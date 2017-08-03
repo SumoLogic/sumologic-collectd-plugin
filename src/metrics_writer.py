@@ -30,7 +30,7 @@ def init_callback():
 
     met_buffer = MetricsBuffer(met_config.conf[ConfigOptions.max_requests_to_buffer])
     met_batcher = MetricsBatcher(met_config.conf[ConfigOptions.max_batch_size],
-                                 met_config.conf[ConfigOptions.flushing_interval],
+                                 met_config.conf[ConfigOptions.max_batch_interval],
                                  met_buffer)
     met_sender = MetricsSender(met_config.conf, met_buffer)
 
