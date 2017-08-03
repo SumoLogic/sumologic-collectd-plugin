@@ -4,8 +4,9 @@ import threading
 class MetricsUtil:
 
     _reserved_symbols = [' ', '=']
-    _reserved_keywords = ['_sourceHost', '_sourceName', '_sourceCategory', '_collectorId',
-                          '_collector', '_source', '_sourceId', '_contentType', '_rawName']
+    # reserved keywords are case-insensitive
+    _reserved_keywords = ['_sourcehost', '_sourcename', '_sourcecategory', '_collectorid',
+                          '_collector', '_source', '_sourceid', '_contenttype', '_rawname']
 
     @staticmethod
     def validate_nonempty(s, key):
@@ -33,11 +34,6 @@ class MetricsUtil:
             if reserved_symbol in s:
                 raise Exception('Field %s must not contain reserved symbol %s' %
                                 (s, reserved_symbol))
-
-        for reserved_keyword in MetricsUtil._reserved_keywords:
-            if reserved_keyword in s:
-                raise Exception('Field %s must not contain reserved keyword %s' %
-                                (s, reserved_keyword))
 
     @staticmethod
     def validate_type(data, types):
