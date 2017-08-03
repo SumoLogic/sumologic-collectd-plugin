@@ -4,7 +4,7 @@ import sys
 sys.path.append(cwd + '/src')
 import pytest
 from metrics_converter import MetricsConverter
-from collectd.data import Data
+from collectd.values import Values
 from collectd.helper import Helper
 
 
@@ -65,11 +65,39 @@ def test_tags_to_str_with_empty_tags():
     assert tag_str == ''
 
 
-def test_convert_to_metrics():
-    d = Data()
-    print 'this is data %s' % str(d.type)
+def test_convert_to_metrics_single():
+    d = Values()
     helper = Helper()
     metrics = MetricsConverter.convert_to_metrics(d, helper.conf.types)
 
-    assert metrics == [Data.default_metric()]
+    assert metrics == d.metrics_str()
+
+
+def test_convert_to_metrics_multiple():
+    d = Values(type='test_type_2', values=[1.23, 4.56], ds_names=['test_ds_name1', 'test_ds_name2'],
+               ds_types=['test_ds_type1', 'test_ds_type2'])
+    helper = Helper()
+    metrics = MetricsConverter.convert_to_metrics(d, helper.conf.types)
+
+    assert metrics == d.metrics_str()
+
+
+def test_convert_to_metrics_no_meta():
+    d = Values(type='test_type_2', meta={}, values=[1.23, 4.56], ds_names=['test_ds_name1', 'test_ds_name2'],
+               ds_types=['test_ds_type1', 'test_ds_type2'])
+    helper = Helper()
+    metrics = MetricsConverter.convert_to_metrics(d, helper.conf.types)
+
+    assert metrics == d.metrics_str()
+
+
+def test_convert_to_metrics_exception():
+    with pytest.raises(Exception) as e:
+        d = Values(type='test_type_2', values=[1.23], ds_names=['test_ds_name1', 'test_ds_name2'],
+                   ds_types=['test_ds_type1', 'test_ds_type2'])
+        helper = Helper()
+        MetricsConverter.convert_to_metrics(d, helper.conf.types)
+
+    assert 'Number values [1.23] differ from types defined for test_type_2' in str(e.value)
+
 

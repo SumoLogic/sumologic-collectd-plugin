@@ -40,16 +40,13 @@ class MetricsUtil:
 
         # Verify type is defined in types.db
         if data.type not in types:
-            collectd.warning('write_callback: do not know how to handle type %s. '
-                             'Do you have all your types.db files configured?' % data.type)
-            return False
+            raise Exception('Do not know how to handle type %s. Do you have all your types.db files'
+                            ' configured?' % data.type)
 
         # Verify values conform to the type defined
         if len(data.values) != len(types[data.type]):
-            collectd.warning('write_callback: # values is different from type %s' % data.type)
-            return False
-
-        return True
+            raise Exception('Number values %s differ from types defined for %s' %
+                            (data.values, data.type))
 
     @staticmethod
     def start_timer(interval, func):
