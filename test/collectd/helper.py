@@ -4,7 +4,7 @@ import sys
 sys.path.append(cwd + '/src')
 from metrics_config import MetricsConfig, ConfigOptions
 from collectd.collectd_config import CollectdConfig, ConfigNode
-from collectd.data import Data
+from collectd.values import Values
 
 
 class Helper:
