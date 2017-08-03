@@ -1,10 +1,12 @@
+import os
+cwd = os.getcwd()
 import sys
-sys.path.append('src')
+sys.path.append(cwd + '/src')
 from metrics_config import MetricsConfig, ConfigOptions
 from collectd.collectd_config import CollectdConfig, ConfigNode
 
 url = "http://www.sumologic.com"
-types_db = 'test/data/types.db'
+types_db = cwd + '/test/data/types.db'
 
 
 def test_parse_types_db():
