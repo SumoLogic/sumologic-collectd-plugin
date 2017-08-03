@@ -8,6 +8,13 @@ class MetricsUtil:
                           '_collector', '_source', '_sourceId', '_contentType', '_rawName']
 
     @staticmethod
+    def validate_nonempty(s, key):
+
+        if not s:
+            raise Exception('Value for key %s cannot be empty' % key)
+
+
+    @staticmethod
     def validate_positive(v):
 
         if not v > 0:

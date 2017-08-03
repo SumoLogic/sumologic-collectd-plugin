@@ -8,4 +8,4 @@ before_install:
 install: "pip install -r requirements.txt"
 
 # command to run tests
-script: pytest --help
+script: pytest -v test/test_metrics_config.py
