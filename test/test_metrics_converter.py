@@ -5,7 +5,7 @@ sys.path.append(cwd + '/src')
 import pytest
 from metrics_converter import MetricsConverter
 from collectd.data import Data
-from collectd.helper import TestHelper
+from collectd.helper import Helper
 
 
 def test_gen_tag():
@@ -65,8 +65,11 @@ def test_tags_to_str_with_empty_tags():
     assert tag_str == ''
 
 
-# def test_convert_to_metrics():
-#     d = Data()
-#     helper = TestHelper()
-#     types = helper.conf.types
-#     metric = MetricsConverter.convert_to_metrics(d, types)
+def test_convert_to_metrics():
+    d = Data()
+    print 'this is data %s' % str(d.type)
+    helper = Helper()
+    metrics = MetricsConverter.convert_to_metrics(d, helper.conf.types)
+
+    assert metrics == [Data.default_metric()]
+

@@ -16,8 +16,8 @@ class MetricsConverter:
     """
 
     # reserved keywords are case-insensitive
-    _reserved_keywords = ['_sourcehost', '_sourcename', '_sourcecategory', '_collectorid',
-                          '_collector', '_source', '_sourceid', '_contenttype', '_rawname']
+    _reserved_keywords = frozenset(['_sourcehost', '_sourcename', '_sourcecategory', '_collectorid',
+                          '_collector', '_source', '_sourceid', '_contenttype', '_rawname'])
 
     @staticmethod
     def convert_to_metrics(data, types):

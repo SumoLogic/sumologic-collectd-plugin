@@ -2,17 +2,16 @@ import os
 cwd = os.getcwd()
 import sys
 sys.path.append(cwd + '/src')
+
 import pytest
 from metrics_config import MetricsConfig, ConfigOptions
 from collectd.collectd_config import CollectdConfig, ConfigNode
-from collectd.helper import TestHelper
-
-url = "http://www.sumologic.com"
+from collectd.helper import Helper
 
 
 def test_parse_types_db():
     met_config = MetricsConfig()
-    config = CollectdConfig([TestHelper.url_node(), TestHelper.types_db_node()])
+    config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])
     met_config.parse_config(config)
 
     assert len(met_config.types) == 271
@@ -20,16 +19,16 @@ def test_parse_types_db():
 
 def test_parse_url():
     met_config = MetricsConfig()
-    config = CollectdConfig([TestHelper.url_node()])
+    config = CollectdConfig([Helper.url_node()])
     met_config.parse_config(config)
 
-    assert met_config.conf[ConfigOptions.url] == url
+    assert met_config.conf[ConfigOptions.url] == Helper.url
 
 
 def test_parse_dimension_tags():
     met_config = MetricsConfig()
     tags = ('dim_key1', 'dim_val1', 'dim_key2', 'dim_val2')
-    config = CollectdConfig([TestHelper.url_node(), tags_node(ConfigOptions.dimension_tags, tags)])
+    config = CollectdConfig([Helper.url_node(), tags_node(ConfigOptions.dimension_tags, tags)])
     met_config.parse_config(config)
 
     assert met_config.conf[ConfigOptions.dimension_tags] == tuple_to_dict(tags)
@@ -38,7 +37,7 @@ def test_parse_dimension_tags():
 def test_parse_meta_tags():
     met_config = MetricsConfig()
     tags = ('meta_key1', 'meta_val1', 'meta_key2', 'meta_val2')
-    config = CollectdConfig([TestHelper.url_node(), tags_node(ConfigOptions.meta_tags, tags)])
+    config = CollectdConfig([Helper.url_node(), tags_node(ConfigOptions.meta_tags, tags)])
     met_config.parse_config(config)
 
     assert met_config.conf[ConfigOptions.meta_tags] == tuple_to_dict(tags)
@@ -48,7 +47,7 @@ def test_parse_source_name():
     met_config = MetricsConfig()
     source_name = 'test_source'
     source_name_node = ConfigNode(ConfigOptions.source_name, [source_name])
-    config = CollectdConfig([TestHelper.url_node(), source_name_node])
+    config = CollectdConfig([Helper.url_node(), source_name_node])
     met_config.parse_config(config)
 
     assert met_config.conf[ConfigOptions.source_name] == source_name
@@ -58,7 +57,7 @@ def test_parse_host_name():
     met_config = MetricsConfig()
     host_name = 'test_host'
     host_name_node = ConfigNode(ConfigOptions.host_name, [host_name])
-    config = CollectdConfig([TestHelper.url_node(), host_name_node])
+    config = CollectdConfig([Helper.url_node(), host_name_node])
     met_config.parse_config(config)
 
     assert met_config.conf[ConfigOptions.host_name] == host_name
@@ -68,7 +67,7 @@ def test_parse_source_category():
     met_config = MetricsConfig()
     source_category = 'test_category'
     source_category_node = ConfigNode(ConfigOptions.source_category, [source_category])
-    config = CollectdConfig([TestHelper.url_node(), source_category_node])
+    config = CollectdConfig([Helper.url_node(), source_category_node])
     met_config.parse_config(config)
 
     assert met_config.conf[ConfigOptions.source_category] == source_category
@@ -78,7 +77,7 @@ def test_parse_http_post_interval():
     met_config = MetricsConfig()
     http_post_interval = '0.5'
     http_post_interval_node = ConfigNode(ConfigOptions.http_post_interval, [http_post_interval])
-    config = CollectdConfig([TestHelper.url_node(), http_post_interval_node])
+    config = CollectdConfig([Helper.url_node(), http_post_interval_node])
     met_config.parse_config(config)
 
     assert met_config.conf[ConfigOptions.http_post_interval] == float(http_post_interval)
@@ -107,7 +106,7 @@ def test_parse_int_config():
     retry_jitter_max_node = ConfigNode(ConfigOptions.retry_jitter_max, [retry_jitter_max])
     max_requests_to_buffer_node = ConfigNode(ConfigOptions.max_requests_to_buffer, [max_requests_to_buffer])
 
-    config = CollectdConfig([TestHelper.url_node(), max_batch_size_node, max_batch_interval_node,
+    config = CollectdConfig([Helper.url_node(), max_batch_size_node, max_batch_interval_node,
                              retry_initial_delay_node, retry_max_attempts_node,
                              retry_max_delay_node, retry_backoff_node, retry_jitter_min_node,
                              retry_jitter_max_node, max_requests_to_buffer_node])
@@ -132,7 +131,7 @@ def test_parse_batch_config():
     max_batch_interval = '5'
     max_batch_size_node = ConfigNode(ConfigOptions.max_batch_size, [max_batch_size])
     max_batch_interval_node = ConfigNode(ConfigOptions.max_batch_interval, [max_batch_interval])
-    config = CollectdConfig([TestHelper.url_node(), max_batch_size_node, max_batch_interval_node])
+    config = CollectdConfig([Helper.url_node(), max_batch_size_node, max_batch_interval_node])
 
     met_config.parse_config(config)
 
@@ -156,7 +155,7 @@ def test_parse_retry_config():
     retry_backoff_node = ConfigNode(ConfigOptions.retry_backoff, [retry_backoff])
     retry_jitter_min_node = ConfigNode(ConfigOptions.retry_jitter_min, [retry_jitter_min])
     retry_jitter_max_node = ConfigNode(ConfigOptions.retry_jitter_max, [retry_jitter_max])
-    config = CollectdConfig([TestHelper.url_node(), retry_initial_delay_node, retry_max_attempts_node,
+    config = CollectdConfig([Helper.url_node(), retry_initial_delay_node, retry_max_attempts_node,
                              retry_max_delay_node, retry_backoff_node, retry_jitter_min_node,
                              retry_jitter_max_node])
 
@@ -184,7 +183,7 @@ def test_parse_int_exception():
         met_config = MetricsConfig()
         max_batch_size = ''
         max_batch_size_node = ConfigNode(ConfigOptions.max_batch_size, [max_batch_size])
-        config = CollectdConfig([TestHelper.url_node(), max_batch_size_node])
+        config = CollectdConfig([Helper.url_node(), max_batch_size_node])
         met_config.parse_config(config)
 
 
@@ -202,7 +201,7 @@ def test_invalid_http_post_interval_exception():
         met_config = MetricsConfig()
         http_post_interval = '100.0'
         http_post_interval_node = ConfigNode(ConfigOptions.http_post_interval, [http_post_interval])
-        config = CollectdConfig([TestHelper.url_node(), http_post_interval_node])
+        config = CollectdConfig([Helper.url_node(), http_post_interval_node])
         met_config.parse_config(config)
 
     assert 'Specify HttpPostInterval' in str(e.value)

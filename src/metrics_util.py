@@ -3,7 +3,7 @@ import threading
 
 class MetricsUtil:
 
-    _reserved_symbols = [' ', '=']
+    _reserved_symbols = frozenset([' ', '='])
 
     @staticmethod
     def validate_nonempty(s, key):
