@@ -35,27 +35,14 @@ class MetricsConfig:
     Configuration for sumologic collectd plugin
     """
 
-    _default_config = {
-        ConfigOptions.http_post_interval: 0.1,
-        ConfigOptions.max_batch_size: 100,
-        ConfigOptions.max_batch_interval: 1,
-        ConfigOptions.retry_initial_delay: 0,
-        ConfigOptions.retry_max_attempts: 10,
-        ConfigOptions.retry_max_delay: 100,
-        ConfigOptions.retry_backoff: 2,
-        ConfigOptions.retry_jitter_min: 0,
-        ConfigOptions.retry_jitter_max: 10,
-        ConfigOptions.max_requests_to_buffer: 1000000
-    }
-
     def __init__(self):
         """
         Init MetricsConfig with default config
         """
-        self.conf = self._default_config
+        self.conf = self.default_config()
         self.types = {}
 
-        collectd.info('Initialized MetricsConfig with default config %s' % self._default_config)
+        collectd.info('Initialized MetricsConfig with default config %s' % self.conf)
 
     def parse_config(self, config):
         """
@@ -83,7 +70,7 @@ class MetricsConfig:
                     f = float(child.values[0])
                     MetricsUtil.validate_positive(f)
                     self.conf[child.key] = f
-                elif child.key in self._default_config.keys():
+                elif child.key in self.conf.keys():
                     i = int(child.values[0])
                     MetricsUtil.validate_positive(i)
                     self.conf[child.key] = i
@@ -149,3 +136,18 @@ class MetricsConfig:
         self.conf[child.key] = dict(zip(*(iter(child.values),) * 2))
 
         collectd.info('Parsed %s tags %s' % (child.key, self.conf[child.key]))
+
+    @staticmethod
+    def default_config():
+        return {
+            ConfigOptions.http_post_interval: 0.1,
+            ConfigOptions.max_batch_size: 100,
+            ConfigOptions.max_batch_interval: 1,
+            ConfigOptions.retry_initial_delay: 0,
+            ConfigOptions.retry_max_attempts: 10,
+            ConfigOptions.retry_max_delay: 100,
+            ConfigOptions.retry_backoff: 2,
+            ConfigOptions.retry_jitter_min: 0,
+            ConfigOptions.retry_jitter_max: 10,
+            ConfigOptions.max_requests_to_buffer: 1000000
+        }
