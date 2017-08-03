@@ -117,12 +117,12 @@ class MetricsSender:
     def _send_request_with_retries(self, batch):
 
         retry_call(self._send_request, fargs=[self.http_headers, batch],
-                   tries=self.conf[ConfigOptions.max_retries],
-                   delay=self.conf[ConfigOptions.initial_delay],
-                   max_delay=self.conf[ConfigOptions.max_delay],
-                   backoff=self.conf[ConfigOptions.backoff],
-                   jitter=(self.conf[ConfigOptions.jitter_min],
-                           self.conf[ConfigOptions.jitter_max]))
+                   tries=self.conf[ConfigOptions.retry_max_attempts],
+                   delay=self.conf[ConfigOptions.retry_initial_delay],
+                   max_delay=self.conf[ConfigOptions.retry_max_delay],
+                   backoff=self.conf[ConfigOptions.retry_backoff],
+                   jitter=(self.conf[ConfigOptions.retry_jitter_min],
+                           self.conf[ConfigOptions.retry_jitter_max]))
 
     # Build http header
     def _build_header(self):

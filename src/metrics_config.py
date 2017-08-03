@@ -6,28 +6,28 @@ class ConfigOptions:
     """
     Config options
     """
-    types_db = 'types_db'
-    url = 'url'
+    types_db = 'TypesDB'
+    url = 'URL'
     # Http header options
-    dimension_tags = 'dimension_tags'
-    meta_tags = 'meta_tags'
-    source_name = 'source_name'
-    host_name = 'host_name'
-    source_category = 'source_category'
+    dimension_tags = 'Dimensions'
+    meta_tags = 'Metadata'
+    source_name = 'SourceName'
+    host_name = 'HostName'
+    source_category = 'SourceCategory'
     # Metrics Batching options
-    max_batch_size = 'max_batch_size'
-    flushing_interval = 'flushing_interval'
+    max_batch_size = 'MaxBatchSize'
+    max_batch_interval = 'MaxBatchInterval'
     # Http post request frequency option
-    http_post_interval = 'http_post_interval'
+    http_post_interval = 'HttpPostInterval'
     # Http retry options
-    initial_delay = 'initial_delay'
-    max_retries = 'max_retries'
-    max_delay = 'max_delay'
-    backoff = 'backoff'
-    jitter_min = 'jitter_min'
-    jitter_max = 'jitter_max'
+    retry_initial_delay = 'RetryInitialDelay'
+    retry_max_attempts = 'RetryMaxAttempts'
+    retry_max_delay = 'RetryMaxDelay'
+    retry_backoff = 'RetryBackOff'
+    retry_jitter_min = 'RetryJitterMin'
+    retry_jitter_max = 'RetryJitterMax'
     # Memory option
-    max_requests_to_buffer = 'max_requests_to_buffer'
+    max_requests_to_buffer = 'MaxRequestsToBuffer'
 
 
 class MetricsConfig:
@@ -38,13 +38,13 @@ class MetricsConfig:
     _default_config = {
         ConfigOptions.http_post_interval: 0.1,
         ConfigOptions.max_batch_size: 100,
-        ConfigOptions.flushing_interval: 1,
-        ConfigOptions.initial_delay: 0,
-        ConfigOptions.max_retries: 10,
-        ConfigOptions.max_delay: 100,
-        ConfigOptions.backoff: 2,
-        ConfigOptions.jitter_min: 0,
-        ConfigOptions.jitter_max: 10,
+        ConfigOptions.max_batch_interval: 1,
+        ConfigOptions.retry_initial_delay: 0,
+        ConfigOptions.retry_max_attempts: 10,
+        ConfigOptions.retry_max_delay: 100,
+        ConfigOptions.retry_backoff: 2,
+        ConfigOptions.retry_jitter_min: 0,
+        ConfigOptions.retry_jitter_max: 10,
         ConfigOptions.max_requests_to_buffer: 1000000
     }
 
@@ -96,7 +96,7 @@ class MetricsConfig:
             raise Exception('Specify url in collectd.conf.')
 
         http_post_interval = self.conf[ConfigOptions.http_post_interval]
-        flushing_interval = self.conf[ConfigOptions.flushing_interval]
+        flushing_interval = self.conf[ConfigOptions.max_batch_interval]
 
         if http_post_interval > flushing_interval:
             raise Exception('Specify http_post_interval %f as float between 0 and '
@@ -134,7 +134,7 @@ class MetricsConfig:
             collectd.info('Parsed types %s with types_db file %s ' % (self.types, db))
 
         except Exception as e:
-            collectd.error()
+            collectd.error('Parse types %s failed with %s' %(db, e.message))
             raise e
 
     # parse dimension_tags/meta_tags specified in collectd.conf
