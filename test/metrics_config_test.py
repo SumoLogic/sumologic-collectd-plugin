@@ -6,7 +6,7 @@ from metrics_config import MetricsConfig, ConfigOptions
 from collectd.collectd_config import CollectdConfig, ConfigNode
 
 url = "http://www.sumologic.com"
-types_db = cwd + '/test/data/types.db'
+types_db = 'types.db'
 
 
 def test_parse_types_db():
