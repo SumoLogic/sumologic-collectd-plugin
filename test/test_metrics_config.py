@@ -45,7 +45,7 @@ def test_parse_meta_tags():
 
 def test_parse_source_name():
     met_config = MetricsConfig()
-    source_name = 'Test_Source'
+    source_name = 'test_source'
     source_name_node = ConfigNode(ConfigOptions.source_name, [source_name])
     config = CollectdConfig([url_node(), source_name_node])
     met_config.parse_config(config)
@@ -55,7 +55,7 @@ def test_parse_source_name():
 
 def test_parse_host_name():
     met_config = MetricsConfig()
-    host_name = 'Test_Host'
+    host_name = 'test_host'
     host_name_node = ConfigNode(ConfigOptions.host_name, [host_name])
     config = CollectdConfig([url_node(), host_name_node])
     met_config.parse_config(config)
@@ -65,7 +65,7 @@ def test_parse_host_name():
 
 def test_parse_source_category():
     met_config = MetricsConfig()
-    source_category = 'Test_Category'
+    source_category = 'test_category'
     source_category_node = ConfigNode(ConfigOptions.source_category, [source_category])
     config = CollectdConfig([url_node(), source_category_node])
     met_config.parse_config(config)

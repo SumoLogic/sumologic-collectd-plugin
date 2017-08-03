@@ -34,7 +34,7 @@ class MetricsConverter:
 
             dimension_tags = MetricsConverter._gen_dimension_tags(data, ds_name, ds_type)
             meta_tags = MetricsConverter._gen_meta_tags(data)
-            metric = MetricsConverter.gen_metric(dimension_tags, meta_tags, value, data.time)
+            metric = MetricsConverter._gen_metric(dimension_tags, meta_tags, value, data.time)
 
             metrics.append(metric)
 
@@ -43,6 +43,54 @@ class MetricsConverter:
         collectd.debug('Converted data %s to metrics %s' %(data, metrics))
 
         return metrics
+
+    @staticmethod
+    def gen_tag(key, value):
+        """
+        Tag is of form key=value
+        """
+        MetricsUtil.validate_field(key)
+        MetricsUtil.validate_field(value)
+        if not key:
+            raise Exception('Key for value %s cannot be empty' % value)
+        elif key.lower() in MetricsUtil._reserved_keywords:
+            raise Exception('Key %s (case-insensitive) must not contain reserved keywords %s' %
+                            (key, MetricsUtil._reserved_keywords))
+        elif not value:
+            return ''
+        else:
+            return key + '=' + value
+
+    @staticmethod
+    def tags_to_str(tags):
+        """
+        Convert list of tags to a single string
+        """
+        return ' '.join(tags)
+
+    # Generate meta_tags from data
+    @staticmethod
+    def _gen_meta_tags(data):
+
+        meta_tags = [MetricsConverter.gen_tag(key, value) for key, value in data.meta.items()]
+        return MetricsConverter._remove_empty_tags(meta_tags)
+
+    @staticmethod
+    def _remove_empty_tags(tags):
+        return [tag for tag in tags if tag]
+
+    @staticmethod
+    def _gen_metric(dimension_tags, meta_tags, value, timestamp):
+        """
+        Convert (dimension_tags, meta_tags, value, timestamp) to metric string
+        """
+
+        if not meta_tags:
+            return '%s  %f %i' % (MetricsConverter.tags_to_str(dimension_tags), value, timestamp)
+
+        else:
+            return '%s  %s %f %i' % (MetricsConverter.tags_to_str(dimension_tags),
+                                     MetricsConverter.tags_to_str(meta_tags), value, timestamp)
 
     # Generate dimension tags
     @staticmethod
@@ -54,49 +102,6 @@ class MetricsConverter:
                          [MetricsConverter.gen_tag(IntrinsicKeys.ds_name, ds_name),
                           MetricsConverter.gen_tag(IntrinsicKeys.ds_type, ds_type)]
 
-        return MetricsConverter.remove_empty_tags(dimension_tags)
-
-    # Generate meta_tags from data
-    @staticmethod
-    def _gen_meta_tags(data):
-
-        meta_tags = [MetricsConverter.gen_tag(key, value) for key, value in data.meta.items()]
-        return MetricsConverter.remove_empty_tags(meta_tags)
-
-    @staticmethod
-    def gen_tag(key, value):
-        """
-        Tag is of form key=value
-        """
-        if not value:
-            return ''
-        else:
-            MetricsUtil.validate_field(key)
-            MetricsUtil.validate_field(value)
-            return key + '=' + value
-
-    @staticmethod
-    def tags_to_str(tags):
-        """
-        Convert list of tags to a single string
-        """
-        return ' '.join(tags)
-
-    @staticmethod
-    def remove_empty_tags(tags):
-        return [tag for tag in tags if tag]
-
-    @staticmethod
-    def gen_metric(dimension_tags, meta_tags, value, timestamp):
-        """
-        Convert (dimension_tags, meta_tags, value, timestamp) to metric string
-        """
-
-        if not meta_tags:
-            return '%s  %f %i' % (MetricsConverter.tags_to_str(dimension_tags), value, timestamp)
-
-        else:
-            return '%s  %s %f %i' % (MetricsConverter.tags_to_str(dimension_tags),
-                                     MetricsConverter.tags_to_str(meta_tags), value, timestamp)
+        return MetricsConverter._remove_empty_tags(dimension_tags)
 
 
