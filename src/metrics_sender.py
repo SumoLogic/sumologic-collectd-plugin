@@ -36,7 +36,8 @@ class MetricsSender:
 
     # List of recoverable 4xx http errors. List of http error codes listed here
     # https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-    _recoverable_http_errs = frozenset([404, 408, 429])
+    _recoverable_http_client_errs = frozenset([404, 408, 429])
+    _recoverable_http_server_errs = frozenset([500, 502, 503, 504, 506, 507, 508, 510, 511])
 
     def __init__(self, conf, met_buf):
         """
@@ -80,38 +81,40 @@ class MetricsSender:
             collectd.info('Sent https request with batch size %d got response code %s' %
                           (len(body), response.status_code))
         except requests.exceptions.HTTPError as e:
-            if e.response.status_code in self._recoverable_http_errs:
-                MetricsUtil.fail_with_recoverable_exception('An HTTP error occurred', e)
+            if e.response.status_code in self._recoverable_http_client_errs:
+                MetricsUtil.fail_with_recoverable_exception('Client side HTTP error', body, e)
+            elif e.response.status_code in self._recoverable_http_server_errs:
+                MetricsUtil.fail_with_recoverable_exception('Server side HTTP error', body, e)
             else:
-                MetricsUtil.fail_with_unrecoverable_exception('An HTTP error occurred', e)
+                MetricsUtil.fail_with_unrecoverable_exception('An HTTP error occurred', body, e)
         except requests.exceptions.ConnectionError as e:
-            MetricsUtil.fail_with_recoverable_exception('A Connection error occurred', e)
+            MetricsUtil.fail_with_recoverable_exception('A Connection error occurred', body, e)
         except requests.exceptions.Timeout as e:
-            MetricsUtil.fail_with_recoverable_exception('The request timed out', e)
+            MetricsUtil.fail_with_recoverable_exception('The request timed out', body, e)
         except requests.exceptions.TooManyRedirects as e:
-            MetricsUtil.fail_with_recoverable_exception('Too many redirects', e)
+            MetricsUtil.fail_with_recoverable_exception('Too many redirects', body, e)
         except requests.exceptions.URLRequired as e:
             MetricsUtil.fail_with_unrecoverable_exception(
-                'A valid URL is required to make a request', e)
+                'A valid URL is required to make a request', body, e)
         except requests.exceptions.MissingSchema as e:
             MetricsUtil.fail_with_unrecoverable_exception(
-                'The URL schema (e.g. http or https) is missing', e)
+                'The URL schema (e.g. http or https) is missing', body, e)
         except requests.exceptions.InvalidSchema as e:
-            MetricsUtil.fail_with_unrecoverable_exception('See defaults.py for valid schemas', e)
+            MetricsUtil.fail_with_unrecoverable_exception('See schemas in defaults.py', body, e)
         except requests.exceptions.InvalidURL as e:
-            MetricsUtil.fail_with_unrecoverable_exception('The URL provided was somehow invalid', e)
+            MetricsUtil.fail_with_unrecoverable_exception('The URL provided was invalid', body, e)
         except requests.exceptions.ChunkedEncodingError as e:
             MetricsUtil.fail_with_unrecoverable_exception(
-                'The server declared chunked encoding but sent an invalid chunk', e)
+                'The server declared chunked encoding but sent an invalid chunk', body, e)
         except requests.exceptions.ContentDecodingError as e:
-            MetricsUtil.fail_with_unrecoverable_exception('Failed to decode response content', e)
+            MetricsUtil.fail_with_unrecoverable_exception('Failed to decode response', body, e)
         except requests.exceptions.StreamConsumedError as e:
             MetricsUtil.fail_with_unrecoverable_exception(
-                'The content for this response was already consumed', e)
+                'The content for this response was already consumed', body, e)
         except requests.exceptions.RetryError as e:
-            MetricsUtil.fail_with_unrecoverable_exception('Custom retries logic failed', e)
+            MetricsUtil.fail_with_unrecoverable_exception('Custom retries logic failed', body, e)
         except Exception as e:
-            MetricsUtil.fail_with_unrecoverable_exception('unknown exception', e)
+            MetricsUtil.fail_with_unrecoverable_exception('unknown exception', body, e)
 
     # Send http request with retries
     def _send_request_with_retries(self, batch):

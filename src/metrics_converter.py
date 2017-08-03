@@ -15,6 +15,10 @@ class MetricsConverter:
     Coverts collectd data model to carbon 2.0 data model
     """
 
+    # reserved keywords are case-insensitive
+    _reserved_keywords = frozenset(['_sourcehost', '_sourcename', '_sourcecategory', '_collectorid',
+                          '_collector', '_source', '_sourceid', '_contenttype', '_rawname'])
+
     @staticmethod
     def convert_to_metrics(data, types):
         """
@@ -53,9 +57,9 @@ class MetricsConverter:
         MetricsUtil.validate_field(value)
         if not key:
             raise Exception('Key for value %s cannot be empty' % value)
-        elif key.lower() in MetricsUtil._reserved_keywords:
+        elif key.lower() in MetricsConverter._reserved_keywords:
             raise Exception('Key %s (case-insensitive) must not contain reserved keywords %s' %
-                            (key, MetricsUtil._reserved_keywords))
+                            (key, MetricsConverter._reserved_keywords))
         elif not value:
             return ''
         else:
@@ -66,14 +70,13 @@ class MetricsConverter:
         """
         Convert list of tags to a single string
         """
-        return ' '.join(tags)
+        return ' '.join(MetricsConverter._remove_empty_tags(tags))
 
     # Generate meta_tags from data
     @staticmethod
     def _gen_meta_tags(data):
 
-        meta_tags = [MetricsConverter.gen_tag(key, value) for key, value in data.meta.items()]
-        return MetricsConverter._remove_empty_tags(meta_tags)
+        return [MetricsConverter.gen_tag(key, value) for key, value in data.meta.items()]
 
     @staticmethod
     def _remove_empty_tags(tags):
@@ -96,12 +99,18 @@ class MetricsConverter:
     @staticmethod
     def _gen_dimension_tags(data, ds_name, ds_type):
 
-        dimension_tags = [MetricsConverter.gen_tag(key, getattr(data, key)) for key in
-                          [IntrinsicKeys.host, IntrinsicKeys.plugin, IntrinsicKeys.plugin_instance,
-                           IntrinsicKeys.type, IntrinsicKeys.type_instance]] + \
-                         [MetricsConverter.gen_tag(IntrinsicKeys.ds_name, ds_name),
-                          MetricsConverter.gen_tag(IntrinsicKeys.ds_type, ds_type)]
+        tags = [MetricsConverter.gen_tag(key, getattr(data, key)) for key in
+                [IntrinsicKeys.host, IntrinsicKeys.plugin, IntrinsicKeys.plugin_instance,
+                 IntrinsicKeys.type, IntrinsicKeys.type_instance]] + \
+               [MetricsConverter.gen_tag(IntrinsicKeys.ds_name, ds_name),
+                MetricsConverter.gen_tag(IntrinsicKeys.ds_type, ds_type)]
 
-        return MetricsConverter._remove_empty_tags(dimension_tags)
+        dimension_tags = MetricsConverter._remove_empty_tags(tags)
+
+        if not dimension_tags:
+            raise Exception('Dimension tags for data %s cannot be empty' % data)
+
+        return dimension_tags
+
 
 

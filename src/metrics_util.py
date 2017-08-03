@@ -3,10 +3,7 @@ import threading
 
 class MetricsUtil:
 
-    _reserved_symbols = [' ', '=']
-    # reserved keywords are case-insensitive
-    _reserved_keywords = ['_sourcehost', '_sourcename', '_sourcecategory', '_collectorid',
-                          '_collector', '_source', '_sourceid', '_contenttype', '_rawname']
+    _reserved_symbols = frozenset([' ', '='])
 
     @staticmethod
     def validate_nonempty(s, key):
@@ -66,21 +63,21 @@ class MetricsUtil:
         func()
 
     @staticmethod
-    def fail_with_recoverable_exception(msg, e):
+    def fail_with_recoverable_exception(msg, batch, e):
         """
         Warn about exception and raise RecoverableException
         """
 
-        collectd.warning(msg + ': %s' % e.message)
+        collectd.warning(msg + ': %s. Retrying sending batch %s' % (batch, e.message))
         raise RecoverableException(e)
 
     @staticmethod
-    def fail_with_unrecoverable_exception(msg, e):
+    def fail_with_unrecoverable_exception(msg, batch, e):
         """
         Error about exception and pass through exception
         """
 
-        collectd.error(msg + ': %s' % e.message)
+        collectd.error(msg + ': %s. Dropping batch %s' % (batch, e.message))
         raise e
 
 
