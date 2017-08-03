@@ -6,7 +6,6 @@ from metrics_config import MetricsConfig, ConfigOptions
 from collectd.collectd_config import CollectdConfig, ConfigNode
 
 url = "http://www.sumologic.com"
-types_db = cwd + '/test/types.db'
 
 
 def test_parse_types_db():
@@ -34,6 +33,16 @@ def test_parse_dimension_tags():
     assert met_config.conf[ConfigOptions.dimension_tags] == list_to_dict(tags)
 
 
+def test_parse_source_name():
+    met_config = MetricsConfig()
+    source_name = 'Test_Source'
+    source_name_node = ConfigNode(ConfigOptions.source_name, ['Test_Source'])
+    config = CollectdConfig([url_node(), source_name_node])
+    met_config.parse_config(config)
+
+    assert met_config.conf[ConfigOptions.source_name] == source_name
+
+
 def test_parse_meta_tags():
     met_config = MetricsConfig()
     tags = ['meta_key1', 'meta_val1', 'meta_key2', 'meta_val2']
@@ -48,6 +57,7 @@ def tags_node(key, values):
 
 
 def types_db_node():
+    types_db = cwd + '/test/types.db'
     return ConfigNode(ConfigOptions.types_db, [types_db])
 
 
