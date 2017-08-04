@@ -29,8 +29,8 @@ def test_metrics_batcher_max_size():
 
 def test_metrics_batch_max_interval():
     met_buffer = MetricsBuffer(100)
-    flushing_interval = 0.05
-    met_batcher = MetricsBatcher(1000, flushing_interval, met_buffer)
+    max_batch_interval = 0.05
+    met_batcher = MetricsBatcher(1000, max_batch_interval, met_buffer)
 
     for i in range(50):
         time.sleep(0.010)

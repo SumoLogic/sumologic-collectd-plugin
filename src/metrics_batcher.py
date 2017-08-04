@@ -6,17 +6,17 @@ from metrics_util import MetricsUtil
 
 class MetricsBatcher:
     """
-    Groups metrics in to batches based on max_batch_size and flushing_interval
+    Groups metrics in to batches based on max_batch_size and max_batch_interval
     """
 
-    def __init__(self, max_batch_size, flushing_interval, met_buffer):
+    def __init__(self, max_batch_size, max_batch_interval, met_buffer):
         """
-        Init MetricsBatcher with max_batch_size, flushing_interval, and met_buffer
+        Init MetricsBatcher with max_batch_size, max_batch_interval, and met_buffer
         """
 
-        # initiate max_batch_size and flushing_interval
+        # initiate max_batch_size and max_batch_interval
         self.max_batch_size = max_batch_size
-        self.flushing_interval = flushing_interval
+        self.max_batch_interval = max_batch_interval
 
         # init batching queue to 2 * max_batch_size so that producer can still write while flushing
         self.queue = Queue.Queue(2 * max_batch_size)
@@ -26,10 +26,10 @@ class MetricsBatcher:
         self.metrics_buffer = met_buffer
 
         # start timer
-        self.timer = MetricsUtil.start_timer(self.flushing_interval, self._flush)
+        self.timer = MetricsUtil.start_timer(self.max_batch_interval, self._flush)
 
-        collectd.info('Initialized MetricsBatcher with max_batch_size %s, flushing_interval %s' %
-                      (max_batch_size, flushing_interval))
+        collectd.info('Initialized MetricsBatcher with max_batch_size %s, max_batch_interval %s' %
+                      (max_batch_size, max_batch_interval))
 
     def __del__(self):
         self.timer.cancel()
@@ -46,9 +46,9 @@ class MetricsBatcher:
 
     def _reset_timer(self):
         self.timer.cancel()
-        self.timer = MetricsUtil.start_timer(self.flushing_interval, self._flush)
+        self.timer = MetricsUtil.start_timer(self.max_batch_interval, self._flush)
 
-    # Flush batching queue based on max_batch_siz and flushing_interval
+    # Flush batching queue based on max_batch_siz and max_batch_interval
     def _flush(self):
 
         if self.queue.empty():
