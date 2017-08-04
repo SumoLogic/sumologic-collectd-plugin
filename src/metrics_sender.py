@@ -157,13 +157,13 @@ class MetricsSender(Timer):
     def _gen_config_dimension_tags(self):
 
         return [MetricsConverter.gen_tag(k, v) for k, v in
-                self.conf[ConfigOptions.dimension_tags].items()]
+                self.conf[ConfigOptions.dimension_tags]]
 
     # Generate meta_tags from config
     def _gen_config_meta_tags(self):
 
         return [MetricsConverter.gen_tag(k, v) for k, v in
-                self.conf[ConfigOptions.meta_tags].items()]
+                self.conf[ConfigOptions.meta_tags]]
 
     # Encode body with specified compress method gzip/deflate
     @staticmethod

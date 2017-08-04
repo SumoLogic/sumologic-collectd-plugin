@@ -38,4 +38,4 @@ def test_metrics_batch_max_interval():
 
     while not met_buffer.pending_queue.empty():
         batch = met_buffer.pending_queue.get()
-        assert len(batch) == 4 or len(batch) == 5
+        assert len(batch) < 10

@@ -136,7 +136,7 @@ class MetricsConfig:
         for v in child.values:
             MetricsUtil.validate_field(v)
 
-        self.conf[child.key] = dict(zip(*(iter(child.values),) * 2))
+        self.conf[child.key] = zip(*(iter(child.values),) * 2)
 
         collectd.info('Parsed %s tags %s' % (child.key, self.conf[child.key]))
 
