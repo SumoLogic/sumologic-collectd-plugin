@@ -67,15 +67,15 @@ class MetricsConfig:
                                    ConfigOptions.source_category]:
                     s = child.values[0]
                     MetricsUtil.validate_nonempty(s, child.key)
-                    MetricsUtil.validate_string_type(s)
+                    MetricsUtil.validate_string_type(s, child.key, 'Value', 'Key')
                     self.conf[child.key] = s
                 elif child.key == ConfigOptions.http_post_interval:
                     f = float(child.values[0])
-                    MetricsUtil.validate_positive(f)
+                    MetricsUtil.validate_positive(f, child.key)
                     self.conf[child.key] = f
                 elif child.key in self.conf.keys():
                     i = int(child.values[0])
-                    MetricsUtil.validate_positive(i)
+                    MetricsUtil.validate_non_negative(i, child.key)
                     self.conf[child.key] = i
                 else:
                     collectd.warning('Unknown configuration %s, ignored.' % child.key)
@@ -134,7 +134,7 @@ class MetricsConfig:
             raise Exception('Missing tags key/value.')
 
         for v in child.values:
-            MetricsUtil.validate_field(v)
+            MetricsUtil.validate_field(v, child.key, 'Value', 'Key')
 
         self.conf[child.key] = zip(*(iter(child.values),) * 2)
 

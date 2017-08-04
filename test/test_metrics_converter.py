@@ -34,14 +34,14 @@ def test_gen_key_not_string_exception():
     with pytest.raises(Exception) as e:
         MetricsConverter.gen_tag(('tag_key', ), 'tag_value')
 
-    assert "Field ('tag_key',) must be string type. Type is <type 'tuple'>" in str(e.value)
+    assert "Key ('tag_key',) for Value tag_value must be string type. Type is <type 'tuple'>" in str(e.value)
 
 
 def test_gen_value_not_string_exception():
     with pytest.raises(Exception) as e:
         MetricsConverter.gen_tag('tag_key', 1)
 
-    assert "Field 1 must be string type. Type is <type 'int'>" in str(e.value)
+    assert "Value 1 for Key tag_key must be string type. Type is <type 'int'>" in str(e.value)
 
 
 def test_tags_to_str():
