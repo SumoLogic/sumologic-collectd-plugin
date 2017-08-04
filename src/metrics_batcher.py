@@ -1,10 +1,10 @@
 import collectd
 import threading
 import Queue
-from metrics_util import MetricsUtil
+from timer import Timer
 
 
-class MetricsBatcher:
+class MetricsBatcher(Timer):
     """
     Groups metrics in to batches based on max_batch_size and max_batch_interval
     """
@@ -13,6 +13,8 @@ class MetricsBatcher:
         """
         Init MetricsBatcher with max_batch_size, max_batch_interval, and met_buffer
         """
+
+        Timer.__init__(self, max_batch_interval, self._flush)
 
         # initiate max_batch_size and max_batch_interval
         self.max_batch_size = max_batch_size
@@ -26,13 +28,10 @@ class MetricsBatcher:
         self.metrics_buffer = met_buffer
 
         # start timer
-        self.timer = MetricsUtil.start_timer(self.max_batch_interval, self._flush)
+        self.start_timer()
 
         collectd.info('Initialized MetricsBatcher with max_batch_size %s, max_batch_interval %s' %
                       (max_batch_size, max_batch_interval))
-
-    def __del__(self):
-        self.timer.cancel()
 
     def push_item(self, item):
         """
@@ -42,13 +41,8 @@ class MetricsBatcher:
         self.queue.put(item)
         if self._batch_full():
             self._flush()
-            self._reset_timer()
+            self.reset_timer()
 
-    def _reset_timer(self):
-        self.timer.cancel()
-        self.timer = MetricsUtil.start_timer(self.max_batch_interval, self._flush)
-
-    # Flush batching queue based on max_batch_siz and max_batch_interval
     def _flush(self):
 
         if self.queue.empty():
