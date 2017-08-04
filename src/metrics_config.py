@@ -64,7 +64,7 @@ class MetricsConfig:
                                    ConfigOptions.source_category]:
                     s = child.values[0]
                     MetricsUtil.validate_nonempty(s, child.key)
-                    MetricsUtil.validate_field(s)
+                    MetricsUtil.validate_string_type(s)
                     self.conf[child.key] = s
                 elif child.key == ConfigOptions.http_post_interval:
                     f = float(child.values[0])
