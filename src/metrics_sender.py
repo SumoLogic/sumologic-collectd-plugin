@@ -21,14 +21,6 @@ class HeaderKeys:
     x_sumo_dimensions = 'X-Sumo-Dimensions'
     x_sumo_metadata = 'X-Sumo-Metadata'
 
-class HeaderContants:
-    """
-    Http header constants
-    """
-
-    carbon2_content_type = 'application/vnd.sumologic.carbon2'
-    deflate_encoding = 'deflate'
-
 
 class MetricsSender(Timer):
     """
@@ -134,8 +126,8 @@ class MetricsSender(Timer):
     def _build_header(self):
 
         headers = {
-            HeaderKeys.content_type: HeaderContants.carbon2_content_type,
-            HeaderKeys.content_encoding: HeaderContants.deflate_encoding
+            HeaderKeys.content_type: self.conf[ConfigOptions.content_type],
+            HeaderKeys.content_encoding: self.conf[ConfigOptions.content_encoding]
         }
 
         config_keys = self.conf.keys()

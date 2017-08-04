@@ -28,6 +28,9 @@ class ConfigOptions:
     retry_jitter_max = 'RetryJitterMax'
     # Memory option
     max_requests_to_buffer = 'MaxRequestsToBuffer'
+    # Static options, not configurable yet
+    content_type = 'ContentType'
+    content_encoding = 'ContentEncoding'
 
 
 class MetricsConfig:
@@ -149,5 +152,7 @@ class MetricsConfig:
             ConfigOptions.retry_backoff: 2,
             ConfigOptions.retry_jitter_min: 0,
             ConfigOptions.retry_jitter_max: 10,
-            ConfigOptions.max_requests_to_buffer: 1000000
+            ConfigOptions.max_requests_to_buffer: 1000000,
+            ConfigOptions.content_type: 'application/vnd.sumologic.carbon2',
+            ConfigOptions.content_encoding: 'deflate'
         }

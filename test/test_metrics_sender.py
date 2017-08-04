@@ -29,7 +29,7 @@ def test_post_normal():
 
     time.sleep(1)
 
-    met_sender.timer.cancel()
+    met_sender.cancel_timer()
 
 
 
