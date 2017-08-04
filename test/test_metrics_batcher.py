@@ -23,6 +23,7 @@ def test_metrics_batcher_max_size():
         for j in range(max_batch_size):
             expected_batch.append('item_%s' % (i * max_batch_size + j))
 
+        assert len(batch) == max_batch_size
         assert batch == expected_batch
 
 
