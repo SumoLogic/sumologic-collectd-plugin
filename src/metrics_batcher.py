@@ -26,10 +26,13 @@ class MetricsBatcher:
         self.metrics_buffer = met_buffer
 
         # start timer
-        MetricsUtil.start_timer(self.flushing_interval, self._flush)
+        self.timer = MetricsUtil.start_timer(self.flushing_interval, self._flush)
 
         collectd.info('Initialized MetricsBatcher with max_batch_size %s, flushing_interval %s' %
                       (max_batch_size, flushing_interval))
+
+    def __del__(self):
+        self.timer.cancel()
 
     def push_item(self, item):
         """
@@ -39,6 +42,11 @@ class MetricsBatcher:
         self.queue.put(item)
         if self._batch_full():
             self._flush()
+            self._reset_timer()
+
+    def _reset_timer(self):
+        self.timer.cancel()
+        self.timer = MetricsUtil.start_timer(self.flushing_interval, self._flush)
 
     # Flush batching queue based on max_batch_siz and flushing_interval
     def _flush(self):
