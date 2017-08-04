@@ -58,6 +58,7 @@ class MetricsUtil:
         timer.daemon = True
         timer.start()
         func()
+        return timer
 
     @staticmethod
     def fail_with_recoverable_exception(msg, batch, e):

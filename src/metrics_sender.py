@@ -49,8 +49,11 @@ class MetricsSender:
         self.http_headers = self._build_header()
 
         # start timer
-        MetricsUtil.start_timer(self.conf[ConfigOptions.http_post_interval],
-                                self._request_scheduler)
+        self.timer = MetricsUtil.start_timer(self.conf[ConfigOptions.http_post_interval],
+                                             self._request_scheduler)
+
+    def __del__(self):
+        self.timer.cancel()
 
     # Scheduler to send metrics batch via https
     def _request_scheduler(self):
