@@ -84,11 +84,11 @@ class MetricsConfig:
             raise Exception('Specify URL in collectd.conf.')
 
         http_post_interval = self.conf[ConfigOptions.http_post_interval]
-        flushing_interval = self.conf[ConfigOptions.max_batch_interval]
+        max_batch_interval = self.conf[ConfigOptions.max_batch_interval]
 
-        if http_post_interval > flushing_interval:
+        if http_post_interval > max_batch_interval:
             raise Exception('Specify HttpPostInterval %f as float between 0 and '
-                            'MaxBatchInterval %d' %(http_post_interval, flushing_interval))
+                            'MaxBatchInterval %d' %(http_post_interval, max_batch_interval))
 
         collectd.info('Updated MetricsConfig %s with config file %s ' % (self.conf, config))
 
