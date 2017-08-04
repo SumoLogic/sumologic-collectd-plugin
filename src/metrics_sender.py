@@ -5,6 +5,7 @@ from retry.api import retry_call
 from metrics_config import ConfigOptions
 from metrics_util import MetricsUtil, RecoverableException
 from metrics_converter import MetricsConverter
+from timer import Timer
 
 
 class HeaderKeys:
@@ -29,7 +30,7 @@ class HeaderContants:
     deflate_encoding = 'deflate'
 
 
-class MetricsSender:
+class MetricsSender(Timer):
     """
     Fetches metrics batch from MetricsBuffer and post the http request with error handling
     """
@@ -44,16 +45,14 @@ class MetricsSender:
         Init MetricsSender with conf and met_buf
         """
 
+        Timer.__init__(self, conf[ConfigOptions.http_post_interval], self._request_scheduler)
+
         self.conf = conf
         self.buffer = met_buf
         self.http_headers = self._build_header()
-
+        self.timer = None
         # start timer
-        self.timer = MetricsUtil.start_timer(self.conf[ConfigOptions.http_post_interval],
-                                             self._request_scheduler)
-
-    def __del__(self):
-        self.timer.cancel()
+        self.start_timer()
 
     # Scheduler to send metrics batch via https
     def _request_scheduler(self):
@@ -123,6 +122,7 @@ class MetricsSender:
     def _send_request_with_retries(self, batch):
 
         retry_call(self._send_request, fargs=[self.http_headers, batch],
+                   exceptions=RecoverableException,
                    tries=self.conf[ConfigOptions.retry_max_attempts],
                    delay=self.conf[ConfigOptions.retry_initial_delay],
                    max_delay=self.conf[ConfigOptions.retry_max_delay],

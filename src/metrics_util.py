@@ -1,5 +1,4 @@
 import collectd
-import threading
 
 class MetricsUtil:
 
@@ -47,18 +46,6 @@ class MetricsUtil:
         if len(data.values) != len(types[data.type]):
             raise Exception('Number values %s differ from types defined for %s' %
                             (data.values, data.type))
-
-    @staticmethod
-    def start_timer(interval, func):
-        """
-        Start a thread to periodically run task func
-        """
-
-        timer = threading.Timer(interval, MetricsUtil.start_timer, args=[interval, func])
-        timer.daemon = True
-        timer.start()
-        func()
-        return timer
 
     @staticmethod
     def fail_with_recoverable_exception(msg, batch, e):

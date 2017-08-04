@@ -4,7 +4,6 @@ import sys
 sys.path.append(cwd + '/src')
 from metrics_config import MetricsConfig, ConfigOptions
 from collectd.collectd_config import CollectdConfig, ConfigNode
-from collectd.values import Values
 
 
 class Helper:
@@ -13,7 +12,9 @@ class Helper:
     types_db = cwd + '/test/types.db'
 
     def __init__(self):
-        self.conf = Helper.test_config()
+        config = Helper.test_config()
+        self.conf = config.conf
+        self.types = config.types
 
     @staticmethod
     def types_db_node():
@@ -22,10 +23,6 @@ class Helper:
     @staticmethod
     def url_node():
         return ConfigNode(ConfigOptions.url, [Helper.url])
-
-    @staticmethod
-    def data_to_metric_str(data):
-        pass
 
     @staticmethod
     def test_config():
