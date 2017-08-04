@@ -31,7 +31,7 @@ def test_parse_dimension_tags():
     config = CollectdConfig([Helper.url_node(), tags_node(ConfigOptions.dimension_tags, tags)])
     met_config.parse_config(config)
 
-    assert met_config.conf[ConfigOptions.dimension_tags] == tuple_to_dict(tags)
+    assert met_config.conf[ConfigOptions.dimension_tags] == tuple_to_pair(tags)
 
 
 def test_parse_meta_tags():
@@ -40,7 +40,7 @@ def test_parse_meta_tags():
     config = CollectdConfig([Helper.url_node(), tags_node(ConfigOptions.meta_tags, tags)])
     met_config.parse_config(config)
 
-    assert met_config.conf[ConfigOptions.meta_tags] == tuple_to_dict(tags)
+    assert met_config.conf[ConfigOptions.meta_tags] == tuple_to_pair(tags)
 
 
 def test_parse_http_post_interval():
@@ -136,5 +136,5 @@ def tags_node(key, values):
     return ConfigNode(key, values)
 
 
-def tuple_to_dict(tags):
-    return dict(zip(*(iter(tags),) * 2))
+def tuple_to_pair(tags):
+    return zip(*(iter(tags),) * 2)
