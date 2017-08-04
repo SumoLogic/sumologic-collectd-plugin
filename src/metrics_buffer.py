@@ -39,6 +39,7 @@ class MetricsBuffer:
         """
 
         self.pending_queue.put(batch)
+        self.pending_queue.task_done()
 
     def put_failed_batch(self, batch):
         """
@@ -53,4 +54,5 @@ class MetricsBuffer:
         else:
             collectd.warning('MetricsBuffer: sending metrics batch %s failed. '
                              'Put it back to processing queue' % batch)
-            self.processing_queue.put(batch)
+            self.processing_queue.put_nowait(batch)
+            self.pending_queue.task_done()

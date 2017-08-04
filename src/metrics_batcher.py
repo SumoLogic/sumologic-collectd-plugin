@@ -31,15 +31,6 @@ class MetricsBatcher:
         collectd.info('Initialized MetricsBatcher with max_batch_size %s, flushing_interval %s' %
                       (max_batch_size, flushing_interval))
 
-    def __del__(self):
-        """
-        Flush all items in the batching queue before shutdown
-        """
-
-        while not self.queue.empty():
-            collectd.info('Flushing metric batches on shutdown ...')
-            self._flush()
-
     def push_item(self, item):
         """
         Add a new metric to the batching queue
