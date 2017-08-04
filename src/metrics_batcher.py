@@ -71,6 +71,6 @@ class MetricsBatcher:
         batch = []
 
         for i in range(self._batch_size()):
-            batch.append(self.queue.get_nowait())
+            batch.append(self.queue.get())
 
         return batch

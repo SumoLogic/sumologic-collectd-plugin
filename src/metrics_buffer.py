@@ -4,8 +4,15 @@ import Queue
 
 class MetricsBuffer:
     """
-    Buffer pending requests and retry on failed requests. Upon buffer full, dropping oldest request.
+    Buffer metrics batch that have been submitted by collectd write call back, and yet to be posted
+    to remote server. When the buffer is full, the oldest metrics batch will be dropped to make
+    space for new metrics batches.
     """
+
+    # Setting processing queue size to 1 to enforces strict ordering. No parallel processing.
+    # Setting processing queue size to > 1 enables asynchronous/parallel processing. The ordering
+    # on the other hand is not guaranteed.
+    _processing_queue_size = 1
 
     def __init__(self, max_requests_to_buffer):
         """
@@ -13,7 +20,7 @@ class MetricsBuffer:
         and a failed queue for failed requests
         """
 
-        self.processing_queue = Queue.Queue(1)
+        self.processing_queue = Queue.Queue(self._processing_queue_size)
         self.pending_queue = Queue.Queue(max_requests_to_buffer)
 
         collectd.info('Initialized MetricsBuffer with max_requests_to_buffer %s' %
@@ -28,31 +35,31 @@ class MetricsBuffer:
 
         if self.processing_queue.empty() and self.pending_queue.empty():
             return None
-        elif self.processing_queue.empty():
-            return self.pending_queue.get_nowait()
+
+        if not self.processing_queue.empty():
+            return self.processing_queue.get()
         else:
-            return self.processing_queue.get_nowait()
+            return self.pending_queue.get()
 
     def put_pending_batch(self, batch):
         """
         Add a batch to pending queue. Blocking if queue is full.
         """
+        if self.pending_queue.full():
+            batch_to_drop = self.pending_queue.get()
+            collectd.warning('In memory buffer is full, dropping metrics batch %s' % batch_to_drop)
 
         self.pending_queue.put(batch)
-        self.pending_queue.task_done()
 
     def put_failed_batch(self, batch):
         """
         Add a batch back to processing queue. If queue is full, drop the metrics batch.
         """
 
-        assert self.processing_queue.empty()
-
         if self.pending_queue.full():
-            collectd.warning('MetricsBuffer: sending metrics batch %s failed. '
-                             'In memory buffer is full. Dropping metrics batch %s' % batch)
+            collectd.warning('Sending metrics batch %s failed. '
+                             'In memory buffer is full, dropping metrics batch' % batch)
         else:
-            collectd.warning('MetricsBuffer: sending metrics batch %s failed. '
+            collectd.warning('Sending metrics batch %s failed. '
                              'Put it back to processing queue' % batch)
-            self.processing_queue.put_nowait(batch)
-            self.pending_queue.task_done()
+            self.processing_queue.put(batch)
