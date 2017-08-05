@@ -62,10 +62,12 @@ def test_parse_string_config():
         'source_category': 'test_category'
     }
 
+    Helper.parse_configs(met_config, configs)
+
     for (key, value) in configs.items():
-        node = ConfigNode(getattr(ConfigOptions, key), [value])
-        config = CollectdConfig([Helper.url_node(), node])
-        met_config.parse_config(config)
+        # node = ConfigNode(getattr(ConfigOptions, key), [value])
+        # config = CollectdConfig([Helper.url_node(), node])
+        # met_config.parse_config(config)
 
         assert met_config.conf[getattr(ConfigOptions, key)] == value
 
@@ -85,10 +87,12 @@ def test_parse_int_config():
         'max_requests_to_buffer': '100'
     }
 
+    Helper.parse_configs(met_config, configs)
+
     for (key, value) in configs.items():
-        node = ConfigNode(getattr(ConfigOptions, key), [value])
-        config = CollectdConfig([Helper.url_node(), node])
-        met_config.parse_config(config)
+        # node = ConfigNode(getattr(ConfigOptions, key), [value])
+        # config = CollectdConfig([Helper.url_node(), node])
+        # met_config.parse_config(config)
 
         assert met_config.conf[getattr(ConfigOptions, key)] == int(value)
 

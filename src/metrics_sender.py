@@ -3,7 +3,7 @@ import requests
 import zlib
 from retry.api import retry_call
 from metrics_config import ConfigOptions
-from metrics_util import MetricsUtil, RecoverableException
+from metrics_util import RecoverableException
 from metrics_converter import MetricsConverter
 from timer import Timer
 

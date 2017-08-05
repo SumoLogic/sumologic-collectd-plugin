@@ -12,7 +12,7 @@ class Helper:
     types_db = cwd + '/test/types.db'
 
     def __init__(self):
-        config = Helper.test_config()
+        config = Helper.default_config()
         self.conf = config.conf
         self.types = config.types
 
@@ -25,8 +25,15 @@ class Helper:
         return ConfigNode(ConfigOptions.url, [Helper.url])
 
     @staticmethod
-    def test_config():
+    def default_config():
         met_config = MetricsConfig()
         config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])
         met_config.parse_config(config)
         return met_config
+
+    @staticmethod
+    def parse_configs(met_config, configs):
+        for (key, value) in configs.items():
+            node = ConfigNode(getattr(ConfigOptions, key), [value])
+            config = CollectdConfig([Helper.url_node(), node])
+            met_config.parse_config(config)
