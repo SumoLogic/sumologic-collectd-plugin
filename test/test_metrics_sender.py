@@ -104,86 +104,59 @@ def test_post_normal_addition_dimensions_metadata():
 
 
 def test_post_client_recoverable_http_error():
-    test_cases = [404, 408, 429]
-    for test_case in test_cases:
+    error_codes = [404, 408, 429]
+    for error_code in error_codes:
         reset_test_env()
-        helper_test_post_recoverable_http_error(test_case)
+        exception_to_raise = requests.exceptions.HTTPError(requests.exceptions.RequestException())
+        requests.mock_response.status_code = error_codes
+        helper_test_post_recoverable_exception(exception_to_raise, error_code)
 
 
 def test_post_server_recoverable_http_error():
-    test_cases = [500, 502, 503, 504, 506, 507, 508, 510, 511]
+    error_codes = [500, 502, 503, 504, 506, 507, 508, 510, 511]
 
-    for test_case in test_cases:
+    for error_code in error_codes:
         reset_test_env()
-        helper_test_post_recoverable_http_error(test_case)
+        exception_to_raise = requests.exceptions.HTTPError(requests.exceptions.RequestException())
+        requests.mock_response.status_code = error_code
+        helper_test_post_recoverable_exception(exception_to_raise, error_code)
 
 
 def test_post_unrecoverable_http_error():
-    with pytest.raises(Exception) as e:
-        met_buffer = MetricsBuffer(10)
-        met_config = MetricsConfig()
+    request_exception = requests.exceptions.RequestException()
+    exception_cases = [requests.exceptions.HTTPError(request_exception)]
 
-        configs = {
-            'retry_initial_delay': '0',
-            'retry_max_attempts': '10',
-            'retry_max_delay': '5',
-            'retry_backoff': '1',
-            'retry_jitter_min': '0',
-            'retry_jitter_max': '0'
-        }
-        Helper.parse_configs(met_config, configs)
-
-        requests.post_response_decider.set(True, False, None, 5, 0)
-        requests.mock_response.set(400)
-
-        for i in range(10):
-            met_buffer.put_pending_batch(['batch_%s' % i])
-
-        MetricsSender(met_config.conf, met_buffer)
-
-    assert e.type is requests.exceptions.HTTPError
+    for exception_case in exception_cases:
+        reset_test_env()
+        helper_test_post_unrecoverable_exception(exception_case, "unknown_status_code")
 
 
 def test_post_recoverable_requests_exception():
+    request_exception = requests.exceptions.RequestException()
+    exception_cases = [requests.exceptions.ConnectionError(request_exception),
+                       requests.exceptions.Timeout(request_exception),
+                       requests.exceptions.TooManyRedirects(request_exception),
+                       requests.exceptions.StreamConsumedError(request_exception),
+                       requests.exceptions.RetryError(request_exception),
+                       requests.exceptions.ChunkedEncodingError(request_exception),
+                       requests.exceptions.ContentDecodingError(request_exception)]
 
-    met_buffer1 = MetricsBuffer(10)
-    met_config = MetricsConfig()
-
-    configs = {
-        'retry_initial_delay': '0',
-        'retry_max_attempts': '10',
-        'retry_max_delay': '5',
-        'retry_backoff': '1',
-        'retry_jitter_min': '0',
-        'retry_jitter_max': '0',
-        'http_post_interval': '0.5'
-    }
-    Helper.parse_configs(met_config, configs)
-
-    e = requests.exceptions.ConnectionError(requests.exceptions.RequestException())
-    requests.post_response_decider.set(False, True, e, 5, 0)
-
-    for i in range(10):
-        met_buffer1.put_pending_batch(['batch_%s' % i])
-
-    met_sender = MetricsSender(met_config.conf, met_buffer1)
-
-    sleep_helper(10, 0.100, 100)
-
-    assert requests.mock_server.url == met_config.conf[ConfigOptions.url]
-    assert requests.mock_server.headers == {
-        HeaderKeys.content_type: met_config.conf[ConfigOptions.content_type],
-        HeaderKeys.content_encoding: met_config.conf[ConfigOptions.content_encoding]
-    }
-
-    for i in range(10):
-        assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % i
-
-    met_sender.cancel_timer()
+    for exception_case in exception_cases:
+        reset_test_env()
+        helper_test_post_recoverable_exception(exception_case, "unknown_status_code")
 
 
 def test_post_unrecoverable_requests_exception():
-    pass
+    request_exception = requests.exceptions.RequestException()
+    exception_cases = [requests.exceptions.URLRequired(request_exception),
+                       requests.exceptions.MissingSchema(request_exception),
+                       requests.exceptions.InvalidSchema(request_exception),
+                       requests.exceptions.InvalidURL(request_exception),
+                       Exception('unknown_exception')]
+
+    for exception_case in exception_cases:
+        reset_test_env()
+        helper_test_post_unrecoverable_exception(exception_case, "unknown_status_code")
 
 
 def test_post_fail_after_retries_with_buffer_not_full():
@@ -209,7 +182,7 @@ def reset_test_env():
     requests.mock_response.reset()
 
 
-def helper_test_post_recoverable_http_error(error_code):
+def helper_test_post_recoverable_exception(exception, error_code):
     met_buffer = MetricsBuffer(10)
     met_config = MetricsConfig()
 
@@ -223,7 +196,7 @@ def helper_test_post_recoverable_http_error(error_code):
     }
     Helper.parse_configs(met_config, configs)
 
-    requests.post_response_decider.set(True, False, None, 5, 0)
+    requests.post_response_decider.set(True, False, exception, 5, 0)
     requests.mock_response.set(error_code)
 
     for i in range(10):
@@ -243,6 +216,22 @@ def helper_test_post_recoverable_http_error(error_code):
         assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % i
 
     met_sender.cancel_timer()
+
+
+def helper_test_post_unrecoverable_exception(exception, error_code):
+    with pytest.raises(Exception) as e:
+        met_buffer = MetricsBuffer(10)
+        helper = Helper()
+
+        requests.mock_response.set(error_code)
+        requests.post_response_decider.set(False, True, exception, 5, 0)
+
+        for i in range(10):
+            met_buffer.put_pending_batch(['batch_%s' % i])
+
+        MetricsSender(helper.conf, met_buffer)
+
+    assert e.type == type(exception)
 
 
 def sleep_helper(expected_data_size, sleep_interval, max_tries):
