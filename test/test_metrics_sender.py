@@ -30,7 +30,7 @@ def test_post_normal_no_additional_header():
 
     met_sender = MetricsSender(helper.conf, met_buffer)
 
-    time.sleep(1)
+    sleep_helper(10, 0.100, 100)
 
     assert requests.mock_server.url == helper.conf[ConfigOptions.url]
     assert requests.mock_server.headers == {
@@ -38,7 +38,7 @@ def test_post_normal_no_additional_header():
         HeaderKeys.content_encoding: helper.conf[ConfigOptions.content_encoding]
     }
     for i in range(10):
-        assert requests.mock_server.data[i] == zlib.compress('batch_%s' % i)
+        assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % i
 
     met_sender.cancel_timer()
 
@@ -63,7 +63,7 @@ def test_post_normal_additional_keys():
 
     met_sender = MetricsSender(met_config.conf, met_buffer)
 
-    time.sleep(1)
+    sleep_helper(10, 0.100, 100)
 
     assert requests.mock_server.url == met_config.conf[ConfigOptions.url]
     assert requests.mock_server.headers == {
@@ -75,7 +75,7 @@ def test_post_normal_additional_keys():
     }
 
     for i in range(10):
-        assert requests.mock_server.data[i] == zlib.compress('batch_%s' % i)
+        assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % i
 
     met_sender.cancel_timer()
 
@@ -99,7 +99,7 @@ def test_post_normal_addition_dimensions_metadata():
 
     met_sender = MetricsSender(met_config.conf, met_buffer)
 
-    time.sleep(1)
+    sleep_helper(10, 0.100, 100)
 
     assert requests.mock_server.url == met_config.conf[ConfigOptions.url]
     assert requests.mock_server.headers == {
@@ -110,7 +110,7 @@ def test_post_normal_addition_dimensions_metadata():
     }
 
     for i in range(10):
-        assert requests.mock_server.data[i] == zlib.compress('batch_%s' % i)
+        assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % i
 
     met_sender.cancel_timer()
 
@@ -149,7 +149,7 @@ def helper_test_post_recoverable_http_error(error_code):
 
     met_sender = MetricsSender(met_config.conf, met_buffer)
 
-    time.sleep(1)
+    sleep_helper(10, 0.100, 100)
 
     assert requests.mock_server.url == met_config.conf[ConfigOptions.url]
     assert requests.mock_server.headers == {
@@ -158,7 +158,7 @@ def helper_test_post_recoverable_http_error(error_code):
     }
 
     for i in range(10):
-        assert requests.mock_server.data[i] == zlib.compress('batch_%s' % i)
+        assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % i
 
     met_sender.cancel_timer()
 
@@ -221,7 +221,7 @@ def test_post_recoverable_requests_exception():
 
     met_sender = MetricsSender(met_config.conf, met_buffer1)
 
-    time.sleep(5)
+    sleep_helper(10, 0.100, 100)
 
     assert requests.mock_server.url == met_config.conf[ConfigOptions.url]
     assert requests.mock_server.headers == {
@@ -230,7 +230,7 @@ def test_post_recoverable_requests_exception():
     }
 
     for i in range(10):
-        assert requests.mock_server.data[i] == zlib.compress('batch_%s' % i)
+        assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % i
 
     met_sender.cancel_timer()
 
@@ -245,3 +245,11 @@ def test_post_fail_after_retries_with_buffer_not_full():
 
 def test_post_fail_after_retries_with_buffer_full():
     pass
+
+
+def sleep_helper(expected_data_size, sleep_interval, max_tries):
+    current_retry = 0
+    while len(requests.mock_server.data) != expected_data_size \
+            and current_retry < max_tries:
+        time.sleep(sleep_interval)
+        current_retry += 1
