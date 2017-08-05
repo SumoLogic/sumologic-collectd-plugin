@@ -76,39 +76,39 @@ class MetricsSender(Timer):
                           (len(body), response.status_code))
         except requests.exceptions.HTTPError as e:
             if e.response.status_code in self._recoverable_http_client_errs:
-                MetricsUtil.fail_with_recoverable_exception('Client side HTTP error', body, e)
+                MetricsSender.fail_with_recoverable_exception('Client side HTTP error', body, e)
             elif e.response.status_code in self._recoverable_http_server_errs:
-                MetricsUtil.fail_with_recoverable_exception('Server side HTTP error', body, e)
+                MetricsSender.fail_with_recoverable_exception('Server side HTTP error', body, e)
             else:
-                MetricsUtil.fail_with_unrecoverable_exception('An HTTP error occurred', body, e)
+                self.fail_with_unrecoverable_exception('An HTTP error occurred', body, e)
         except requests.exceptions.ConnectionError as e:
-            MetricsUtil.fail_with_recoverable_exception('A Connection error occurred', body, e)
+            MetricsSender.fail_with_recoverable_exception('A Connection error occurred', body, e)
         except requests.exceptions.Timeout as e:
-            MetricsUtil.fail_with_recoverable_exception('The request timed out', body, e)
+            MetricsSender.fail_with_recoverable_exception('The request timed out', body, e)
         except requests.exceptions.TooManyRedirects as e:
-            MetricsUtil.fail_with_recoverable_exception('Too many redirects', body, e)
+            MetricsSender.fail_with_recoverable_exception('Too many redirects', body, e)
         except requests.exceptions.URLRequired as e:
-            MetricsUtil.fail_with_unrecoverable_exception(
+            self.fail_with_unrecoverable_exception(
                 'A valid URL is required to make a request', body, e)
         except requests.exceptions.MissingSchema as e:
-            MetricsUtil.fail_with_unrecoverable_exception(
+            self.fail_with_unrecoverable_exception(
                 'The URL schema (e.g. http or https) is missing', body, e)
         except requests.exceptions.InvalidSchema as e:
-            MetricsUtil.fail_with_unrecoverable_exception('See schemas in defaults.py', body, e)
+            self.fail_with_unrecoverable_exception('See schemas in defaults.py', body, e)
         except requests.exceptions.InvalidURL as e:
-            MetricsUtil.fail_with_unrecoverable_exception('The URL provided was invalid', body, e)
+            self.fail_with_unrecoverable_exception('The URL provided was invalid', body, e)
         except requests.exceptions.ChunkedEncodingError as e:
-            MetricsUtil.fail_with_unrecoverable_exception(
+            self.fail_with_unrecoverable_exception(
                 'The server declared chunked encoding but sent an invalid chunk', body, e)
         except requests.exceptions.ContentDecodingError as e:
-            MetricsUtil.fail_with_unrecoverable_exception('Failed to decode response', body, e)
+            self.fail_with_unrecoverable_exception('Failed to decode response', body, e)
         except requests.exceptions.StreamConsumedError as e:
-            MetricsUtil.fail_with_unrecoverable_exception(
+            self.fail_with_unrecoverable_exception(
                 'The content for this response was already consumed', body, e)
         except requests.exceptions.RetryError as e:
-            MetricsUtil.fail_with_unrecoverable_exception('Custom retries logic failed', body, e)
+            self.fail_with_unrecoverable_exception('Custom retries logic failed', body, e)
         except Exception as e:
-            MetricsUtil.fail_with_unrecoverable_exception('unknown exception', body, e)
+            self.fail_with_unrecoverable_exception('unknown exception', body, e)
 
     # Send http request with retries
     def _send_request_with_retries(self, batch):
@@ -164,6 +164,26 @@ class MetricsSender(Timer):
 
         return [MetricsConverter.gen_tag(k, v) for k, v in
                 self.conf[ConfigOptions.meta_tags]]
+
+    def fail_with_unrecoverable_exception(self, msg, batch, e):
+        """
+        Error about exception and pass through exception
+        """
+
+        collectd.error(msg + ': Sending batch %s failed with unrecoverable exception %s. '
+                             'Stopping' % (batch, e.message))
+        self.cancel_timer()
+        raise e
+
+    @staticmethod
+    def fail_with_recoverable_exception(msg, batch, e):
+        """
+        Warn about exception and raise RecoverableException
+        """
+
+        collectd.warning(msg + ': Sending batch %s failed with recoverable exception %s. '
+                               'Retrying' % (batch, e.message))
+        raise RecoverableException(e)
 
     # Encode body with specified compress method gzip/deflate
     @staticmethod

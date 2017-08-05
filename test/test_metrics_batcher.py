@@ -26,6 +26,8 @@ def test_metrics_batcher_max_size():
         assert len(batch) == max_batch_size
         assert batch == expected_batch
 
+    met_batcher.cancel_timer()
+
 
 def test_metrics_batch_max_interval():
     met_buffer = MetricsBuffer(100)
@@ -39,3 +41,5 @@ def test_metrics_batch_max_interval():
     while not met_buffer.pending_queue.empty():
         batch = met_buffer.pending_queue.get()
         assert len(batch) < 10
+
+    met_batcher.cancel_timer()

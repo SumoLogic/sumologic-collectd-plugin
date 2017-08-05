@@ -45,6 +45,7 @@ class MetricsBuffer:
         """
         Add a batch to pending queue. Blocking if queue is full.
         """
+
         if self.pending_queue.full():
             batch_to_drop = self.pending_queue.get()
             collectd.warning('In memory buffer is full, dropping metrics batch %s' % batch_to_drop)

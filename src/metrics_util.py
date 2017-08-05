@@ -61,24 +61,6 @@ class MetricsUtil:
             raise Exception('Number values %s differ from types defined for %s' %
                             (data.values, data.type))
 
-    @staticmethod
-    def fail_with_recoverable_exception(msg, batch, e):
-        """
-        Warn about exception and raise RecoverableException
-        """
-
-        collectd.warning(msg + ': %s. Retrying sending batch %s' % (batch, e.message))
-        raise RecoverableException(e)
-
-    @staticmethod
-    def fail_with_unrecoverable_exception(msg, batch, e):
-        """
-        Error about exception and pass through exception
-        """
-
-        collectd.error(msg + ': %s. Dropping batch %s' % (batch, e.message))
-        raise e
-
 
 class RecoverableException(Exception):
     """
