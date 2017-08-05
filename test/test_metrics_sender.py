@@ -109,7 +109,10 @@ def test_post_client_recoverable_http_error():
         reset_test_env()
         exception_to_raise = requests.exceptions.HTTPError(requests.exceptions.RequestException())
         requests.mock_response.status_code = error_codes
-        helper_test_post_recoverable_exception(exception_to_raise, error_code)
+        met_buffer = MetricsBuffer(10)
+        helper_test_post_recoverable_exception(met_buffer, exception_to_raise, error_code, 5)
+        for i in range(10):
+            assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % i
 
 
 def test_post_server_recoverable_http_error():
@@ -119,7 +122,10 @@ def test_post_server_recoverable_http_error():
         reset_test_env()
         exception_to_raise = requests.exceptions.HTTPError(requests.exceptions.RequestException())
         requests.mock_response.status_code = error_code
-        helper_test_post_recoverable_exception(exception_to_raise, error_code)
+        met_buffer = MetricsBuffer(10)
+        helper_test_post_recoverable_exception(met_buffer, exception_to_raise, error_code, 5)
+        for i in range(10):
+            assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % i
 
 
 def test_post_unrecoverable_http_error():
@@ -143,7 +149,10 @@ def test_post_recoverable_requests_exception():
 
     for exception_case in exception_cases:
         reset_test_env()
-        helper_test_post_recoverable_exception(exception_case, "unknown_status_code")
+        met_buffer = MetricsBuffer(10)
+        helper_test_post_recoverable_exception(met_buffer, exception_case, "unknown_status_code", 5)
+        for i in range(10):
+            assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % i
 
 
 def test_post_unrecoverable_requests_exception():
@@ -159,12 +168,24 @@ def test_post_unrecoverable_requests_exception():
         helper_test_post_unrecoverable_exception(exception_case, "unknown_status_code")
 
 
-def test_post_fail_after_retries_with_buffer_not_full():
-    pass
-
-
 def test_post_fail_after_retries_with_buffer_full():
-    pass
+    met_buffer = MetricsBuffer(10)
+    met_buffer.put_pending_batch(['batch_first'])
+    exception_to_raise = requests.exceptions.HTTPError(requests.exceptions.RequestException())
+    helper_test_post_recoverable_exception(met_buffer, exception_to_raise, 429, 10)
+    for i in range(10):
+        assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % i
+
+
+def test_post_fail_after_retries_with_buffer_not_full():
+    met_buffer = MetricsBuffer(20)
+    met_buffer.put_pending_batch(['batch_first'])
+    exception_to_raise = requests.exceptions.HTTPError(requests.exceptions.RequestException())
+    helper_test_post_recoverable_exception(met_buffer, exception_to_raise, 429, 10)
+
+    assert zlib.decompress(requests.mock_server.data[0]) == 'batch_first'
+    for i in range(1, 10):
+        assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % (i - 1)
 
 
 #
@@ -182,8 +203,8 @@ def reset_test_env():
     requests.mock_response.reset()
 
 
-def helper_test_post_recoverable_exception(exception, error_code):
-    met_buffer = MetricsBuffer(10)
+def helper_test_post_recoverable_exception(met_buffer, exception, error_code,
+                                           stop_raise_exception_after):
     met_config = MetricsConfig()
 
     configs = {
@@ -196,7 +217,7 @@ def helper_test_post_recoverable_exception(exception, error_code):
     }
     Helper.parse_configs(met_config, configs)
 
-    requests.post_response_decider.set(True, False, exception, 5, 0)
+    requests.post_response_decider.set(True, False, exception, stop_raise_exception_after, 0)
     requests.mock_response.set(error_code)
 
     for i in range(10):
@@ -211,9 +232,6 @@ def helper_test_post_recoverable_exception(exception, error_code):
         HeaderKeys.content_type: met_config.conf[ConfigOptions.content_type],
         HeaderKeys.content_encoding: met_config.conf[ConfigOptions.content_encoding]
     }
-
-    for i in range(10):
-        assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % i
 
     met_sender.cancel_timer()
 
