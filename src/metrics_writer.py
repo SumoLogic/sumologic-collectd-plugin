@@ -37,26 +37,12 @@ def init_callback():
     collectd.info('Initialized MetricsBuffer, MetricsConverter, MetricsBatcher, and MetricsSender')
 
 
-def read_callback(data=None):
-    """
-    Read callback
-    """
-
-    vread = collectd.Values(type='absolute')
-    vread.host = 'xyz'
-    vread.values = [5]
-    vread.meta = {'my_msg_key': 'my_long_message'}
-    vread.dispatch()
-
-    collectd.info(" sending out %s" % str(vread))
-
-
-def write_callback(raw_metrics, data=None):
+def write_callback(raw_data, data=None):
     """
     Write callback
     """
 
-    metrics = MetricsConverter.convert_to_metrics(raw_metrics, met_config.types)
+    metrics = MetricsConverter.convert_to_metrics(raw_data, met_config.types)
 
     for metric in metrics:
         met_batcher.push_item(metric)
