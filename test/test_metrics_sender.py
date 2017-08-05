@@ -120,7 +120,38 @@ def test_post_normal_addition_dimensions_metadata():
 
 
 def test_post_client_recoverable_http_error():
-    pass
+    met_buffer = MetricsBuffer(10)
+    met_config = MetricsConfig()
+
+    configs = {
+        'retry_initial_delay': '0',
+        'retry_max_attempts': '5',
+        'retry_max_delay': '5',
+        'retry_backoff': '1',
+        'retry_jitter_min': '0',
+        'retry_jitter_max': '0'
+    }
+
+    for (key, value) in configs.items():
+        node = ConfigNode(getattr(ConfigOptions, key), [value])
+        config = CollectdConfig([Helper.url_node(), node])
+        met_config.parse_config(config)
+
+    requests.post_response_decider.set(True, False, 1000, 0)
+    requests.mock_response.set(404)
+
+    for i in range(10):
+        met_buffer.put_pending_batch(['batch_%s' % i])
+
+    met_sender = MetricsSender(met_config.conf, met_buffer)
+
+    time.sleep(1)
+
+    assert met_buffer.processing_queue.qsize() == 1
+    assert met_buffer.processing_queue.get() == ['batch_0']
+    assert met_buffer.pending_queue.qsize() == 9
+
+    met_sender.cancel_timer()
 
 
 def test_post_server_recoverable_http_error():

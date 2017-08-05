@@ -1,3 +1,5 @@
+import exceptions
+
 class PostResponseDecider:
     def __init__(self):
         self.raise_http_error = False
@@ -30,9 +32,11 @@ class MockServer:
         self.data = []
         self.headers = None
 
+
 class MockResponse:
     def __init__(self):
         self.status_code = None
+        self.request = 'test_request'
 
     def reset(self):
         self.status_code = None
@@ -47,12 +51,18 @@ mock_response = MockResponse()
 
 def post(url, data, headers):
     if post_response_decider.raise_http_error:
-        pass
+        exception = exceptions.HTTPError(exceptions.RequestException())
+        exception.response = mock_response
+        exception.message = 'Http error with error code %s ' % exception.response
+        print 'exception type %s, content %s' % (type(exception), exception)
+        raise exception
+            #
+            # exceptions.HTTPError(exceptions.RequestException(
+            # response=mock_response.set(post_response_decider.status_code)), request=data)
     elif post_response_decider.raise_exception:
         pass
     else:
         mock_server.url = url
         mock_server.headers = headers
         mock_server.data.append(data)
-        mock_response.set(200)
-    return mock_response
+        return mock_response

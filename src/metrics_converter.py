@@ -53,8 +53,8 @@ class MetricsConverter:
         """
         Tag is of form key=value
         """
-        MetricsUtil.validate_field(key)
-        MetricsUtil.validate_field(value)
+        MetricsUtil.validate_field(key, value, 'Key', 'Value')
+        MetricsUtil.validate_field(value, key, 'Value', 'Key')
         if not key:
             raise Exception('Key for value %s cannot be empty' % value)
         elif key.lower() in MetricsConverter._reserved_keywords:

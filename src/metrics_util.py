@@ -11,32 +11,39 @@ class MetricsUtil:
             raise Exception('Value for key %s cannot be empty' % key)
 
     @staticmethod
-    def validate_positive(v):
+    def validate_positive(v, key):
 
         if not v > 0:
-            raise Exception('%s is not a positive float' % v)
+            raise Exception('Value %s for key %s is not a positive number' % (v, key))
 
     @staticmethod
-    def validate_string_type(s):
+    def validate_non_negative(v, key):
+
+        if v < 0:
+            raise Exception('Value %s for key %s is a negative number' % (v, key))
+
+    @staticmethod
+    def validate_string_type(s, f, l1, l2):
         """
         Field must be string type
         """
 
         if type(s) is not str:
-            raise Exception('Field %s must be string type. Type is %s' % (s, type(s)))
+            raise Exception('%s %s for %s %s must be string type. Type is %s' %
+                            (l1, s, l2, f, type(s)))
 
     @staticmethod
-    def validate_field(s):
+    def validate_field(s, f, l1, l2):
         """
         Field must be string that does not contains '=' or ' '
         """
 
-        MetricsUtil.validate_string_type(s)
+        MetricsUtil.validate_string_type(s, f, l1, l2)
 
         for reserved_symbol in MetricsUtil._reserved_symbols:
             if reserved_symbol in s:
-                raise Exception('Field %s must not contain reserved symbol %s' %
-                                (s, reserved_symbol))
+                raise Exception('%s %s for %s %s must not contain reserved symbol %s' %
+                                (l1, s, l2, f, reserved_symbol))
 
     @staticmethod
     def validate_type(data, types):
