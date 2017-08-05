@@ -50,5 +50,4 @@ def write_callback(raw_data, data=None):
 
 collectd.register_config(config_callback)
 collectd.register_init(init_callback)
-collectd.register_read(read_callback)
 collectd.register_write(write_callback)
