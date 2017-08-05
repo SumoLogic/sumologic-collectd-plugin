@@ -9,7 +9,7 @@ install: "pip install -r requirements.txt"
 
 # command to run tests
 script:
-  py.test -v --cov=test/
+  py.test -v test/ --cov=src/
 
 after_success:
   - codecov
