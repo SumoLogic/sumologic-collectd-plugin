@@ -1,2 +1,4 @@
 urllib3
 retry
+codecov
+pytest-cov
