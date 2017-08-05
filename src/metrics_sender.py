@@ -3,7 +3,7 @@ import requests
 import zlib
 from retry.api import retry_call
 from metrics_config import ConfigOptions
-from metrics_util import MetricsUtil, RecoverableException
+from metrics_util import RecoverableException
 from metrics_converter import MetricsConverter
 from timer import Timer
 
@@ -87,6 +87,16 @@ class MetricsSender(Timer):
             MetricsSender.fail_with_recoverable_exception('The request timed out', body, e)
         except requests.exceptions.TooManyRedirects as e:
             MetricsSender.fail_with_recoverable_exception('Too many redirects', body, e)
+        except requests.exceptions.StreamConsumedError as e:
+            self.fail_with_recoverable_exception(
+                'The content for this response was already consumed', body, e)
+        except requests.exceptions.RetryError as e:
+            self.fail_with_recoverable_exception('Custom retries logic failed', body, e)
+        except requests.exceptions.ChunkedEncodingError as e:
+            self.fail_with_recoverable_exception(
+                'The server declared chunked encoding but sent an invalid chunk', body, e)
+        except requests.exceptions.ContentDecodingError as e:
+            self.fail_with_recoverable_exception('Failed to decode response', body, e)
         except requests.exceptions.URLRequired as e:
             self.fail_with_unrecoverable_exception(
                 'A valid URL is required to make a request', body, e)
@@ -97,16 +107,6 @@ class MetricsSender(Timer):
             self.fail_with_unrecoverable_exception('See schemas in defaults.py', body, e)
         except requests.exceptions.InvalidURL as e:
             self.fail_with_unrecoverable_exception('The URL provided was invalid', body, e)
-        except requests.exceptions.ChunkedEncodingError as e:
-            self.fail_with_unrecoverable_exception(
-                'The server declared chunked encoding but sent an invalid chunk', body, e)
-        except requests.exceptions.ContentDecodingError as e:
-            self.fail_with_unrecoverable_exception('Failed to decode response', body, e)
-        except requests.exceptions.StreamConsumedError as e:
-            self.fail_with_unrecoverable_exception(
-                'The content for this response was already consumed', body, e)
-        except requests.exceptions.RetryError as e:
-            self.fail_with_unrecoverable_exception('Custom retries logic failed', body, e)
         except Exception as e:
             self.fail_with_unrecoverable_exception('unknown exception', body, e)
 
