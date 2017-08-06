@@ -53,8 +53,6 @@ class MetricsBatcher(Timer):
             collectd.debug('flushing metrics with batch size %d' % len(batch))
             self.metrics_buffer.put_pending_batch(batch)
             self.flushing_lock.release()
-        else:
-            collectd.debug('failed to acquire lock, skip flushing')
 
     # Test whether we have enough metrics in batching queue to form a full batch
     def _batch_full(self):

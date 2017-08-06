@@ -45,16 +45,16 @@ def test_metrics_batcher_max_interval():
     met_batcher.cancel_timer()
 
 
-def test_metrics_batchre_locks():
-    met_buffer = MetricsBuffer(100)
-    max_batch_size = 1
-    met_batcher = MetricsBatcher(max_batch_size, 0.001, met_buffer)
+def test_metrics_batcher_locks():
+    met_buffer = MetricsBuffer(25)
+    max_batch_size = 2
+    met_batcher = MetricsBatcher(max_batch_size, 0.100, met_buffer)
 
     for i in range(50):
         met_batcher.push_item('item_%s' % i)
 
-    assert met_buffer.pending_queue.qsize() == 50
-    for i in range(50):
+    assert met_buffer.pending_queue.qsize() == 25
+    for i in range(25):
         batch = met_buffer.get_batch()
 
         expected_batch = []
