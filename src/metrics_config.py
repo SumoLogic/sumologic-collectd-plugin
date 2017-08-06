@@ -60,13 +60,13 @@ class MetricsConfig:
                 elif child.key == ConfigOptions.url:
                     url = child.values[0]
                     self.conf[child.key] = url
-                    MetricsUtil.validate_nonempty(url, child.key)
+                    MetricsUtil.validate_non_empty(url, child.key)
                 elif child.key in [ConfigOptions.dimension_tags, ConfigOptions.meta_tags]:
                     self._parse_tags(child)
                 elif child.key in [ConfigOptions.source_name, ConfigOptions.host_name,
                                    ConfigOptions.source_category]:
                     s = child.values[0]
-                    MetricsUtil.validate_nonempty(s, child.key)
+                    MetricsUtil.validate_non_empty(s, child.key)
                     MetricsUtil.validate_string_type(s, child.key, 'Value', 'Key')
                     self.conf[child.key] = s
                 elif child.key == ConfigOptions.http_post_interval:

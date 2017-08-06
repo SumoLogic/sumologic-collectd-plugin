@@ -53,6 +53,17 @@ def test_parse_http_post_interval():
     assert met_config.conf[ConfigOptions.http_post_interval] == float(http_post_interval)
 
 
+def test_parse_http_post_interval_exception():
+    with pytest.raises(Exception) as e:
+        met_config = MetricsConfig()
+        http_post_interval = '0'
+        http_post_interval_node = ConfigNode(ConfigOptions.http_post_interval, [http_post_interval])
+        config = CollectdConfig([Helper.url_node(), http_post_interval_node])
+        met_config.parse_config(config)
+
+    assert 'Value 0.0 for key HttpPostInterval is not a positive number' in str(e.value)
+
+
 def test_parse_string_config():
     met_config = MetricsConfig()
 
@@ -97,6 +108,18 @@ def test_parse_int_config():
         assert met_config.conf[getattr(ConfigOptions, key)] == int(value)
 
 
+def test_parse_retry_config_values_negative():
+    with pytest.raises(Exception) as e:
+        met_config = MetricsConfig()
+        configs = {
+            'max_batch_size': '10',
+            'max_batch_interval': '-5'
+        }
+        Helper.parse_configs(met_config, configs)
+
+    assert 'Value -5 for key MaxBatchInterval is a negative number' in str(e.value)
+
+
 def test_parse_string_exception():
     with pytest.raises(Exception) as e:
         met_config = MetricsConfig()
@@ -134,6 +157,16 @@ def test_invalid_http_post_interval_exception():
         met_config.parse_config(config)
 
     assert 'Specify HttpPostInterval' in str(e.value)
+
+
+def test_contains_reserved_symbols_exception():
+    with pytest.raises(Exception) as e:
+        met_config = MetricsConfig()
+        tags = ('meta_key1', 'meta_val1', 'meta_key2', 'meta val2')
+        config = CollectdConfig([Helper.url_node(), tags_node(ConfigOptions.meta_tags, tags)])
+        met_config.parse_config(config)
+
+    assert 'Value meta val2 for Key Metadata must not contain reserved symbol " "' in str(e.value)
 
 
 def tags_node(key, values):

@@ -5,7 +5,7 @@ class MetricsUtil:
     _reserved_symbols = frozenset([' ', '='])
 
     @staticmethod
-    def validate_nonempty(s, key):
+    def validate_non_empty(s, key):
 
         if not s:
             raise Exception('Value for key %s cannot be empty' % key)
@@ -42,7 +42,7 @@ class MetricsUtil:
 
         for reserved_symbol in MetricsUtil._reserved_symbols:
             if reserved_symbol in s:
-                raise Exception('%s %s for %s %s must not contain reserved symbol %s' %
+                raise Exception('%s %s for %s %s must not contain reserved symbol \"%s\"' %
                                 (l1, s, l2, f, reserved_symbol))
 
     @staticmethod
