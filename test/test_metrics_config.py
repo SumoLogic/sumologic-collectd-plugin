@@ -136,6 +136,16 @@ def test_invalid_http_post_interval_exception():
     assert 'Specify HttpPostInterval' in str(e.value)
 
 
+def test_contains_reserved_symbols_exception():
+    with pytest.raises(Exception) as e:
+        met_config = MetricsConfig()
+        tags = ('meta_key1', 'meta_val1', 'meta_key2', 'meta val2')
+        config = CollectdConfig([Helper.url_node(), tags_node(ConfigOptions.meta_tags, tags)])
+        met_config.parse_config(config)
+
+    assert 'Value meta val2 for Key Metadata must not contain reserved symbol " "' in str(e.value)
+
+
 def tags_node(key, values):
     return ConfigNode(key, values)
 

@@ -91,7 +91,7 @@ def test_convert_to_metrics_no_meta():
     assert metrics == d.metrics_str()
 
 
-def test_convert_to_metrics_exception():
+def test_convert_to_metrics_type_exception():
     with pytest.raises(Exception) as e:
         d = Values(type='test_type_2', values=[1.23], ds_names=['test_ds_name1', 'test_ds_name2'],
                    ds_types=['test_ds_type1', 'test_ds_type2'])
