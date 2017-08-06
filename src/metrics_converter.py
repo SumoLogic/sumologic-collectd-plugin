@@ -107,9 +107,6 @@ class MetricsConverter:
 
         dimension_tags = MetricsConverter._remove_empty_tags(tags)
 
-        if not dimension_tags:
-            raise Exception('Dimension tags for data %s cannot be empty' % data)
-
         return dimension_tags
 
 
