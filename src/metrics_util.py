@@ -5,7 +5,7 @@ class MetricsUtil:
     _reserved_symbols = frozenset([' ', '='])
 
     @staticmethod
-    def validate_nonempty(s, key):
+    def validate_non_empty(s, key):
 
         if not s:
             raise Exception('Value for key %s cannot be empty' % key)
