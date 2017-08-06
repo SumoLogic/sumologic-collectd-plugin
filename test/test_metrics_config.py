@@ -43,6 +43,16 @@ def test_parse_meta_tags():
     assert met_config.conf[ConfigOptions.meta_tags] == tuple_to_pair(tags)
 
 
+def test_parse_meta_tags_missing_value():
+    with pytest.raises(Exception) as e:
+        met_config = MetricsConfig()
+        tags = ('meta_key1', 'meta_val1', 'meta_key2')
+        config = CollectdConfig([Helper.url_node(), tags_node(ConfigOptions.meta_tags, tags)])
+        met_config.parse_config(config)
+
+    assert "Missing tags key/value in options ('meta_key1', 'meta_val1', 'meta_key2')." in str(e.value)
+
+
 def test_parse_http_post_interval():
     met_config = MetricsConfig()
     http_post_interval = '0.5'
@@ -76,9 +86,6 @@ def test_parse_string_config():
     Helper.parse_configs(met_config, configs)
 
     for (key, value) in configs.items():
-        # node = ConfigNode(getattr(ConfigOptions, key), [value])
-        # config = CollectdConfig([Helper.url_node(), node])
-        # met_config.parse_config(config)
 
         assert met_config.conf[getattr(ConfigOptions, key)] == value
 
@@ -101,9 +108,6 @@ def test_parse_int_config():
     Helper.parse_configs(met_config, configs)
 
     for (key, value) in configs.items():
-        # node = ConfigNode(getattr(ConfigOptions, key), [value])
-        # config = CollectdConfig([Helper.url_node(), node])
-        # met_config.parse_config(config)
 
         assert met_config.conf[getattr(ConfigOptions, key)] == int(value)
 
@@ -118,6 +122,16 @@ def test_parse_retry_config_values_negative():
         Helper.parse_configs(met_config, configs)
 
     assert 'Value -5 for key MaxBatchInterval is a negative number' in str(e.value)
+
+
+def test_parse_unknown_config_option():
+    met_config = MetricsConfig()
+    unknown_config = 'unknown_config'
+    unknown_config_node = ConfigNode('unknown_config', unknown_config)
+    config = CollectdConfig([Helper.url_node(), unknown_config_node])
+    met_config.parse_config(config)
+
+    assert hasattr(met_config, 'unknown_config') is False
 
 
 def test_parse_string_exception():
@@ -167,6 +181,25 @@ def test_contains_reserved_symbols_exception():
         met_config.parse_config(config)
 
     assert 'Value meta val2 for Key Metadata must not contain reserved symbol " "' in str(e.value)
+
+
+def test_invalid_ds_in_types_db():
+    met_config = MetricsConfig()
+    types_db_node = ConfigNode(ConfigOptions.types_db, [cwd + '/test/types_invalid_ds.db'])
+    config = CollectdConfig([Helper.url_node(), types_db_node])
+    met_config.parse_config(config)
+
+    assert 'bytes' not in met_config.conf.keys()
+
+
+def test_types_db_no_exist_exception():
+    with pytest.raises(Exception) as e:
+        met_config = MetricsConfig()
+        types_db_node = ConfigNode(ConfigOptions.types_db, [cwd + '/test/types_not_exist.db'])
+        config = CollectdConfig([Helper.url_node(), types_db_node])
+        met_config.parse_config(config)
+
+    assert 'No such file or directory' in str(e.value)
 
 
 def tags_node(key, values):

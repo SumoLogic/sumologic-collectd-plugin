@@ -131,7 +131,7 @@ class MetricsConfig:
     # parse dimension_tags/meta_tags specified in collectd.conf
     def _parse_tags(self, child):
         if len(child.values) % 2 != 0:
-            raise Exception('Missing tags key/value.')
+            raise Exception('Missing tags key/value in options %s.' % str(child.values))
 
         for v in child.values:
             MetricsUtil.validate_field(v, child.key, 'Value', 'Key')
