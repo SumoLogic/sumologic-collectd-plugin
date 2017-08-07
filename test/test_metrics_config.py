@@ -112,7 +112,7 @@ def test_parse_int_config():
         assert met_config.conf[getattr(ConfigOptions, key)] == int(value)
 
 
-def test_parse_retry_config_values_negative():
+def test_parse_retry_config_values_positive():
     with pytest.raises(Exception) as e:
         met_config = MetricsConfig()
         configs = {
@@ -122,6 +122,17 @@ def test_parse_retry_config_values_negative():
         Helper.parse_configs(met_config, configs)
 
     assert 'Value -5 for key MaxBatchInterval is not a positive number' in str(e.value)
+
+
+def test_parse_retry_config_values_non_negative():
+    with pytest.raises(Exception) as e:
+        met_config = MetricsConfig()
+        configs = {
+            'retry_initial_delay': '-1'
+        }
+        Helper.parse_configs(met_config, configs)
+
+    assert 'Value -1 for key RetryInitialDelay is a negative number' in str(e.value)
 
 
 def test_parse_unknown_config_option():
