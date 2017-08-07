@@ -135,6 +135,18 @@ def test_parse_retry_config_values_non_negative():
     assert 'Value -1 for key RetryInitialDelay is a negative number' in str(e.value)
 
 
+def test_parse_retry_config_jitter_min_greater_than_max():
+    with pytest.raises(Exception) as e:
+        met_config = MetricsConfig()
+        configs = {
+            'retry_jitter_min': '2',
+            'retry_jitter_max': '1'
+        }
+        Helper.parse_configs(met_config, configs)
+
+    assert 'Specify RetryJitterMin 2 to be less or equal to RetryJitterMax 1' in str(e.value)
+
+
 def test_parse_unknown_config_option():
     met_config = MetricsConfig()
     unknown_config = 'unknown_config'
