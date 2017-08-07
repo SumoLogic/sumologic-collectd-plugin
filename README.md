@@ -46,22 +46,22 @@ An exmple configuration for the plugin is shown below (code to be added to colle
 ```
 LoadPlugin python
 <Plugin python>
-    ModulePath "/path/to/your/python/modules"
-    LogTraces true
-    Interactive false
-    Import "metrics_writer"
+    	ModulePath "/path/to/your/python/modules"
+    	LogTraces true
+    	Interactive false
+    	Import "metrics_writer"
     
-    <Module "metrics_writer">
-	    TypesDB "/usr/local/Cellar/collectd/5.7.2/share/collectd/types.db"
-      	    URL "/path/to/your/http/endpoint"
+    	<Module "metrics_writer">
+	    	TypesDB "/usr/local/Cellar/collectd/5.7.2/share/collectd/types.db"
+      	    	URL "/path/to/your/http/endpoint"
 
-	    SourceName my_source_name
-	    HostName my_host
-	    SourceCategory my_category
+	    	SourceName my_source_name
+	    	HostName my_host
+	    	SourceCategory my_category
 
-	    Dimensions my_dim_key1 my_dim_val1
-	    Metadata my_meta_key1 my_meta_val1 my_meta_key2 my_meta_key2
-    </Module>
+	    	Dimensions my_dim_key1 my_dim_val1
+	    	Metadata my_meta_key1 my_meta_val1 my_meta_key2 my_meta_key2
+    	</Module>
 </Plugin>
 ```
 
