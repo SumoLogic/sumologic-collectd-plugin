@@ -107,6 +107,11 @@ Following terms are reserved for Sumo Logic internal use only.
 ```
 
 ### 4. Start sending metrics
+Start sending metrics by simply running collectd, e.g. (command can be differnt depends on collectd installation)
+```
+ sudo /usr/local/sbin/collectd -f -C /usr/local/etc/collectd.conf
+```
+#### Data moel
 
 ### 5. View metrics in Sumo Logic web app
 
