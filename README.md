@@ -124,9 +124,9 @@ Metrics after batching are compressed before being sent. The compression algorit
 #### Error handling
 Sumo Logic collectd plugin retries failed https requests if the exception is recoverable. If the exception is unrecoverable, it will simply abort. Several client side errors and most server side errors are treated as recoverable exceptions. 
 A complete set of Http status code is available here [List of HTTP status codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes). The status codes recognized as recoverable exceptions in Sumo Logic collectd plugin are provided below:
-##### Client side recoverable exceptions
+**Client side recoverable exceptions**
 Error codes: 404, 408, 429
-##### Server side recoverable exceptions
+**Server side recoverable exceptions**
 Error codes: 500, 502, 503, 504, 506, 507, 508, 510, 511
 
 ### 5. View metrics in Sumo Logic web app
