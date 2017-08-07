@@ -75,7 +75,7 @@ LoadPlugin python
 ```
 
 Other recommended modules.
-It is recommeded to setup the following two plugins in collectd.conf if it is not enabled already. The functionalities of the two plugins are explained in collectd Wiki [Plugin:LogFile](https://collectd.org/wiki/index.php/Plugin:LogFile) and [Plugin:CSV](https://collectd.org/wiki/index.php/Plugin:CSV)
+It is recommeded to setup the following two plugins in collectd.conf. The functionalities of the two plugins are explained in collectd Wiki [Plugin:LogFile](https://collectd.org/wiki/index.php/Plugin:LogFile) and [Plugin:CSV](https://collectd.org/wiki/index.php/Plugin:CSV)
 ```
 LoadPlugin logfile
 <Plugin logfile>
