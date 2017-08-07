@@ -56,7 +56,7 @@ An exmple configuration for the plugin is shown below.
     
     <Module "metrics_writer">
 	    TypesDB "/usr/local/Cellar/collectd/5.7.2/share/collectd/types.db"
-      URL "/path/to/your/http/endpoint"
+      	    URL "/path/to/your/http/endpoint"
 
 	    SourceName my_source_name
 	    HostName my_host
