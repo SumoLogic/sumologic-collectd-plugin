@@ -45,6 +45,8 @@ The parameters below are for advanced users. They have reasonal defaults. Normal
 |RetryJitterMin|Sumo Logic collectd output plugin retries on recoverable exceptions. RetryJitterMin specifies the minimum extra seconds added to delay between attempts. More information can be found in the [retry library](https://pypi.python.org/pypi/retry)|Integer|0|Second|
 |RetryJitterMax|Sumo Logic collectd output plugin retries on recoverable exceptions. RetryJitterMax specifies the maximum extra seconds added to delay between attempts. More information can be found in the [retry library](https://pypi.python.org/pypi/retry)|Integer|10|Second|
 
+#### Example configuration
+
 #### Restrictions
 
 ### 4. Start sending metrics
