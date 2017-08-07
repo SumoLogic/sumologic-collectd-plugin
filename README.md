@@ -46,6 +46,27 @@ The parameters below are for advanced users. They have reasonal defaults. Normal
 |RetryJitterMax|Sumo Logic collectd output plugin retries on recoverable exceptions. RetryJitterMax specifies the maximum extra seconds added to delay between attempts. More information can be found in the [retry library](https://pypi.python.org/pypi/retry)|Non-negative Integer|10|Second|
 
 #### Example configuration
+An exmple configuration for the plugin is shown below.
+```
+<Plugin python>
+    ModulePath "/path/to/your/python/modules"
+    LogTraces true
+    Interactive false
+    Import "metrics_writer"
+    
+    <Module "metrics_writer">
+	    TypesDB "/usr/local/Cellar/collectd/5.7.2/share/collectd/types.db"
+      URL "/path/to/your/http/endpoint"
+
+	    SourceName my_source_name
+	    HostName my_host
+	    SourceCategory my_category
+
+	    Dimensions my_dim_key1 my_dim_val1
+	    Metadata my_meta_key1 my_meta_val1 my_meta_key2 my_meta_key2
+    </Module>
+</Plugin>
+```
 
 #### Restrictions
 
