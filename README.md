@@ -39,7 +39,7 @@ The paramers below are not strictly required. It is recommended to set these par
 |Metadata|Key value pairs that do not contribute to identifying a metric. Metadata are primarily used to assist in searching metrics. Collectd data may have internal metadata. The additional metadata specified here can be used to enrich the existing metadata set. Metadata cannot contain [reserved symbols](https://github.com/CCheSumo/collectd-plugin/blob/master/README.md#reserved-symbols) and [reserved keywords](https://github.com/CCheSumo/collectd-plugin/blob/master/README.md#reserved-keywords)|Srings in the format of `key1` `val1` `key2` `val2` ...|False|
 
 #### Advanced parameters
-Sumo Logic collectd plugin also supports some [advanced configurations](https://github.com/CCheSumo/collectd-plugin/blob/master/README.md#reserved-keywords). These configurations have reasonable defaults and normally do not need to be updated. 
+Sumo Logic collectd plugin also supports some [advanced configurations](https://github.com/CCheSumo/collectd-plugin/blob/master/README.md#advanced-parameters-1). These configurations have reasonable defaults and normally do not need to be updated. 
 
 #### Example configuration
 An exmple configuration for the plugin is shown below (code to be added to collectd.conf under $collectd_root/etc).
@@ -104,9 +104,9 @@ Following terms are reserved for Sumo Logic internal use only.
 
 ### 5. View metrics in Sumo Logic web app
 
-### Advanced Topics
+## Advanced Topics
 
-#### Advanced parameters
+### Advanced parameters
 The parameters below are for advanced users. They have reasonal defaults. Normal users do not have to update these values.  
 
 |Name|Description|Type|Default|Unit|
