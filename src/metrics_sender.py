@@ -24,7 +24,7 @@ class HeaderKeys:
 
 class MetricsSender(Timer):
     """
-    Fetches metrics batch from MetricsBuffer and post the http request with error handling
+    Fetches metrics batch from MetricsBuffer and post the http request with error handling and retry
     """
 
     # List of recoverable 4xx http errors. List of http error codes listed here

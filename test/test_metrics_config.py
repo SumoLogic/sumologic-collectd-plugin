@@ -121,7 +121,7 @@ def test_parse_retry_config_values_negative():
         }
         Helper.parse_configs(met_config, configs)
 
-    assert 'Value -5 for key MaxBatchInterval is a negative number' in str(e.value)
+    assert 'Value -5 for key MaxBatchInterval is not a positive number' in str(e.value)
 
 
 def test_parse_unknown_config_option():
