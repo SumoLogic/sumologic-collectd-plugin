@@ -9,10 +9,7 @@ class MetricsBuffer:
     space for new metrics batches.
     """
 
-    # Setting processing queue size to 1 to enforces strict ordering. No parallel processing.
-    # Setting processing queue size to > 1 enables asynchronous/parallel processing. The ordering
-    # on the other hand is not guaranteed.
-    _processing_queue_size = 1
+    _processing_queue_size = 10
 
     def __init__(self, max_requests_to_buffer):
         """

@@ -73,7 +73,15 @@ class MetricsConfig:
                     f = float(child.values[0])
                     MetricsUtil.validate_positive(f, child.key)
                     self.conf[child.key] = f
-                elif child.key in self.conf.keys():
+                elif child.key in [ConfigOptions.max_batch_size, ConfigOptions.max_batch_interval,
+                                   ConfigOptions.retry_max_attempts, ConfigOptions.retry_max_delay,
+                                   ConfigOptions.retry_backoff,
+                                   ConfigOptions.max_requests_to_buffer]:
+                    i = int(child.values[0])
+                    MetricsUtil.validate_positive(i, child.key)
+                    self.conf[child.key] = i
+                elif child.key in [ConfigOptions.retry_initial_delay,
+                                   ConfigOptions.retry_jitter_min, ConfigOptions.retry_jitter_max]:
                     i = int(child.values[0])
                     MetricsUtil.validate_non_negative(i, child.key)
                     self.conf[child.key] = i
