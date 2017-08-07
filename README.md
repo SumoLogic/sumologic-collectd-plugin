@@ -9,7 +9,6 @@ It is fully free and fully open source. The license is Apache 2.0, meaning you a
 If collected is already installed, safely skip this step. Otherwise, follow the instructions in the [collectd download](https://collectd.org/download.shtml) site for download and installation. There are some more information for getting novice users started in collectd Wiki [first_steps](https://collectd.org/wiki/index.php/First_steps) 
 
 ### 2. Install Sumo Logic collectd plugin into collectd
-#### Clone sumologic-collectd-plugin source code
 The Sumo Logic collectd plugin module can be anywhere in your system. Here is an example of installing this plugin into a collectd directory.
 ```
 1. Go to collectd root dir
@@ -18,7 +17,6 @@ The Sumo Logic collectd plugin module can be anywhere in your system. Here is an
 4. cd collectd_python.plugin
 5. git clone git@github.com:SumoLogic/sumologic-collectd-plugin.git
 ```
-#### Update collectd.conf
 
 ### 3. Setup Sumo Logic collectd plugin configurations
 Sumo Logic collectd plugin supports following prarmeters. 
@@ -57,8 +55,9 @@ The parameters below are for advanced users. They have reasonal defaults. Normal
 |RetryJitterMax|Sumo Logic collectd output plugin retries on recoverable exceptions. RetryJitterMax specifies the maximum extra seconds added to delay between attempts. More information can be found in the [retry library](https://pypi.python.org/pypi/retry)|Non-negative Integer|10|Second|
 
 #### Example configuration
-An exmple configuration for the plugin is shown below.
+An exmple configuration for the plugin is shown below (code to be added to collectd.conf under $collectd_root/etc).
 ```
+LoadPlugin python
 <Plugin python>
     ModulePath "/path/to/your/python/modules"
     LogTraces true
@@ -78,6 +77,30 @@ An exmple configuration for the plugin is shown below.
     </Module>
 </Plugin>
 ```
+
+Other recommended modules.
+It is recommeded to setup the following two plugins in collectd.conf if it is not enabled already. The functionalities of the two plugins are explained in collectd Wiki [Plugin:LogFile](https://collectd.org/wiki/index.php/Plugin:LogFile) and [Plugin:CSV](https://collectd.org/wiki/index.php/Plugin:CSV)
+```
+LoadPlugin logfile
+<Plugin logfile>
+	LogLevel "info"
+	File "/var/log/collectd.log" 
+	Timestamp true
+	PrintSeverity true
+</Plugin>
+LoadPlugin csv
+<Plugin csv>
+	DataDir "/usr/local/var/lib/collectd/csv"
+</Plugin>
+```
+The following pulgins, if enabled in collectd.conf, enables collecting [cpu](https://collectd.org/wiki/index.php/Plugin:CPU), [memory](https://collectd.org/wiki/index.php/Plugin:Memory), [disk](https://collectd.org/wiki/index.php/Plugin:Disk), [network](https://collectd.org/wiki/index.php/Plugin:Interface) metrics from the system. 
+```
+LoadPlugin cpu
+LoadPlugin memory
+LoadPlugin disk
+LoadPlugin interface
+```
+A list of all collectd plugins is awailable in collectd Wiki [Table of Plugins](https://collectd.org/wiki/index.php/Table_of_Plugins)
 
 #### Reserved symbols
 Equal sign and space are reserved symbols.
