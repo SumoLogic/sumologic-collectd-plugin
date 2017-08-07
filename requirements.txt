@@ -1,9 +1,6 @@
 # source dependencies
-threading
-Queue
 requests
 retry
-zlib
 
 # test dependencies
 urllib3
