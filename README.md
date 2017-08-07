@@ -17,7 +17,7 @@ The Sumo Logic collectd plugin module can be anywhere in your system. Here is an
 4. cd collectd_python.plugin
 5. git clone git@github.com:SumoLogic/sumologic-collectd-plugin.git
 ```
-Sumo Logic collectd plugin uses requests and retry library for sumbitting https requests. If they are not installed. Install them using pip.
+Sumo Logic collectd plugin uses [requests](http://docs.python-requests.org/en/master/) and [retry](https://pypi.python.org/pypi/retrying) libraries for sumbitting https requests. If they are not installed. Install them using pip.
 ```
 sudo pip install requests
 sudo pip install retry
