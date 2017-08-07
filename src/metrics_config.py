@@ -159,7 +159,7 @@ class MetricsConfig:
     def default_config():
         return {
             ConfigOptions.http_post_interval: 0.1,
-            ConfigOptions.max_batch_size: 100,
+            ConfigOptions.max_batch_size: 5000,
             ConfigOptions.max_batch_interval: 1,
             ConfigOptions.retry_initial_delay: 0,
             ConfigOptions.retry_max_attempts: 10,
