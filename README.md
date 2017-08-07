@@ -110,7 +110,16 @@ Following terms are reserved for Sumo Logic internal use only.
 Start sending metrics by simply running collectd, e.g. (command can be differnt depends on collectd installation)
 ```
  sudo /usr/local/sbin/collectd -f -C /usr/local/etc/collectd.conf
+ 
 ```
+
+#### View logs
+If logfile is installed, then you can view logs by tailling collectd.log file, e.g. (command can be differnt depends on collectd installation)
+```
+tail -f /var/log/collectd.log
+```
+
+
 #### Data model
 Metrics sending out by Sumo Logic collectd plugin is in [Carbon 2.0](https://gowalker.org/github.com/metrics20/go-metrics20/carbon20) format, where a metrics is defined as:
 ```
@@ -123,11 +132,18 @@ Metrics after batching are compressed before being sent. The compression algorit
 
 #### Error handling
 Sumo Logic collectd plugin retries failed https requests if the exception is recoverable. If the exception is unrecoverable, it will simply abort. Several client side errors and most server side errors are treated as recoverable exceptions. 
-A complete set of Http status code is available here [List of HTTP status codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes). The status codes recognized as recoverable exceptions in Sumo Logic collectd plugin are provided below:
-**Client side recoverable exceptions**
+A complete set of Http status code is available here [List of HTTP status codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes). 
+
+The status codes recognized as recoverable exceptions in Sumo Logic collectd plugin are provided below:
+
+##### Client side recoverable exceptions
 Error codes: 404, 408, 429
-**Server side recoverable exceptions**
+
+##### Server side recoverable exceptions
 Error codes: 500, 502, 503, 504, 506, 507, 508, 510, 511
+
+#### Retry failure and buffering
+Sumo Logic collectd plugin retries on recoverable exceptions by default. When all retries fail, the request is either put back to scheudle for next run, or dropped, based on the buffer status. By default, 1000000 requests are buffered. If the buffer becomes full, then requests failed after all retries will be dropped. Otherwise, it is put back to the processing queue for the next run.
 
 ### 5. View metrics in Sumo Logic web app
 
@@ -138,7 +154,7 @@ The parameters below are for advanced users. They have reasonal defaults. Normal
 
 |Name|Description|Type|Default|Unit|
 |:---|:---|:---|:---|:---|
-|MaxBatchSize|Sumo Logic collectd output plugin batches metrics before sending them through https. MaxBatchSize defines the upper limit of metrics per batch.|Positive Integer|100|
+|MaxBatchSize|Sumo Logic collectd output plugin batches metrics before sending them through https. MaxBatchSize defines the upper limit of metrics per batch.|Positive Integer|5000|
 |MaxBatchInterval|Sumo Logic collectd output plugin batches metrics before sending them through https. MaxBatchInterval defines the upper limit of duration to construct a batch.|Positive Integer|1|Second|
 |HttpPostInterval|Sumo Logic collectd output plugin schedules https post requests at fixed intervals. HttpPostInterval defines the frequency for the scheduler to run. If no metrics batch is available at the time, the sceduler immediately returns. If multiple metrics batches are available, then the oldest batch is picked to be sent.|Positive Float|0.1|Second|
 |MaxRequestsToBuffer|Sumo Logic collectd output plugin buffers failed and delayed metrics batch requests. MaxRequestsToBuffer specifies the maximum number of these requests to buffer. After the buffer becomes full, the request with oldest metrics batch will be dropped to make space for new metrics batch.|Positive Integer|1000000|NA|
