@@ -101,6 +101,13 @@ class MetricsConfig:
             raise Exception('Specify HttpPostInterval %f as float between 0 and '
                             'MaxBatchInterval %d' %(http_post_interval, max_batch_interval))
 
+        retry_jitter_min = self.conf[ConfigOptions.retry_jitter_min]
+        retry_jitter_max = self.conf[ConfigOptions.retry_jitter_max]
+
+        if retry_jitter_min > retry_jitter_max:
+            raise Exception('Specify RetryJitterMin %d to be less or equal to RetryJitterMax %d' %
+                            (retry_jitter_min, retry_jitter_max))
+
         collectd.info('Updated MetricsConfig %s with config file %s ' % (self.conf, config))
 
     # parse types.db file
