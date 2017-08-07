@@ -8,7 +8,7 @@ It is fully free and fully open source. The license is Apache 2.0, meaning you a
 ### 1. Install collectd on you matchine
 If collected is already installed, safely skip this step. Otherwise, follow the instructions in the [collectd download](https://collectd.org/download.shtml) site for download and installation. There are some more information for getting novice users started in collectd Wiki [first_steps](https://collectd.org/wiki/index.php/First_steps) 
 
-### 2. Install Sumo Logic output plugin into collectd
+### 2. Install Sumo Logic collectd plugin into collectd
 #### Clone sumologic-collectd-plugin source code
 The Sumo Logic collectd plugin module can be anywhere in your system. Here is an example of installing this plugin into a collectd directory.
 ```
@@ -20,8 +20,8 @@ The Sumo Logic collectd plugin module can be anywhere in your system. Here is an
 ```
 #### Update collectd.conf
 
-### 3. Setup Sumo Logic output plugin configurations
-Sumo Logic output plugin supports following prarmeters. 
+### 3. Setup Sumo Logic collectd plugin configurations
+Sumo Logic collectd plugin supports following prarmeters. 
 #### Required parameter
 The paramer below is required and must be specified in the module config. 
 
