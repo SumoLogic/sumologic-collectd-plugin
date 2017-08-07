@@ -68,13 +68,12 @@ An exmple configuration for the plugin is shown below.
 </Plugin>
 ```
 
-#### Restrictions
-##### Reserved symbols
+#### Reserved symbols
 Equal sign and space are reserved symbols.
 ```
 "=", " "
 ```
-##### Reserved keywords
+#### Reserved keywords
 Following terms are reserved for Sumo Logic internal use only.
 ```
 "_sourcehost", "_sourcename", "_sourcecategory", "_collectorid", "_collector", "_source", "_sourceid", "_contenttype", "_rawname"
