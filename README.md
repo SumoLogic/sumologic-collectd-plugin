@@ -23,7 +23,9 @@ sudo pip install requests
 sudo pip install retry
 ```
 
-### 3. Setup Sumo Logic collectd plugin configurations
+### 3. Set up metrics http source
+
+### 4. Setup Sumo Logic collectd plugin configurations
 Sumo Logic collectd plugin supports following prarmeters. 
 
 #### Required parameter
@@ -106,7 +108,7 @@ Following terms are reserved for Sumo Logic internal use only.
 "_sourcehost", "_sourcename", "_sourcecategory", "_collectorid", "_collector", "_source", "_sourceid", "_contenttype", "_rawname"
 ```
 
-### 4. Start sending metrics
+### 5. Start sending metrics
 Start sending metrics by simply running collectd, e.g. (command can be differnt depends on collectd installation)
 ```
  sudo /usr/local/sbin/collectd -f -C /usr/local/etc/collectd.conf
@@ -118,7 +120,6 @@ If logfile is installed, then you can view logs by tailling collectd.log file, e
 ```
 tail -f /var/log/collectd.log
 ```
-
 
 #### Data model
 Metrics sending out by Sumo Logic collectd plugin is in [Carbon 2.0](https://gowalker.org/github.com/metrics20/go-metrics20/carbon20) format, where a metrics is defined as:
@@ -153,11 +154,11 @@ Error codes: 500, 502, 503, 504, 506, 507, 508, 510, 511
 #### Retry failure and buffering
 Sumo Logic collectd plugin retries on recoverable exceptions by default. When all retries fail, the request is either put back to scheudle for next run, or dropped, based on the buffer status. By default, 1000000 requests are buffered. If the buffer becomes full, then requests failed after all retries will be dropped. Otherwise, it is put back to the processing queue for the next run.
 
-### 5. View metrics in Sumo Logic web app
+### 6. View metrics in Sumo Logic web app
 
 ## Advanced Topics
 
-### Advanced parameters
+### 1. Advanced parameters
 The parameters below are for advanced users. They have reasonal defaults. Normal users do not have to update these values.  
 
 |Name|Description|Type|Default|Unit|
