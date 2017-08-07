@@ -9,6 +9,13 @@ It is fully free and fully open source. The license is Apache 2.0, meaning you a
 If collected is already installed, safely skip this step. Otherwise, follow the instructions in the [collectd download](https://collectd.org/download.shtml) site for download and installation. There are some more information for getting novice users started in collectd Wiki [first_steps](https://collectd.org/wiki/index.php/First_steps) 
 
 ### 2. Install Sumo Logic output plugin into collectd
+The Sumo Logic collectd plugin module can be anywhere in your system. Here is an example of installing this plugin into a collectd directory.
+```
+1. Go to collectd root dir
+2. cd ./lib
+3. mkdir collectd_python.plugin
+4. cd collectd_python.plugin
+```
 
 ### 3. Setup Sumo Logic output plugin configurations
 Sumo Logic output plugin supports following prarmeters. 
