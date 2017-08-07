@@ -69,6 +69,16 @@ An exmple configuration for the plugin is shown below.
 ```
 
 #### Restrictions
+##### Reserved symbols
+Equal sign and space are reserved symbols.
+```
+"=", " "
+```
+##### Reserved keywords
+Following terms are reserved for Sumo Logic internal use only.
+```
+"_sourcehost", "_sourcename", "_sourcecategory", "_collectorid", "_collector", "_source", "_sourceid", "_contenttype", "_rawname"
+```
 
 ### 4. Start sending metrics
 
