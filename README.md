@@ -126,6 +126,14 @@ Metrics sending out by Sumo Logic collectd plugin is in [Carbon 2.0](https://gow
 dimensions  metadata value timestamp
 ```
 `dimensions` and `metadata` are key/value pairs of strings. `dimensions` contributes to uniquely identifying a metric. `metadata` do not contribute to identifying a metric. They are used to categorize metrics for searching. 
+`value` is a double number
+`timestamp` is a long number
+
+Example data before compression 
+```
+host=my_mac plugin=cpu plugin_instance=1 type=cpu type_instance=user ds_name=value ds_type=DERIVE  5991.000000 1502148249
+host=my_mac plugin=cpu plugin_instance=0 type=cpu type_instance=user ds_name=value ds_type=DERIVE  98722.000000 1502148249
+```
 
 #### Compression
 Metrics after batching are compressed before being sent. The compression algorithm is `deflate`. The algorithm is explained in more details in [An Explanation of the Deflate Algorithm](https://zlib.net/feldspar.html)
