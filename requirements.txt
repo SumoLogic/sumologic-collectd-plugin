@@ -1,4 +1,8 @@
-urllib3
+# source dependencies
+requests
 retry
+
+# test dependencies
+urllib3
 codecov
 pytest-cov
