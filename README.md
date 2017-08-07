@@ -6,6 +6,7 @@ It is fully free and fully open source. The license is Apache 2.0, meaning you a
 ## Getting Started
 
 ### 1. Install collectd on you matchine
+If collected is already installed, safely skip this step. Otherwise, follow the instructions in the [collectd download](https://collectd.org/download.shtml) site for download and installation. There are some more information for getting novice users started in collectd Wiki [fist_steps](https://collectd.org/wiki/index.php/First_steps) 
 
 ### 2. Install Sumo Logic output plugin into collectd
 
