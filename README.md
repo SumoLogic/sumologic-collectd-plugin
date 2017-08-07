@@ -111,7 +111,15 @@ Start sending metrics by simply running collectd, e.g. (command can be differnt 
 ```
  sudo /usr/local/sbin/collectd -f -C /usr/local/etc/collectd.conf
 ```
-#### Data moel
+#### Data model
+Metrics sending out by Sumo Logic collectd plugin is in [Carbon 2.0](https://gowalker.org/github.com/metrics20/go-metrics20/carbon20) format, where a metrics is defined as:
+```
+dimensions  metadata value timestamp
+```
+`dimensions` and `metadata` are key/value pairs of strings. `dimensions` contributes to uniquely identifying a metric. `metadata` do not contribute to identifying a metric. They are used to categorize metrics for searching. 
+
+#### Compression
+Metrics after batching are compressed before being sent. The compression algorithm is `deflate`. The algorithm is explained in more details in [An Explanation of the Deflate Algorithm](https://zlib.net/feldspar.html)
 
 ### 5. View metrics in Sumo Logic web app
 
