@@ -24,6 +24,7 @@ sudo pip install retry
 ```
 
 ### 3. Set up metrics http source
+N/A atm
 
 ### 4. Setup Sumo Logic collectd plugin configurations
 Sumo Logic collectd plugin supports following prarmeters. 
