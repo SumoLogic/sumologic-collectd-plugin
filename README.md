@@ -24,7 +24,11 @@ sudo pip install retry
 ```
 
 ### 3. Set up metrics http source
-N/A atm
+Create a [Sumo Logic free account](https://www.sumologic.com/) if you currently don't have one.
+
+Create a [HTTP source](http://help.sumologic.com/Send_Data/Sources/HTTP_Source) in your account and get the URL for this source. It should be something like:
+
+https://events.sumologic.net/receiver/v1/http/XXXXXXXXXX
 
 ### 4. Setup Sumo Logic collectd plugin configurations
 Sumo Logic collectd plugin supports following prarmeters. 
@@ -34,7 +38,7 @@ The paramer below is required and must be specified in the module config.
 
 |Name|Description|Type|Required|
 |:---|:---|:---|:---|
-|URL|The URL to send logs to. This should be given when creating a Metrics HTTP Source on Sumo Logic web app. See [Metrics Http Source](https://not_ready_yet)|String|True|
+|URL|The URL to send logs to. This should be given when [creating the HTTP Source](https://github.com/CCheSumo/collectd-plugin/blob/master/README.md) on Sumo Logic web app. See [Metrics Http Source](https://not_ready_yet)|String|True|
 
 #### Basic parameters
 The paramers below are not strictly required. It is recommended to set these parameters as they prove to be extremely useful to categorize your metrics and search by them.
