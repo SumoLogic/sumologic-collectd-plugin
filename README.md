@@ -55,7 +55,7 @@ An exmple configuration for the plugin is shown below (code to be added to colle
 ```
 LoadPlugin python
 <Plugin python>
-    	ModulePath "/path/to/your/python/modules"
+    	ModulePath "/path/to/your/collectd_python.plugin/sumologic-collectd-plugin/src"
     	LogTraces true
     	Interactive false
     	Import "metrics_writer"
