@@ -156,6 +156,11 @@ Error codes: 500, 502, 503, 504, 506, 507, 508, 510, 511
 Sumo Logic collectd plugin retries on recoverable exceptions by default. When all retries fail, the request is either put back to scheudle for next run, or dropped, based on the buffer status. By default, 1000000 requests are buffered. If the buffer becomes full, then requests failed after all retries will be dropped. Otherwise, it is put back to the processing queue for the next run.
 
 ### 6. View metrics in Sumo Logic web app
+Go to Sumo Logic web app and open a metrics tab. Type in the Dimensions or Metadata for the query. E.g. 
+```
+plugin=cpu type=cpu type_instance=user
+```
+You should be able to see metrics displayed in the main graph. 
 
 ## Advanced Topics
 
