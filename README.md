@@ -183,3 +183,13 @@ The parameters below are for advanced users. They have reasonal defaults. Normal
 |RetryBackOff|Sumo Logic collectd output plugin retries on recoverable exceptions. RetryBackOff specifies the multiplier applied to delay between attempts. More information can be found in the [retry library](https://pypi.python.org/pypi/retry)|Positive Integer|2|NA|
 |RetryJitterMin|Sumo Logic collectd output plugin retries on recoverable exceptions. RetryJitterMin specifies the minimum extra seconds added to delay between attempts. More information can be found in the [retry library](https://pypi.python.org/pypi/retry)|Non-negative Integer|0|Second|
 |RetryJitterMax|Sumo Logic collectd output plugin retries on recoverable exceptions. RetryJitterMax specifies the maximum extra seconds added to delay between attempts. More information can be found in the [retry library](https://pypi.python.org/pypi/retry)|Non-negative Integer|10|Second|
+
+### 2. Engine under the hood
+<pre>
+Collectd		MetricsConverter		  MetricsBatcher	        MetricsBuffer				  MetricsSender
+--------	    --------------------------		  --------------	   ------------------------			-----------------
+														bath to send	
+Raw Data     ->	   Metric in Carbon 2.0 format	   ->	  Metrics Batch     ->	   Buffered metrics batches	     ->		Request scheduler
+		  												<-
+														failed batch		
+</pre>
