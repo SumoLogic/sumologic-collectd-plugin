@@ -2,6 +2,9 @@ import threading
 
 
 class Timer:
+    """
+    Event scheduler with start, cancel, and reset
+    """
 
     def __init__(self, interval, task):
         self.interval = interval
