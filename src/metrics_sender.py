@@ -170,8 +170,8 @@ class MetricsSender(Timer):
         Error about exception and pass through exception
         """
 
-        collectd.error(msg + ': Sending batch %s failed with unrecoverable exception %s. '
-                             'Stopping' % (batch, e.message))
+        collectd.error(msg + ': Sending batch with size %s failed with unrecoverable exception %s. '
+                             'Stopping' % (len(batch), e.message))
         self.cancel_timer()
         raise e
 
@@ -181,8 +181,8 @@ class MetricsSender(Timer):
         Warn about exception and raise RecoverableException
         """
 
-        collectd.warning(msg + ': Sending batch %s failed with recoverable exception %s. '
-                               'Retrying' % (batch, e.message))
+        collectd.warning(msg + ': Sending batch with size %s failed with recoverable exception %s. '
+                               'Retrying' % (len(batch), e.message))
         raise RecoverableException(e)
 
     # Encode body with specified compress method gzip/deflate
