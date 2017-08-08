@@ -189,7 +189,7 @@ The parameters below are for advanced users. They have reasonal defaults. Normal
 Collectd		MetricsConverter		  MetricsBatcher	        MetricsBuffer				  MetricsSender
 --------	    --------------------------		  --------------	   ------------------------			-----------------
 														bath to send	
-Raw Data     ->	   Metric in Carbon 2.0 format	   ->	  Metrics Batch     ->	   Buffered metrics batches	     ->		Request scheduler
-		  												<-
+Raw Data     ->	   Metric in Carbon 2.0 format	   ->	  Metrics Batch     ->	   Buffered metrics batches	    ->		Request scheduler
+		  												    <-
 														failed batch		
 </pre>
