@@ -38,7 +38,7 @@ The paramer below is required and must be specified in the module config.
 
 |Name|Description|Type|Required|
 |:---|:---|:---|:---|
-|URL|The URL to send logs to. This should be given when [creating the HTTP Source](https://github.com/CCheSumo/collectd-plugin/blob/master/README.md) on Sumo Logic web app. See [Metrics Http Source](https://not_ready_yet)|String|True|
+|URL|The URL to send logs to. This should be given when [creating the HTTP Source](https://github.com/CCheSumo/collectd-plugin/blob/master/README.md#3-set-up-metrics-http-source) on Sumo Logic web app.|String|True|
 
 #### Basic parameters
 The paramers below are not strictly required. It is recommended to set these parameters as they prove to be extremely useful to categorize your metrics and search by them.
