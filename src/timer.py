@@ -7,6 +7,7 @@ class Timer:
         self.interval = interval
         self.task = task
         self.timer = None
+        self.start_timer_lock = threading.Lock()
 
     def __del__(self):
         self.cancel_timer()
@@ -18,7 +19,10 @@ class Timer:
 
         self.timer = threading.Timer(self.interval, self.start_timer)
         self.timer.daemon = True
-        self.timer.start()
+        if self.start_timer_lock.acquire(False):
+            if not self.timer.isAlive():
+                self.timer.start()
+            self.start_timer_lock.release()
 
         self.task()
 
