@@ -7,11 +7,19 @@ It is fully free and fully open source. The license is Apache 2.0, meaning you a
 
 ### 1. Install collectd on you matchine
 If collected is already installed, safely skip this step. Otherwise, follow the instructions in the [collectd download](https://collectd.org/download.shtml) site for download and installation. There are some more information for getting novice users started in collectd Wiki [first_steps](https://collectd.org/wiki/index.php/First_steps) 
+#### Mac OSX
+```
+brew install collectd
+```
+#### Debian / Ubuntu
+```
+sudo apt-get install collectd
+```
 
 ### 2. Install Sumo Logic collectd plugin into collectd
 The Sumo Logic collectd plugin module can be anywhere in your system. Here is an example of installing this plugin into a collectd directory.
 ```
-1. Go to collectd root dir
+1. Go to collectd root dir (e.g. /usr/local/Cellar/collectd/5.7.2 on Mac OSX)
 2. cd ./lib
 3. mkdir collectd_python.plugin
 4. cd collectd_python.plugin
@@ -65,7 +73,7 @@ LoadPlugin python
     	Import "metrics_writer"
     
     	<Module "metrics_writer">
-	    	TypesDB "/usr/local/Cellar/collectd/5.7.2/share/collectd/types.db"
+	    	TypesDB "/path/to/your/collectd/types.db"
       	    	URL "/path/to/your/http/endpoint"
 
 	    	SourceName my_source_name
