@@ -47,7 +47,7 @@ The paramer below is required and must be specified in the module config.
 |Name|Description|Type|Required|
 |:---|:---|:---|:---|
 |URL|The URL to send logs to. This should be given when [creating the HTTP Source](https://github.com/CCheSumo/collectd-plugin/blob/master/README.md#3-set-up-metrics-http-source) on Sumo Logic web app.|String|True|
-|TypesDB| Data-set specification for collectd raw data. More information about types.db is available in [collectd types.db](https://collectd.org/documentation/manpages/types.db.5.shtml). Collectd ships with a default types.db file that is in the directory of collectd root, `share/collectd/types.db` (e.g. /usr/local/Cellar/collectd/5.7.2/share/collectd/types.db on Mac OSX).
+|TypesDB| Data-set specification for collectd raw data. More information about types.db is available in [collectd types.db](https://collectd.org/documentation/manpages/types.db.5.shtml). Collectd ships with a default types.db file that is in the directory of collectd root, `share/collectd/types.db` (e.g. /usr/local/Cellar/collectd/5.7.2/share/collectd/types.db on Mac OSX).|Strings in the format of `types1.db` `types2.db` ...|True|
 
 #### Basic parameters
 The paramers below are not strictly required. It is recommended to set these parameters as they prove to be extremely useful to categorize your metrics and search by them.
