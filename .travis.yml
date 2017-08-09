@@ -2,7 +2,7 @@ language: python
 
 # install collectd
 before_install:
-  - sudo sudo apt-get install collectd
+  - sudo apt-get install collectd
 
 # command to install dependencies
 install: "pip install -r requirements.txt"
