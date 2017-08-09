@@ -55,7 +55,7 @@ The paramers below are not strictly required. It is recommended to set these par
 |Name|Description|Type|Required|
 |:---|:---|:---|:---|
 |SourceName|Name of the metrics source. `_sourceName` can be used to search metrics from this source.|String|False|
-|HostName|Name of metrics host. `host` can be used to search metrics from this host.|String|False|
+|HostName|Name of metrics host. `_sourceHost` can be used to search metrics from this host.|String|False|
 |SourceCategory|Category of the collected metrics. `_sourceCategory` can be used to search metrics from this category.|String|False|
 |Dimensions|Key value pairs that contribute to identifying a metric. Collectd data have intrinsic dimensions with keys as `host`, `plugin`, `plugin_instance`, `type`, `type_instance`, `ds_name`, `ds_type`. The Additional dimensions specified here can help separating metrics collected from this collectd instance with metircs collected from other collectd instances. Dimensions cannot contain [reserved symbols](https://github.com/CCheSumo/collectd-plugin/blob/master/README.md#reserved-symbols) and [reserved keywords](https://github.com/CCheSumo/collectd-plugin/blob/master/README.md#reserved-keywords).|Srings in the format of `key1` `val1` `key2` `val2` ... |False|
 |Metadata|Key value pairs that do not contribute to identifying a metric. Metadata are primarily used to assist in searching metrics. Collectd data may have internal metadata. The additional metadata specified here can be used to enrich the existing metadata set. Metadata cannot contain [reserved symbols](https://github.com/CCheSumo/collectd-plugin/blob/master/README.md#reserved-symbols) and [reserved keywords](https://github.com/CCheSumo/collectd-plugin/blob/master/README.md#reserved-keywords)|Srings in the format of `key1` `val1` `key2` `val2` ...|False|
@@ -77,7 +77,7 @@ LoadPlugin python
 	    	TypesDB "/path/to/your/collectd/share/collectd/types.db"
       	    	URL "/path/to/your/http/endpoint"
 
-	    	SourceName my_source_name
+	    	SourceName my_source
 	    	HostName my_host
 	    	SourceCategory my_category
 
@@ -171,7 +171,7 @@ Sumo Logic collectd plugin retries on recoverable exceptions by default. When al
 ### 6. View metrics
 Go to Sumo Logic web app and open a metrics tab. Type in the Dimensions or Metadata for the query. E.g. 
 ```
-plugin=cpu type=cpu type_instance=user
+_sourceName=my_source _sourceHost=my_host _sourceCategory=my_category plugin=cpu
 ```
 You should be able to see metrics displayed in the main graph. 
 
