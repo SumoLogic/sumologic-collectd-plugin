@@ -92,7 +92,10 @@ class MetricsConfig:
             raise e
 
         if ConfigOptions.url not in self.conf:
-            raise Exception('Specify URL in collectd.conf.')
+            raise Exception('Specify %s in collectd.conf.' % ConfigOptions.url)
+
+        if not self.types:
+            raise Exception('Specify %s in collectd.conf.' % ConfigOptions.types_db)
 
         http_post_interval = self.conf[ConfigOptions.http_post_interval]
         max_batch_interval = self.conf[ConfigOptions.max_batch_interval]

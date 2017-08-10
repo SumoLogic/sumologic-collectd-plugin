@@ -19,7 +19,7 @@ def test_parse_types_db():
 
 def test_parse_url():
     met_config = MetricsConfig()
-    config = CollectdConfig([Helper.url_node()])
+    config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])
     met_config.parse_config(config)
 
     assert met_config.conf[ConfigOptions.url] == Helper.url
@@ -28,7 +28,8 @@ def test_parse_url():
 def test_parse_dimension_tags():
     met_config = MetricsConfig()
     tags = ('dim_key1', 'dim_val1', 'dim_key2', 'dim_val2')
-    config = CollectdConfig([Helper.url_node(), tags_node(ConfigOptions.dimension_tags, tags)])
+    config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
+                             tags_node(ConfigOptions.dimension_tags, tags)])
     met_config.parse_config(config)
 
     assert met_config.conf[ConfigOptions.dimension_tags] == tuple_to_pair(tags)
@@ -37,7 +38,8 @@ def test_parse_dimension_tags():
 def test_parse_meta_tags():
     met_config = MetricsConfig()
     tags = ('meta_key1', 'meta_val1', 'meta_key2', 'meta_val2')
-    config = CollectdConfig([Helper.url_node(), tags_node(ConfigOptions.meta_tags, tags)])
+    config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
+                             tags_node(ConfigOptions.meta_tags, tags)])
     met_config.parse_config(config)
 
     assert met_config.conf[ConfigOptions.meta_tags] == tuple_to_pair(tags)
@@ -47,7 +49,8 @@ def test_parse_meta_tags_missing_value():
     with pytest.raises(Exception) as e:
         met_config = MetricsConfig()
         tags = ('meta_key1', 'meta_val1', 'meta_key2')
-        config = CollectdConfig([Helper.url_node(), tags_node(ConfigOptions.meta_tags, tags)])
+        config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
+                                 tags_node(ConfigOptions.meta_tags, tags)])
         met_config.parse_config(config)
 
     assert "Missing tags key/value in options ('meta_key1', 'meta_val1', 'meta_key2')." in str(e.value)
@@ -57,7 +60,8 @@ def test_parse_http_post_interval():
     met_config = MetricsConfig()
     http_post_interval = '0.5'
     http_post_interval_node = ConfigNode(ConfigOptions.http_post_interval, [http_post_interval])
-    config = CollectdConfig([Helper.url_node(), http_post_interval_node])
+    config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
+                             http_post_interval_node])
     met_config.parse_config(config)
 
     assert met_config.conf[ConfigOptions.http_post_interval] == float(http_post_interval)
@@ -68,7 +72,8 @@ def test_parse_http_post_interval_exception():
         met_config = MetricsConfig()
         http_post_interval = '0'
         http_post_interval_node = ConfigNode(ConfigOptions.http_post_interval, [http_post_interval])
-        config = CollectdConfig([Helper.url_node(), http_post_interval_node])
+        config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
+                                 http_post_interval_node])
         met_config.parse_config(config)
 
     assert 'Value 0.0 for key HttpPostInterval is not a positive number' in str(e.value)
@@ -151,7 +156,7 @@ def test_parse_unknown_config_option():
     met_config = MetricsConfig()
     unknown_config = 'unknown_config'
     unknown_config_node = ConfigNode('unknown_config', unknown_config)
-    config = CollectdConfig([Helper.url_node(), unknown_config_node])
+    config = CollectdConfig([Helper.url_node(), Helper.types_db_node(), unknown_config_node])
     met_config.parse_config(config)
 
     assert hasattr(met_config, 'unknown_config') is False
@@ -172,17 +177,26 @@ def test_parse_int_exception():
         met_config = MetricsConfig()
         max_batch_size = ''
         max_batch_size_node = ConfigNode(ConfigOptions.max_batch_size, [max_batch_size])
-        config = CollectdConfig([Helper.url_node(), max_batch_size_node])
+        config = CollectdConfig([Helper.url_node(), Helper.types_db_node(), max_batch_size_node])
         met_config.parse_config(config)
 
 
 def test_no_url_exception():
     with pytest.raises(Exception) as e:
         met_config = MetricsConfig()
-        config = CollectdConfig([])
+        config = CollectdConfig([Helper.types_db_node()])
         met_config.parse_config(config)
 
     assert 'Specify URL in collectd.conf' in str(e.value)
+
+
+def test_no_types_db_exception():
+    with pytest.raises(Exception) as e:
+        met_config = MetricsConfig()
+        config = CollectdConfig([Helper.url_node()])
+        met_config.parse_config(config)
+
+    assert 'Specify TypesDB in collectd.conf' in str(e.value)
 
 
 def test_invalid_http_post_interval_exception():
@@ -190,7 +204,8 @@ def test_invalid_http_post_interval_exception():
         met_config = MetricsConfig()
         http_post_interval = '100.0'
         http_post_interval_node = ConfigNode(ConfigOptions.http_post_interval, [http_post_interval])
-        config = CollectdConfig([Helper.url_node(), http_post_interval_node])
+        config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
+                                 http_post_interval_node])
         met_config.parse_config(config)
 
     assert 'Specify HttpPostInterval' in str(e.value)
@@ -200,7 +215,8 @@ def test_contains_reserved_symbols_exception():
     with pytest.raises(Exception) as e:
         met_config = MetricsConfig()
         tags = ('meta_key1', 'meta_val1', 'meta_key2', 'meta val2')
-        config = CollectdConfig([Helper.url_node(), tags_node(ConfigOptions.meta_tags, tags)])
+        config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
+                                 tags_node(ConfigOptions.meta_tags, tags)])
         met_config.parse_config(config)
 
     assert 'Value meta val2 for Key Metadata must not contain reserved symbol " "' in str(e.value)
