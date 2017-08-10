@@ -54,12 +54,14 @@ class MetricsSender(Timer):
             if batch is not None:
                 self._send_request_with_retries(batch)
         except RecoverableException as e:
-            collectd.warning('Sending metrics batch %s failed after all retries due to %s. '
-                             'Put metrics batch into failed metrics buffer.' % (batch, e.message))
+            collectd.warning('All retries failed with recoverable exception %s when sending metrics'
+                             ' batch %s. Put metrics batch back into metrics buffer.' %
+                             (e.message, batch))
             self.buffer.put_failed_batch(batch)
         except Exception as e:
-            collectd.warning('Sending metrics batch %s encountered unrecoverable exception %s.'
-                             % (batch, e.message))
+            collectd.warning('All retries failed with unrecoverable exception %s when sending'
+                             ' metrics batch %s. Aborting'
+                             % (e.message, batch))
             raise e
 
     # Send metrics batch via https with error handling
