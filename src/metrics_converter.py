@@ -26,23 +26,17 @@ class MetricsConverter:
         """
         MetricsUtil.validate_type(data, types)
 
-        data_type = types[data.type]
-
-        i = 0
-
         metrics = []
 
-        for value in data.values:
-            ds_name = data_type[i][0]
-            ds_type = data_type[i][1]
+        for (value, data_type) in zip(data.values, types[data.type]):
+            ds_name = data_type[0]
+            ds_type = data_type[1]
 
             dimension_tags = MetricsConverter._gen_dimension_tags(data, ds_name, ds_type)
             meta_tags = MetricsConverter._gen_meta_tags(data)
             metric = MetricsConverter._gen_metric(dimension_tags, meta_tags, value, data.time)
 
             metrics.append(metric)
-
-            i += 1
 
         collectd.debug('Converted data %s to metrics %s' %(data, metrics))
 
