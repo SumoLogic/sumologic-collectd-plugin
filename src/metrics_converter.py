@@ -1,6 +1,7 @@
 import collectd
 from metrics_util import MetricsUtil
 
+
 class IntrinsicKeys:
     host = "host"
     plugin = "plugin"
@@ -10,40 +11,13 @@ class IntrinsicKeys:
     ds_name = "ds_name"
     ds_type = "ds_type"
 
-class MetricsConverter:
-    """
-    Coverts collectd data model to carbon 2.0 data model
-    """
 
-    # reserved keywords are case-insensitive
-    _reserved_keywords = frozenset(['_sourcehost', '_sourcename', '_sourcecategory', '_collectorid',
-                          '_collector', '_source', '_sourceid', '_contenttype', '_rawname'])
+# reserved keywords are case-insensitive
+_reserved_keywords = frozenset(['_sourcehost', '_sourcename', '_sourcecategory', '_collectorid',
+                                '_collector', '_source', '_sourceid', '_contenttype', '_rawname'])
 
-    @staticmethod
-    def convert_to_metrics(data, types):
-        """
-        Convert data into metrics
-        """
-        MetricsUtil.validate_type(data, types)
 
-        metrics = []
-
-        for (value, data_type) in zip(data.values, types[data.type]):
-            ds_name = data_type[0]
-            ds_type = data_type[1]
-
-            dimension_tags = MetricsConverter._gen_dimension_tags(data, ds_name, ds_type)
-            meta_tags = MetricsConverter._gen_meta_tags(data)
-            metric = MetricsConverter._gen_metric(dimension_tags, meta_tags, value, data.time)
-
-            metrics.append(metric)
-
-        collectd.debug('Converted data %s to metrics %s' %(data, metrics))
-
-        return metrics
-
-    @staticmethod
-    def gen_tag(key, value):
+def gen_tag(key, value):
         """
         Tag is of form key=value
         """
@@ -51,57 +25,77 @@ class MetricsConverter:
         MetricsUtil.validate_field(value, key, 'Value', 'Key')
         if not key:
             raise Exception('Key for value %s cannot be empty' % value)
-        elif key.lower() in MetricsConverter._reserved_keywords:
+        elif key.lower() in _reserved_keywords:
             raise Exception('Key %s (case-insensitive) must not contain reserved keywords %s' %
-                            (key, MetricsConverter._reserved_keywords))
+                            (key, _reserved_keywords))
         elif not value:
             return ''
         else:
             return key + '=' + value
 
-    @staticmethod
-    def tags_to_str(tags):
+
+def _remove_empty_tags(tags):
+    return [tag for tag in tags if tag]
+
+
+def tags_to_str(tags):
         """
         Convert list of tags to a single string
         """
-        return ' '.join(MetricsConverter._remove_empty_tags(tags))
+        return ' '.join(_remove_empty_tags(tags))
 
-    # Generate meta_tags from data
-    @staticmethod
-    def _gen_meta_tags(data):
 
-        return [MetricsConverter.gen_tag(key, value) for key, value in data.meta.items()]
+# Generate meta_tags from data
+def _gen_meta_tags(data):
 
-    @staticmethod
-    def _remove_empty_tags(tags):
-        return [tag for tag in tags if tag]
+        return [gen_tag(key, value) for key, value in data.meta.items()]
 
-    @staticmethod
-    def _gen_metric(dimension_tags, meta_tags, value, timestamp):
+
+def _gen_metric(dimension_tags, meta_tags, value, timestamp):
         """
         Convert (dimension_tags, meta_tags, value, timestamp) to metric string
         """
 
         if not meta_tags:
-            return '%s  %f %i' % (MetricsConverter.tags_to_str(dimension_tags), value, timestamp)
+            return '%s  %f %i' % (tags_to_str(dimension_tags), value, timestamp)
 
         else:
-            return '%s  %s %f %i' % (MetricsConverter.tags_to_str(dimension_tags),
-                                     MetricsConverter.tags_to_str(meta_tags), value, timestamp)
+            return '%s  %s %f %i' % (tags_to_str(dimension_tags),
+                                     tags_to_str(meta_tags), value, timestamp)
 
-    # Generate dimension tags
-    @staticmethod
-    def _gen_dimension_tags(data, ds_name, ds_type):
 
-        tags = [MetricsConverter.gen_tag(key, getattr(data, key)) for key in
+# Generate dimension tags
+def _gen_dimension_tags(data, ds_name, ds_type):
+
+        tags = [gen_tag(key, getattr(data, key)) for key in
                 [IntrinsicKeys.host, IntrinsicKeys.plugin, IntrinsicKeys.plugin_instance,
                  IntrinsicKeys.type, IntrinsicKeys.type_instance]] + \
-               [MetricsConverter.gen_tag(IntrinsicKeys.ds_name, ds_name),
-                MetricsConverter.gen_tag(IntrinsicKeys.ds_type, ds_type)]
+               [gen_tag(IntrinsicKeys.ds_name, ds_name),
+                gen_tag(IntrinsicKeys.ds_type, ds_type)]
 
-        dimension_tags = MetricsConverter._remove_empty_tags(tags)
+        dimension_tags = _remove_empty_tags(tags)
 
         return dimension_tags
 
 
+def convert_to_metrics(data, types):
+    """
+    Convert data into metrics
+    """
+    MetricsUtil.validate_type(data, types)
 
+    metrics = []
+
+    for (value, data_type) in zip(data.values, types[data.type]):
+        ds_name = data_type[0]
+        ds_type = data_type[1]
+
+        dimension_tags = _gen_dimension_tags(data, ds_name, ds_type)
+        meta_tags = _gen_meta_tags(data)
+        metric = _gen_metric(dimension_tags, meta_tags, value, data.time)
+
+        metrics.append(metric)
+
+    collectd.debug('Converted data %s to metrics %s' % (data, metrics))
+
+    return metrics
