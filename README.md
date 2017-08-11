@@ -4,7 +4,10 @@ A [collectd](https://collectd.org/) output plugin to send Carbon 2.0-formatted m
 
 ## Getting Started
 
-### 1. Install collectd on your machine
+### 1. Python version
+Sumo Logic collectd plugin is built on top of [collectd-python plugin](https://collectd.org/documentation/manpages/collectd-python.5.shtml). The minimum required version for running the plugin is Python version 2.6. You can download and install the desired Python version from [Python download page](https://www.python.org/downloads/). 
+
+### 2. Install collectd on your machine
 If collectd is already installed, you can skip this step. Otherwise, follow the instructions in the [collectd download](https://collectd.org/download.shtml) site for download and installation. For additional details, see [first_steps](https://collectd.org/wiki/index.php/First_steps) section in the collectd Wiki.
 
 #### Mac OSX
@@ -16,7 +19,7 @@ brew install collectd
 sudo apt-get install collectd
 ```
 
-### 2. Install Sumo Logic collectd plugin into collectd
+### 3. Install Sumo Logic collectd plugin into collectd
 The Sumo Logic collectd plugin module can be saved in a directory anywhere on your system. Here is an example of installing this plugin into the collectd `lib` directory.
 ```
 1. Go to collectd root dir (e.g. /opt/collectd on Linux, or /usr/local/Cellar/collectd/5.7.2 on Mac OSX)
@@ -31,12 +34,12 @@ sudo pip install requests
 sudo pip install retry
 ```
 
-### 3. Create HTTP Metrics Source in Sumo Logic
+### 4. Create HTTP Metrics Source in Sumo Logic
 Create a [Sumo Logic account](https://www.sumologic.com/) if you don't currently have one.
 
 Follow these instructions for [setting up an HTTP Source](http://help.sumologic.com/Send_Data/Sources/HTTP_Source) in Sumo Logic.  Be sure to obtain the URL endpoint after creating an HTTP Source.
 
-### 4. Configure Sumo Logic collectd plugin
+### 5. Configure Sumo Logic collectd plugin
 Sumo Logic collectd plugin supports following prarmeters. 
 
 #### Required parameters
@@ -129,7 +132,7 @@ Following terms are reserved for Sumo Logic internal use only.
 "_sourcehost", "_sourcename", "_sourcecategory", "_collectorid", "_collector", "_source", "_sourceid", "_contenttype", "_rawname"
 ```
 
-### 5. Start sending metrics
+### 6. Start sending metrics
 Start sending metrics by simply running collectd, e.g. (command can be differnt depends on collectd installation)
 ```
  sudo /usr/local/sbin/collectd -f -C /usr/local/etc/collectd.conf
@@ -175,7 +178,7 @@ Error codes: 500, 502, 503, 504, 506, 507, 508, 510, 511
 #### Retry failure and buffering
 Sumo Logic collectd plugin retries on recoverable exceptions by default. When all retries fail, the request is either scheduled for a future attempt or dropped based on the buffer status. By default, 1000000 requests are buffered. If the buffer becomes full, then requests failed after all retries will be dropped. Otherwise, it is put back to the processing queue for the next run.
 
-### 6. View metrics
+### 7. View metrics
 To view the metrics sent by the collectd plugin, log into Sumo Logic and open a Metrics tab. Query for metrics using either dimensions or metadata, e.g. 
 ```
 _sourceName=my_source _sourceHost=my_host _sourceCategory=my_category plugin=cpu
