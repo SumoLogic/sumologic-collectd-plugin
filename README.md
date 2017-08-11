@@ -4,7 +4,7 @@ A [collectd](https://collectd.org/) output plugin to send Carbon 2.0-formatted m
 
 ## Getting Started
 
-### 1. Install collectd on you matchine
+### 1. Install collectd on your machine
 If collectd is already installed, you can skip this step. Otherwise, follow the instructions in the [collectd download](https://collectd.org/download.shtml) site for download and installation. For additional details, see [first_steps](https://collectd.org/wiki/index.php/First_steps) section in the collectd Wiki.
 
 #### Mac OSX
