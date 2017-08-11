@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 cwd = os.getcwd()
 import sys
@@ -223,6 +225,19 @@ def test_types_db_no_exist_exception():
         met_config.parse_config(config)
 
     assert 'No such file or directory' in str(e.value)
+
+
+def test_non_ascii_strings():
+    met_config = MetricsConfig()
+
+    configs = {
+        'source_name': '数据源',
+    }
+
+    Helper.parse_configs(met_config, configs)
+
+    assert met_config.conf[ConfigOptions.source_name] == '数据源'
+
 
 
 def tags_node(key, values):

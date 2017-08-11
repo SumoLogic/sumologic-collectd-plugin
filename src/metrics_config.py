@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import collectd
 from metrics_util import MetricsUtil
 

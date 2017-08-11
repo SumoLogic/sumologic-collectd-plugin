@@ -34,7 +34,8 @@ def test_gen_key_not_string_exception():
     with pytest.raises(Exception) as e:
         gen_tag(('tag_key', ), 'tag_value')
 
-    assert "Key ('tag_key',) for Value tag_value must be string type. Type is <type 'tuple'>" in str(e.value)
+    assert "Key ('tag_key',) for Value tag_value must be string type. Type is <type 'tuple'>" in \
+           str(e.value)
 
 
 def test_gen_value_not_string_exception():
@@ -83,7 +84,8 @@ def test_convert_to_metrics_multiple():
 
 
 def test_convert_to_metrics_no_meta():
-    d = Values(type='test_type_2', meta={}, values=[1.23, 4.56], ds_names=['test_ds_name1', 'test_ds_name2'],
+    d = Values(type='test_type_2', meta={}, values=[1.23, 4.56],
+               ds_names=['test_ds_name1', 'test_ds_name2'],
                ds_types=['test_ds_type1', 'test_ds_type2'])
     helper = Helper()
     metrics = convert_to_metrics(d, helper.types)
@@ -110,5 +112,3 @@ def test_convert_to_metrics_type_nonexist_exception():
 
     assert 'Do not know how to handle type test_type_3. ' \
            'Do you have all your types.db files configured?' in str(e.value)
-
-
