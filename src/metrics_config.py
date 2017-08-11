@@ -47,6 +47,23 @@ class MetricsConfig:
 
         collectd.info('Initialized MetricsConfig with default config %s' % self.conf)
 
+    @staticmethod
+    def default_config():
+        return {
+            ConfigOptions.http_post_interval: 0.1,
+            ConfigOptions.max_batch_size: 5000,
+            ConfigOptions.max_batch_interval: 1,
+            ConfigOptions.retry_initial_delay: 0,
+            ConfigOptions.retry_max_attempts: 10,
+            ConfigOptions.retry_max_delay: 100,
+            ConfigOptions.retry_backoff: 2,
+            ConfigOptions.retry_jitter_min: 0,
+            ConfigOptions.retry_jitter_max: 10,
+            ConfigOptions.max_requests_to_buffer: 1000,
+            ConfigOptions.content_type: 'application/vnd.sumologic.carbon2',
+            ConfigOptions.content_encoding: 'deflate'
+        }
+
     def parse_config(self, config):
         """
         Parse the python plugin configurations in collectd.conf
@@ -157,20 +174,3 @@ class MetricsConfig:
         self.conf[child.key] = zip(*(iter(child.values),) * 2)
 
         collectd.info('Parsed %s tags %s' % (child.key, self.conf[child.key]))
-
-    @staticmethod
-    def default_config():
-        return {
-            ConfigOptions.http_post_interval: 0.1,
-            ConfigOptions.max_batch_size: 5000,
-            ConfigOptions.max_batch_interval: 1,
-            ConfigOptions.retry_initial_delay: 0,
-            ConfigOptions.retry_max_attempts: 10,
-            ConfigOptions.retry_max_delay: 100,
-            ConfigOptions.retry_backoff: 2,
-            ConfigOptions.retry_jitter_min: 0,
-            ConfigOptions.retry_jitter_max: 10,
-            ConfigOptions.max_requests_to_buffer: 1000,
-            ConfigOptions.content_type: 'application/vnd.sumologic.carbon2',
-            ConfigOptions.content_encoding: 'deflate'
-        }
