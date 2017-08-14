@@ -37,7 +37,7 @@ sudo pip install retry
 ### 4. Create HTTP Metrics Source in Sumo Logic
 Create a [Sumo Logic account](https://www.sumologic.com/) if you don't currently have one.
 
-Follow these instructions for [setting up an HTTP Source](http://help.sumologic.com/Send_Data/Sources/HTTP_Source) in Sumo Logic.  Be sure to obtain the URL endpoint after creating an HTTP Source.
+Follow these instructions for [setting up an HTTP Source](https://help.sumologic.com/Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source/zGenerate-a-new-URL-for-an-HTTP-Source) in Sumo Logic.  Be sure to obtain the URL endpoint after creating an HTTP Source.
 
 ### 5. Configure Sumo Logic collectd plugin
 Sumo Logic collectd plugin supports following prarmeters. 
