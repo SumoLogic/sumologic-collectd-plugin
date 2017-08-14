@@ -47,7 +47,7 @@ The paramers below are required and must be specified in the module config.
 
 |Name|Description|Type|Required|
 |:---|:---|:---|:---|
-|[URL](https://help.sumologic.com/Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source/zGenerate-a-new-URL-for-an-HTTP-Source)|The URL to send logs to. This should be given when [creating the HTTP Source](https://github.com/SumoLogic/sumologic-collectd-plugin#3-set-up-metrics-http-source) on Sumo Logic web app.|String|True|
+|[URL](https://help.sumologic.com/Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source/zGenerate-a-new-URL-for-an-HTTP-Source)|The URL to send logs to. This should be given when [creating the HTTP Source](https://github.com/SumoLogic/sumologic-collectd-plugin/blob/master/README.md#4-create-http-metrics-source-in-sumo-logic) on Sumo Logic web app.|String|True|
 |TypesDB| Data-set specification for collectd raw data. More information about types.db is available in [collectd types.db](https://collectd.org/documentation/manpages/types.db.5.shtml). Collectd ships with a default types.db file that is in the directory of collectd root, `share/collectd/types.db` (e.g. /usr/local/Cellar/collectd/5.7.2/share/collectd/types.db on Mac OSX).|Strings in the format of `types1.db` `types2.db` ...|True|
 
 #### Basic parameters
@@ -62,7 +62,7 @@ The paramers below are not strictly required. It is recommended to set these par
 |Metadata|Key value pairs that do not contribute to identifying a metric. Metadata are primarily used to assist in searching metrics. Collectd data may have internal metadata. The additional metadata specified here can be used to enrich the existing metadata set. Metadata cannot contain [reserved symbols](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-symbols) and [reserved keywords](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-keywords)|Srings in the format of `key1` `val1` `key2` `val2` ...|False|
 
 #### Advanced parameters
-Sumo Logic collectd plugin also supports some [advanced configurations](https://github.com/SumoLogic/sumologic-collectd-plugin#advanced-parameters). These configurations have reasonable defaults and normally do not need to be updated. 
+Sumo Logic collectd plugin also supports some [advanced configurations](https://github.com/SumoLogic/sumologic-collectd-plugin/blob/master/README.md#1-advanced-parameters). These configurations have reasonable defaults and normally do not need to be updated. 
 
 #### Example configuration
 An exmple configuration for the plugin is shown below (code to be added to collectd.conf under $collectd_root/etc).
