@@ -20,29 +20,28 @@ def test_gen_tag_empty_key_exception():
     with pytest.raises(Exception) as e:
         gen_tag('', 'tag_value')
 
-    assert 'Key for value tag_value cannot be empty' in str(e.value)
+    assert 'Key for value tag_value cannot be empty' in str(e)
 
 
 def test_gen_tag_key_word_exception():
     with pytest.raises(Exception) as e:
         gen_tag('_sourceId', 'tag_value')
 
-    assert 'Key _sourceId (case-insensitive) must not contain reserved keywords' in str(e.value)
+    assert 'Key _sourceId (case-insensitive) must not contain reserved keywords' in str(e)
 
 
 def test_gen_key_not_string_exception():
     with pytest.raises(Exception) as e:
         gen_tag(('tag_key', ), 'tag_value')
 
-    assert "Key ('tag_key',) for Value tag_value must be string type. Type is <type 'tuple'>" in \
-           str(e.value)
+    assert "Key ('tag_key',) for Value tag_value must be string type." in str(e)
 
 
 def test_gen_value_not_string_exception():
     with pytest.raises(Exception) as e:
         gen_tag('tag_key', 1)
 
-    assert "Value 1 for Key tag_key must be string type. Type is <type 'int'>" in str(e.value)
+    assert "Value 1 for Key tag_key must be string type." in str(e)
 
 
 def test_tags_to_str():
@@ -100,7 +99,7 @@ def test_convert_to_metrics_type_format_exception():
         helper = Helper()
         convert_to_metrics(d, helper.types)
 
-    assert 'Number values [1.23] differ from types defined for test_type_2' in str(e.value)
+    assert 'Number values [1.23] differ from types defined for test_type_2' in str(e)
 
 
 def test_convert_to_metrics_type_nonexist_exception():
@@ -111,4 +110,4 @@ def test_convert_to_metrics_type_nonexist_exception():
         convert_to_metrics(d, helper.types)
 
     assert 'Do not know how to handle type test_type_3. ' \
-           'Do you have all your types.db files configured?' in str(e.value)
+           'Do you have all your types.db files configured?' in str(e)

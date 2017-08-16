@@ -55,7 +55,7 @@ def test_parse_meta_tags_missing_value():
                                  tags_node(ConfigOptions.meta_tags, tags)])
         met_config.parse_config(config)
 
-    assert "Missing tags key/value in options ('meta_key1', 'meta_val1', 'meta_key2')." in str(e.value)
+    assert "Missing tags key/value in options ('meta_key1', 'meta_val1', 'meta_key2')." in str(e)
 
 
 def test_parse_http_post_interval():
@@ -78,7 +78,7 @@ def test_parse_http_post_interval_exception():
                                  http_post_interval_node])
         met_config.parse_config(config)
 
-    assert 'Value 0.0 for key HttpPostInterval is not a positive number' in str(e.value)
+    assert 'Value 0.0 for key HttpPostInterval is not a positive number' in str(e)
 
 
 def test_parse_string_config():
@@ -128,7 +128,7 @@ def test_parse_retry_config_values_positive():
         }
         Helper.parse_configs(met_config, configs)
 
-    assert 'Value -5 for key MaxBatchInterval is not a positive number' in str(e.value)
+    assert 'Value -5 for key MaxBatchInterval is not a positive number' in str(e)
 
 
 def test_parse_retry_config_values_non_negative():
@@ -139,7 +139,7 @@ def test_parse_retry_config_values_non_negative():
         }
         Helper.parse_configs(met_config, configs)
 
-    assert 'Value -1 for key RetryInitialDelay is a negative number' in str(e.value)
+    assert 'Value -1 for key RetryInitialDelay is a negative number' in str(e)
 
 
 def test_parse_retry_config_jitter_min_greater_than_max():
@@ -151,7 +151,7 @@ def test_parse_retry_config_jitter_min_greater_than_max():
         }
         Helper.parse_configs(met_config, configs)
 
-    assert 'Specify RetryJitterMin 2 to be less or equal to RetryJitterMax 1' in str(e.value)
+    assert 'Specify RetryJitterMin 2 to be less or equal to RetryJitterMax 1' in str(e)
 
 
 def test_parse_unknown_config_option():
@@ -171,7 +171,7 @@ def test_parse_string_exception():
         config = CollectdConfig([url_node])
         met_config.parse_config(config)
 
-    assert 'Value for key URL cannot be empty' in str(e.value)
+    assert 'Value for key URL cannot be empty' in str(e)
 
 
 def test_parse_int_exception():
@@ -189,7 +189,7 @@ def test_no_url_exception():
         config = CollectdConfig([Helper.types_db_node()])
         met_config.parse_config(config)
 
-    assert 'Specify URL in collectd.conf' in str(e.value)
+    assert 'Specify URL in collectd.conf' in str(e)
 
 
 def test_no_types_db_exception():
@@ -198,7 +198,7 @@ def test_no_types_db_exception():
         config = CollectdConfig([Helper.url_node()])
         met_config.parse_config(config)
 
-    assert 'Specify TypesDB in collectd.conf' in str(e.value)
+    assert 'Specify TypesDB in collectd.conf' in str(e)
 
 
 def test_invalid_http_post_interval_exception():
@@ -210,7 +210,7 @@ def test_invalid_http_post_interval_exception():
                                  http_post_interval_node])
         met_config.parse_config(config)
 
-    assert 'Specify HttpPostInterval' in str(e.value)
+    assert 'Specify HttpPostInterval' in str(e)
 
 
 def test_contains_reserved_symbols_exception():
@@ -221,7 +221,7 @@ def test_contains_reserved_symbols_exception():
                                  tags_node(ConfigOptions.meta_tags, tags)])
         met_config.parse_config(config)
 
-    assert 'Value meta val2 for Key Metadata must not contain reserved symbol " "' in str(e.value)
+    assert 'Value meta val2 for Key Metadata must not contain reserved symbol " "' in str(e)
 
 
 def test_invalid_ds_in_types_db():
@@ -240,7 +240,7 @@ def test_types_db_no_exist_exception():
         config = CollectdConfig([Helper.url_node(), types_db_node])
         met_config.parse_config(config)
 
-    assert 'No such file or directory' in str(e.value)
+    assert 'No such file or directory' in str(e)
 
 
 def test_non_ascii_strings():

@@ -57,11 +57,11 @@ class MetricsSender(Timer):
                 self._send_request_with_retries(batch)
         except RecoverableException as e:
             collectd.warning('Sending metrics batch %s failed after all retries due to %s. '
-                             'Put metrics batch into failed metrics buffer.' % (batch, e.message))
+                             'Put metrics batch into failed metrics buffer.' % (batch, str(e)))
             self.buffer.put_failed_batch(batch)
         except Exception as e:
             collectd.warning('Sending metrics batch %s encountered unrecoverable exception %s.'
-                             % (batch, e.message))
+                             % (batch, str(e)))
             raise e
 
     # Send metrics batch via https with error handling
@@ -171,7 +171,7 @@ class MetricsSender(Timer):
         """
 
         collectd.error(msg + ': Sending batch with size %s failed with unrecoverable exception %s. '
-                             'Stopping' % (len(batch), e.message))
+                             'Stopping' % (len(batch), str(e)))
         self.cancel_timer()
         raise e
 
@@ -182,7 +182,7 @@ class MetricsSender(Timer):
         """
 
         collectd.warning(msg + ': Sending batch with size %s failed with recoverable exception %s. '
-                               'Retrying' % (len(batch), e.message))
+                               'Retrying' % (len(batch), str(e)))
         raise RecoverableException(e)
 
     # Encode body with specified compress method gzip/deflate

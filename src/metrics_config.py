@@ -108,7 +108,7 @@ class MetricsConfig:
                 else:
                     collectd.warning('Unknown configuration %s, ignored.' % child.key)
         except Exception as e:
-            collectd.error('Failed to parse configurations due to %s' % e.message)
+            collectd.error('Failed to parse configurations due to %s' % str(e))
             raise e
 
         if ConfigOptions.url not in self.conf:
@@ -163,7 +163,7 @@ class MetricsConfig:
             collectd.info('Parsed types %s with types_db file %s ' % (self.types, db))
 
         except Exception as e:
-            collectd.error('Parse types %s failed with %s' %(db, e.message))
+            collectd.error('Parse types %s failed with %s' %(db, str(e)))
             raise e
 
     # parse dimension_tags/meta_tags specified in collectd.conf
