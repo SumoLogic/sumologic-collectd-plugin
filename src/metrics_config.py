@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import collectd
-from metrics_util import MetricsUtil
+from metrics_util import validate_non_empty, validate_string_type, validate_positive, \
+    validate_non_negative, validate_field
 
 
 class ConfigOptions:
@@ -79,30 +80,30 @@ class MetricsConfig:
                 elif child.key == ConfigOptions.url:
                     url = child.values[0]
                     self.conf[child.key] = url
-                    MetricsUtil.validate_non_empty(url, child.key)
+                    validate_non_empty(url, child.key)
                 elif child.key in [ConfigOptions.dimension_tags, ConfigOptions.meta_tags]:
                     self._parse_tags(child)
                 elif child.key in [ConfigOptions.source_name, ConfigOptions.host_name,
                                    ConfigOptions.source_category]:
                     s = child.values[0]
-                    MetricsUtil.validate_non_empty(s, child.key)
-                    MetricsUtil.validate_string_type(s, child.key, 'Value', 'Key')
+                    validate_non_empty(s, child.key)
+                    validate_string_type(s, child.key, 'Value', 'Key')
                     self.conf[child.key] = s
                 elif child.key == ConfigOptions.http_post_interval:
                     f = float(child.values[0])
-                    MetricsUtil.validate_positive(f, child.key)
+                    validate_positive(f, child.key)
                     self.conf[child.key] = f
                 elif child.key in [ConfigOptions.max_batch_size, ConfigOptions.max_batch_interval,
                                    ConfigOptions.retry_max_attempts, ConfigOptions.retry_max_delay,
                                    ConfigOptions.retry_backoff,
                                    ConfigOptions.max_requests_to_buffer]:
                     i = int(child.values[0])
-                    MetricsUtil.validate_positive(i, child.key)
+                    validate_positive(i, child.key)
                     self.conf[child.key] = i
                 elif child.key in [ConfigOptions.retry_initial_delay,
                                    ConfigOptions.retry_jitter_min, ConfigOptions.retry_jitter_max]:
                     i = int(child.values[0])
-                    MetricsUtil.validate_non_negative(i, child.key)
+                    validate_non_negative(i, child.key)
                     self.conf[child.key] = i
                 else:
                     collectd.warning('Unknown configuration %s, ignored.' % child.key)
@@ -171,7 +172,7 @@ class MetricsConfig:
             raise Exception('Missing tags key/value in options %s.' % str(child.values))
 
         for v in child.values:
-            MetricsUtil.validate_field(v, child.key, 'Value', 'Key')
+            validate_field(v, child.key, 'Value', 'Key')
 
         self.conf[child.key] = zip(*(iter(child.values),) * 2)
 

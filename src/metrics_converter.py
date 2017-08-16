@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import collectd
-from metrics_util import MetricsUtil
+from metrics_util import validate_field, validate_type
 
 
 class IntrinsicKeys:
@@ -23,8 +23,8 @@ def gen_tag(key, value):
         """
         Tag is of form key=value
         """
-        MetricsUtil.validate_field(key, value, 'Key', 'Value')
-        MetricsUtil.validate_field(value, key, 'Value', 'Key')
+        validate_field(key, value, 'Key', 'Value')
+        validate_field(value, key, 'Value', 'Key')
         if not key:
             raise Exception('Key for value %s cannot be empty' % value)
         elif key.lower() in _reserved_keywords:
@@ -84,7 +84,7 @@ def convert_to_metrics(data, types):
     """
     Convert data into metrics
     """
-    MetricsUtil.validate_type(data, types)
+    validate_type(data, types)
 
     metrics = []
 
