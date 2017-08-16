@@ -35,6 +35,7 @@ class ConfigOptions:
     content_encoding = 'ContentEncoding'
     # Static option, not configurable yet. Default is application/vnd.sumologic.carbon2
     content_type = 'ContentType'
+    shutdown_max_wait = "ShutdownMaxWait"  # seconds
 
 
 class MetricsConfig:
@@ -66,8 +67,9 @@ class MetricsConfig:
             ConfigOptions.retry_jitter_min: 0,
             ConfigOptions.retry_jitter_max: 10,
             ConfigOptions.max_requests_to_buffer: 1000,
+            ConfigOptions.content_encoding: 'deflate',
             ConfigOptions.content_type: 'application/vnd.sumologic.carbon2',
-            ConfigOptions.content_encoding: 'deflate'
+            ConfigOptions.shutdown_max_wait: 5
         }
 
     def parse_config(self, config):
