@@ -47,4 +47,4 @@ def test_reset_timer_not_start():
 
 
 def task():
-    print 'Timer task ... '
+    print('Timer task ... ')
