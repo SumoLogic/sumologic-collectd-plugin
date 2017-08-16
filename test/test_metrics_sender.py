@@ -79,7 +79,7 @@ def test_post_normal_addition_dimensions_metadata():
     }
     for (key, value) in configs.items():
         node = ConfigNode(getattr(ConfigOptions, key), value)
-        config = CollectdConfig([Helper.url_node(), node])
+        config = CollectdConfig([Helper.url_node(), Helper.types_db_node(), node])
         met_config.parse_config(config)
 
     for i in range(10):

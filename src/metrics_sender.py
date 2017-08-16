@@ -1,10 +1,12 @@
+# -*- coding: utf-8 -*-
+
 import collectd
 import requests
 import zlib
 from retry.api import retry_call
 from metrics_config import ConfigOptions
 from metrics_util import RecoverableException
-from metrics_converter import MetricsConverter
+from metrics_converter import gen_tag, tags_to_str
 from timer import Timer
 
 
@@ -143,26 +145,24 @@ class MetricsSender(Timer):
 
         # Add custom dimension_tags specified in conf
         if ConfigOptions.dimension_tags in config_keys:
-            headers[HeaderKeys.x_sumo_dimensions] = \
-                MetricsConverter.tags_to_str(self._gen_config_dimension_tags())
+            headers[HeaderKeys.x_sumo_dimensions] = tags_to_str(self._gen_config_dimension_tags())
 
         # Add custom meta_tags specified in conf
         if ConfigOptions.meta_tags in config_keys:
-            headers[HeaderKeys.x_sumo_metadata] = \
-                MetricsConverter.tags_to_str(self._gen_config_meta_tags())
+            headers[HeaderKeys.x_sumo_metadata] = tags_to_str(self._gen_config_meta_tags())
 
         return headers
 
     # Generate dimension_tags from config
     def _gen_config_dimension_tags(self):
 
-        return [MetricsConverter.gen_tag(k, v) for k, v in
+        return [gen_tag(k, v) for k, v in
                 self.conf[ConfigOptions.dimension_tags]]
 
     # Generate meta_tags from config
     def _gen_config_meta_tags(self):
 
-        return [MetricsConverter.gen_tag(k, v) for k, v in
+        return [gen_tag(k, v) for k, v in
                 self.conf[ConfigOptions.meta_tags]]
 
     def fail_with_unrecoverable_exception(self, msg, batch, e):

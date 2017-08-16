@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import collectd
 import threading
 import Queue

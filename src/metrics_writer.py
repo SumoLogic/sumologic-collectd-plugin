@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
+
 import collectd
 from metrics_config import MetricsConfig, ConfigOptions
 from metrics_buffer import MetricsBuffer
-from metrics_converter import MetricsConverter
+from metrics_converter import convert_to_metrics
 from metrics_batcher import MetricsBatcher
 from metrics_sender import MetricsSender
 
@@ -23,7 +25,7 @@ def config_callback(conf):
 
 def init_callback():
     """
-    Init MetricsConverter, MetricsBuffer, MetricsBatcher, and MetricsSender
+    Init MetricsBuffer, MetricsBatcher, and MetricsSender
     """
 
     global met_buffer, met_batcher, met_sender
@@ -34,7 +36,7 @@ def init_callback():
                                  met_buffer)
     met_sender = MetricsSender(met_config.conf, met_buffer)
 
-    collectd.info('Initialized MetricsBuffer, MetricsConverter, MetricsBatcher, and MetricsSender')
+    collectd.info('Initialized MetricsBuffer, MetricsBatcher, and MetricsSender')
 
 
 def write_callback(raw_data, data=None):
@@ -42,7 +44,7 @@ def write_callback(raw_data, data=None):
     Write callback
     """
 
-    metrics = MetricsConverter.convert_to_metrics(raw_data, met_config.types)
+    metrics = convert_to_metrics(raw_data, met_config.types)
 
     for metric in metrics:
         met_batcher.push_item(metric)
