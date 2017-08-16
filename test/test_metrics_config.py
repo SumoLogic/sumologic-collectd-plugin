@@ -119,6 +119,38 @@ def test_parse_int_config():
         assert met_config.conf[getattr(ConfigOptions, key)] == int(value)
 
 
+def test_parse_content_encoding():
+
+    deflate_config = {
+        'content_encoding': 'deflate'
+    }
+    gzip_config = {
+        'content_encoding': 'gzip'
+    }
+    none_config = {
+        'content_encoding': 'none'
+    }
+    configs = [deflate_config, gzip_config, none_config]
+
+    for config in configs:
+        met_config = MetricsConfig()
+        Helper.parse_configs(met_config, config)
+        assert met_config.conf[ConfigOptions.content_encoding] == \
+               config['content_encoding']
+
+
+def test_parse_unknown_content_encoding():
+    with pytest.raises(Exception) as e:
+        met_config = MetricsConfig()
+        unknown_config = {
+            'content_encoding': 'unknown'
+        }
+        Helper.parse_configs(met_config, unknown_config)
+
+    assert 'Unknown ContentEncoding unknown specified. ' \
+           'ContentEncoding must be deflate, gzip, or none' in str(e)
+
+
 def test_parse_retry_config_values_positive():
     with pytest.raises(Exception) as e:
         met_config = MetricsConfig()
