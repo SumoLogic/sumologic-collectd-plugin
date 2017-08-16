@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+try:
+    from StringIO import StringIO as CompatibleIO
+except ImportError:
+    from io import BytesIO as CompatibleIO
+import gzip
 import collectd
 import requests
 import zlib
@@ -72,7 +77,7 @@ class MetricsSender(Timer):
             collectd.debug('Sending https request with headers %s, body %s' %(headers, body))
 
             response = requests.post(self.conf[ConfigOptions.url],
-                                     data=MetricsSender._encode_body(body), headers=headers)
+                                     data=self.encode_body(body), headers=headers)
 
             collectd.info('Sent https request with batch size %d got response code %s' %
                           (len(body), response.status_code))
@@ -165,6 +170,20 @@ class MetricsSender(Timer):
         return [gen_tag(k, v) for k, v in
                 self.conf[ConfigOptions.meta_tags]]
 
+    # Encode body with specified compress method gzip/deflate
+    def encode_body(self, body):
+        body_str = '\n'.join(body).encode('utf-8')
+        content_encoding = self.conf[ConfigOptions.content_encoding]
+        if content_encoding == 'deflate':
+            return zlib.compress(body_str)
+        elif content_encoding == 'gzip':
+            encoded_stream = CompatibleIO()
+            with GzipFile(fileobj=encoded_stream, mode="w") as f:
+                f.write(body_str)
+            return encoded_stream.getvalue()
+        else:
+            return body_str
+
     def fail_with_unrecoverable_exception(self, msg, batch, e):
         """
         Error about exception and pass through exception
@@ -185,7 +204,18 @@ class MetricsSender(Timer):
                                'Retrying' % (len(batch), str(e)))
         raise RecoverableException(e)
 
-    # Encode body with specified compress method gzip/deflate
-    @staticmethod
-    def _encode_body(body):
-        return zlib.compress(('\n'.join(body)).encode('utf-8'))
+
+# Fix GzipFile incompatibility with python 2.6
+# https://mail.python.org/pipermail/tutor/2009-November/072957.html
+class GzipFile(gzip.GzipFile):
+    def __enter__(self, *args):
+        if hasattr(gzip.GzipFile, '__enter__'):
+            return gzip.GzipFile.__enter__(self)
+        else:
+            return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if hasattr(gzip.GzipFile, '__exit__'):
+            return gzip.GzipFile.__exit__(self, exc_type, exc_value, traceback)
+        else:
+            return self.close()
