@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
+try:
+    import Queue as queue
+except ImportError:
+    import queue as queue
 import collectd
 import threading
-import Queue
 from timer import Timer
 
 
@@ -23,7 +26,7 @@ class MetricsBatcher(Timer):
         self.max_batch_interval = max_batch_interval
 
         # init batching queue to 2 * max_batch_size so that producer can still write while flushing
-        self.queue = Queue.Queue(2 * max_batch_size)
+        self.queue = queue.Queue(2 * max_batch_size)
 
         # init lock for flushing
         self.flushing_lock = threading.Lock()

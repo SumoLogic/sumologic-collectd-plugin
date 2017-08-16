@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
+try:
+    import Queue as queue
+except ImportError:
+    import queue as queue
 import collectd
-import Queue
 
 
 class MetricsBuffer:
@@ -19,8 +22,8 @@ class MetricsBuffer:
         and a failed queue for failed requests
         """
 
-        self.processing_queue = Queue.Queue(self._processing_queue_size)
-        self.pending_queue = Queue.Queue(max_requests_to_buffer)
+        self.processing_queue = queue.Queue(self._processing_queue_size)
+        self.pending_queue = queue.Queue(max_requests_to_buffer)
 
         collectd.info('Initialized MetricsBuffer with max_requests_to_buffer %s' %
                       max_requests_to_buffer)
