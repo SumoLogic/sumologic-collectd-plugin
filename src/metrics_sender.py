@@ -34,11 +34,6 @@ class MetricsSender(Timer):
     Fetches metrics batch from MetricsBuffer and post the http request with error handling and retry
     """
 
-    # List of recoverable 4xx http errors. List of http error codes listed here
-    # https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-    _recoverable_http_client_errs = frozenset([404, 408, 429])
-    _recoverable_http_server_errs = frozenset([500, 502, 503, 504, 506, 507, 508, 510, 511])
-
     def __init__(self, conf, met_buf):
         """
         Init MetricsSender with conf and met_buf
@@ -74,7 +69,7 @@ class MetricsSender(Timer):
     def _send_request(self, headers, body):
 
         try:
-            collectd.debug('Sending https request with headers %s, body %s' %(headers, body))
+            collectd.debug('Sending https request with headers %s, body %s' % (headers, body))
 
             response = requests.post(self.conf[ConfigOptions.url],
                                      data=self.encode_body(body), headers=headers)
@@ -82,12 +77,7 @@ class MetricsSender(Timer):
             collectd.info('Sent https request with batch size %d got response code %s' %
                           (len(body), response.status_code))
         except requests.exceptions.HTTPError as e:
-            if e.response.status_code in self._recoverable_http_client_errs:
-                MetricsSender.fail_with_recoverable_exception('Client side HTTP error', body, e)
-            elif e.response.status_code in self._recoverable_http_server_errs:
-                MetricsSender.fail_with_recoverable_exception('Server side HTTP error', body, e)
-            else:
-                self.fail_with_unrecoverable_exception('An HTTP error occurred', body, e)
+            self.fail_with_recoverable_exception('An HTTP error occurred', body, e)
         except requests.exceptions.ConnectionError as e:
             MetricsSender.fail_with_recoverable_exception('A Connection error occurred', body, e)
         except requests.exceptions.Timeout as e:
@@ -105,17 +95,17 @@ class MetricsSender(Timer):
         except requests.exceptions.ContentDecodingError as e:
             self.fail_with_recoverable_exception('Failed to decode response', body, e)
         except requests.exceptions.URLRequired as e:
-            self.fail_with_unrecoverable_exception(
+            self.fail_with_recoverable_exception(
                 'A valid URL is required to make a request', body, e)
         except requests.exceptions.MissingSchema as e:
-            self.fail_with_unrecoverable_exception(
+            self.fail_with_recoverable_exception(
                 'The URL schema (e.g. http or https) is missing', body, e)
         except requests.exceptions.InvalidSchema as e:
-            self.fail_with_unrecoverable_exception('See schemas in defaults.py', body, e)
+            self.fail_with_recoverable_exception('See schemas in defaults.py', body, e)
         except requests.exceptions.InvalidURL as e:
-            self.fail_with_unrecoverable_exception('The URL provided was invalid', body, e)
+            self.fail_with_recoverable_exception('The URL provided was invalid', body, e)
         except Exception as e:
-            self.fail_with_unrecoverable_exception('unknown exception', body, e)
+            self.fail_with_recoverable_exception('unknown exception', body, e)
 
     # Send http request with retries
     def _send_request_with_retries(self, batch):
@@ -183,16 +173,6 @@ class MetricsSender(Timer):
             return encoded_stream.getvalue()
         else:
             return body_str
-
-    def fail_with_unrecoverable_exception(self, msg, batch, e):
-        """
-        Error about exception and pass through exception
-        """
-
-        collectd.error(msg + ': Sending batch with size %s failed with unrecoverable exception %s. '
-                             'Stopping' % (len(batch), str(e)))
-        self.cancel_timer()
-        raise e
 
     @staticmethod
     def fail_with_recoverable_exception(msg, batch, e):
