@@ -188,4 +188,4 @@ class MetricsSender(Timer):
     # Encode body with specified compress method gzip/deflate
     @staticmethod
     def _encode_body(body):
-        return zlib.compress(str('\n'.join(body)))
+        return zlib.compress(('\n'.join(body)).encode('utf-8'))
