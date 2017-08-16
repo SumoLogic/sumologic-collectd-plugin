@@ -34,7 +34,7 @@ def test_parse_dimension_tags():
                              tags_node(ConfigOptions.dimension_tags, tags)])
     met_config.parse_config(config)
 
-    assert met_config.conf[ConfigOptions.dimension_tags] == tuple_to_pair(tags)
+    assert list(met_config.conf[ConfigOptions.dimension_tags]) == list(tuple_to_pair(tags))
 
 
 def test_parse_meta_tags():
@@ -44,7 +44,7 @@ def test_parse_meta_tags():
                              tags_node(ConfigOptions.meta_tags, tags)])
     met_config.parse_config(config)
 
-    assert met_config.conf[ConfigOptions.meta_tags] == tuple_to_pair(tags)
+    assert list(met_config.conf[ConfigOptions.meta_tags]) == list(tuple_to_pair(tags))
 
 
 def test_parse_meta_tags_missing_value():
