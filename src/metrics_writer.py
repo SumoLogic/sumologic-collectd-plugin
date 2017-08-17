@@ -62,7 +62,6 @@ def shutdown_callback():
     # Increase frequency for scheduling http requests
     met_sender.interval = flush_interval
     while time.time() < stop and (not met_buffer.empty()):
-        met_batcher.flush()
         time.sleep(flush_interval)
 
 
