@@ -164,19 +164,7 @@ host=my_mac plugin=cpu plugin_instance=0 type=cpu type_instance=user ds_name=val
 Metrics are batched and compressed before they are sent. The compression algorithm is `deflate`. The algorithm is explained in more detail in [An Explanation of the Deflate Algorithm](https://zlib.net/feldspar.html).
 
 #### Error handling
-Sumo Logic collectd plugin retries failed HTTP requests if the exception is recoverable. If the exception is unrecoverable, it will simply log the error and skip the batch. Several client-side errors and most server side errors are treated as recoverable exceptions. 
-A complete set of Http status code is available here [List of HTTP status codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes). 
-
-The status codes recognized as recoverable exceptions in Sumo Logic collectd plugin are provided below:
-
-##### Client side recoverable exceptions
-Error codes: 404, 408, 429
-
-##### Server side recoverable exceptions
-Error codes: 500, 502, 503, 504, 506, 507, 508, 510, 511
-
-#### Retry failure and buffering
-Sumo Logic collectd plugin retries on recoverable exceptions by default. When all retries fail, the request is either scheduled for a future attempt or dropped based on the buffer status. By default, 1000000 requests are buffered. If the buffer becomes full, then requests failed after all retries will be dropped. Otherwise, it is put back to the processing queue for the next run.
+Sumo Logic collectd plugin retries on exceptions by default. When all retries fail, the request is either scheduled for a future attempt or dropped based on the buffer status. By default, 1000 requests are buffered. If the buffer becomes full, then requests failed after all retries will be dropped. Otherwise, it is put back to the processing queue for the next run.
 
 ### 7. View metrics
 To view the metrics sent by the collectd plugin, log into Sumo Logic and open a Metrics tab. Query for metrics using either dimensions or metadata, e.g. 
