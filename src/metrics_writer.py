@@ -57,6 +57,7 @@ def shutdown_callback():
     """
     now = time.time()
     stop = now + met_config.conf[ConfigOptions.shutdown_max_wait]
+    met_batcher.cancel_timer()
     met_batcher.flush()
     flush_interval = 0.1  # 100 ms
     # Increase frequency for scheduling http requests
