@@ -55,14 +55,10 @@ class MetricsSender(Timer):
         try:
             if batch is not None:
                 self._send_request_with_retries(batch)
-        except RecoverableException as e:
+        except Exception as e:
             collectd.warning('Sending metrics batch %s failed after all retries due to %s. '
                              'Put metrics batch into failed metrics buffer.' % (batch, str(e)))
             self.buffer.put_failed_batch(batch)
-        except Exception as e:
-            collectd.warning('Sending metrics batch %s encountered unrecoverable exception %s.'
-                             % (batch, str(e)))
-            raise e
 
     # Send metrics batch via https with error handling
     # Exceptions defined in https://github.com/requests/requests/blob/master/requests/exceptions.py
