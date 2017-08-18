@@ -36,7 +36,7 @@ Create a [Sumo Logic account](https://www.sumologic.com/) if you don't currently
 Follow these instructions for [setting up an HTTP Source](https://help.sumologic.com/Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source/zGenerate-a-new-URL-for-an-HTTP-Source) in Sumo Logic.  Be sure to obtain the URL endpoint after creating an HTTP Source.
 
 ### 5. Configure Sumo Logic collectd plugin
-Sumo Logic collectd plugin supports following prarmeters. 
+Sumo Logic collectd plugin supports the following parameters.  To configure the plugin, modify collectd's configuration file named `collectd.conf` (e.g. `/etc/collectd/collectd.conf`).
 
 #### Required parameters
 The parameters below are required and must be specified in the module config. 
@@ -57,8 +57,8 @@ The parameters below are not strictly required. It is recommended to set these p
 |Dimensions|Key value pairs that contribute to identifying a metric. Collectd data have intrinsic dimensions with keys as `host`, `plugin`, `plugin_instance`, `type`, `type_instance`, `ds_name`, `ds_type`. The Additional dimensions specified here can help separating metrics collected from this collectd instance with metircs collected from other collectd instances. Dimensions cannot contain [reserved symbols](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-symbols) and [reserved keywords](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-keywords).|Srings in the format of `key1` `val1` `key2` `val2` ... |False|
 |Metadata|Key value pairs that do not contribute to identifying a metric. Metadata are primarily used to assist in searching metrics. Collectd data may have internal metadata. The additional metadata specified here can be used to enrich the existing metadata set. Metadata cannot contain [reserved symbols](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-symbols) and [reserved keywords](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-keywords)|Srings in the format of `key1` `val1` `key2` `val2` ...|False|
 
-#### Advanced parameters
-Sumo Logic collectd plugin also supports some [advanced configurations](https://github.com/SumoLogic/sumologic-collectd-plugin/blob/master/README.md#1-advanced-parameters). These configurations have reasonable defaults and normally do not need to be updated. 
+#### Additional parameters
+For additional configuration parameters, see [Advanced Parameters](https://github.com/SumoLogic/sumologic-collectd-plugin/blob/master/README.md#1-advanced-parameters) below.
 
 #### Example configuration
 An exmple configuration for the plugin is shown below (code to be added to collectd.conf under $collectd_root/etc).
@@ -90,6 +90,15 @@ You can optionally override any of the following settings within the `metrics_wr
 
 	    	Dimensions my_dim_key1 my_dim_val1
 	    	Metadata my_meta_key1 my_meta_val1 my_meta_key2 my_meta_key2
+    	</Module>
+```
+
+To specify multiple `types.db` files, include each path as a quoted string following `TypesDB` parameter:
+
+```
+    	<Module "metrics_writer">
+	    	TypesDB "/path/types1.db" "/path/types2.db" "/path/types3.db"
+      	    	URL "https://<deployment>.sumologic.com/receiver/v1/http/<source_token>"
     	</Module>
 ```
 
@@ -129,10 +138,9 @@ Following terms are reserved for Sumo Logic internal use only.
 ```
 
 ### 6. Start sending metrics
-Start sending metrics by simply running collectd, e.g. (command can be differnt depends on collectd installation)
+Start sending metrics by running collectd, e.g. (command will differ depending on collectd installation)
 ```
- sudo /usr/local/sbin/collectd -f -C /usr/local/etc/collectd.conf
- 
+sudo service collectd start
 ```
 
 #### View logs
