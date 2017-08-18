@@ -66,3 +66,6 @@ class MetricsBuffer:
             collectd.warning('Sending metrics batch %s failed. '
                              'Put it back to processing queue' % batch)
             self.processing_queue.put(batch)
+
+    def empty(self):
+        return self.processing_queue.empty() and self.pending_queue.empty()

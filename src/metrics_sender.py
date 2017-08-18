@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+try:
+    from StringIO import StringIO as CompatibleIO
+except ImportError:
+    from io import BytesIO as CompatibleIO
+import gzip
 import collectd
 import requests
 import zlib
@@ -28,11 +33,6 @@ class MetricsSender(Timer):
     """
     Fetches metrics batch from MetricsBuffer and post the http request with error handling and retry
     """
-
-    # List of recoverable 4xx http errors. List of http error codes listed here
-    # https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-    _recoverable_http_client_errs = frozenset([404, 408, 429])
-    _recoverable_http_server_errs = frozenset([500, 502, 503, 504, 506, 507, 508, 510, 511])
 
     def __init__(self, conf, met_buf):
         """
@@ -69,20 +69,15 @@ class MetricsSender(Timer):
     def _send_request(self, headers, body):
 
         try:
-            collectd.debug('Sending https request with headers %s, body %s' %(headers, body))
+            collectd.debug('Sending https request with headers %s, body %s' % (headers, body))
 
             response = requests.post(self.conf[ConfigOptions.url],
-                                     data=MetricsSender._encode_body(body), headers=headers)
+                                     data=self.encode_body(body), headers=headers)
 
             collectd.info('Sent https request with batch size %d got response code %s' %
                           (len(body), response.status_code))
         except requests.exceptions.HTTPError as e:
-            if e.response.status_code in self._recoverable_http_client_errs:
-                MetricsSender.fail_with_recoverable_exception('Client side HTTP error', body, e)
-            elif e.response.status_code in self._recoverable_http_server_errs:
-                MetricsSender.fail_with_recoverable_exception('Server side HTTP error', body, e)
-            else:
-                self.fail_with_unrecoverable_exception('An HTTP error occurred', body, e)
+            self.fail_with_recoverable_exception('An HTTP error occurred', body, e)
         except requests.exceptions.ConnectionError as e:
             MetricsSender.fail_with_recoverable_exception('A Connection error occurred', body, e)
         except requests.exceptions.Timeout as e:
@@ -100,17 +95,17 @@ class MetricsSender(Timer):
         except requests.exceptions.ContentDecodingError as e:
             self.fail_with_recoverable_exception('Failed to decode response', body, e)
         except requests.exceptions.URLRequired as e:
-            self.fail_with_unrecoverable_exception(
+            self.fail_with_recoverable_exception(
                 'A valid URL is required to make a request', body, e)
         except requests.exceptions.MissingSchema as e:
-            self.fail_with_unrecoverable_exception(
+            self.fail_with_recoverable_exception(
                 'The URL schema (e.g. http or https) is missing', body, e)
         except requests.exceptions.InvalidSchema as e:
-            self.fail_with_unrecoverable_exception('See schemas in defaults.py', body, e)
+            self.fail_with_recoverable_exception('See schemas in defaults.py', body, e)
         except requests.exceptions.InvalidURL as e:
-            self.fail_with_unrecoverable_exception('The URL provided was invalid', body, e)
+            self.fail_with_recoverable_exception('The URL provided was invalid', body, e)
         except Exception as e:
-            self.fail_with_unrecoverable_exception('unknown exception', body, e)
+            self.fail_with_recoverable_exception('unknown exception', body, e)
 
     # Send http request with retries
     def _send_request_with_retries(self, batch):
@@ -165,15 +160,19 @@ class MetricsSender(Timer):
         return [gen_tag(k, v) for k, v in
                 self.conf[ConfigOptions.meta_tags]]
 
-    def fail_with_unrecoverable_exception(self, msg, batch, e):
-        """
-        Error about exception and pass through exception
-        """
-
-        collectd.error(msg + ': Sending batch with size %s failed with unrecoverable exception %s. '
-                             'Stopping' % (len(batch), str(e)))
-        self.cancel_timer()
-        raise e
+    # Encode body with specified compress method gzip/deflate
+    def encode_body(self, body):
+        body_str = '\n'.join(body).encode('utf-8')
+        content_encoding = self.conf[ConfigOptions.content_encoding]
+        if content_encoding == 'deflate':
+            return zlib.compress(body_str)
+        elif content_encoding == 'gzip':
+            encoded_stream = CompatibleIO()
+            with GzipFile(fileobj=encoded_stream, mode="w") as f:
+                f.write(body_str)
+            return encoded_stream.getvalue()
+        else:
+            return body_str
 
     @staticmethod
     def fail_with_recoverable_exception(msg, batch, e):
@@ -185,7 +184,18 @@ class MetricsSender(Timer):
                                'Retrying' % (len(batch), str(e)))
         raise RecoverableException(e)
 
-    # Encode body with specified compress method gzip/deflate
-    @staticmethod
-    def _encode_body(body):
-        return zlib.compress(('\n'.join(body)).encode('utf-8'))
+
+# Fix GzipFile incompatibility with python 2.6
+# https://mail.python.org/pipermail/tutor/2009-November/072957.html
+class GzipFile(gzip.GzipFile):
+    def __enter__(self, *args):
+        if hasattr(gzip.GzipFile, '__enter__'):
+            return gzip.GzipFile.__enter__(self)
+        else:
+            return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if hasattr(gzip.GzipFile, '__exit__'):
+            return gzip.GzipFile.__exit__(self, exc_type, exc_value, traceback)
+        else:
+            return self.close()

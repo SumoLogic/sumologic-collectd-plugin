@@ -31,15 +31,19 @@ class ConfigOptions:
     retry_jitter_max = 'RetryJitterMax'
     # Memory option
     max_requests_to_buffer = 'MaxRequestsToBuffer'
-    # Static options, not configurable yet
-    content_type = 'ContentType'
+    # Content encoding option
     content_encoding = 'ContentEncoding'
+    # Static option, not configurable yet. Default is application/vnd.sumologic.carbon2
+    content_type = 'ContentType'
+    shutdown_max_wait = "ShutdownMaxWait"  # seconds
 
 
 class MetricsConfig:
     """
     Configuration for sumologic collectd plugin
     """
+
+    _content_encoding_set = frozenset(['deflate', 'gzip', 'none'])
 
     def __init__(self):
         """
@@ -63,8 +67,9 @@ class MetricsConfig:
             ConfigOptions.retry_jitter_min: 0,
             ConfigOptions.retry_jitter_max: 10,
             ConfigOptions.max_requests_to_buffer: 1000,
+            ConfigOptions.content_encoding: 'deflate',
             ConfigOptions.content_type: 'application/vnd.sumologic.carbon2',
-            ConfigOptions.content_encoding: 'deflate'
+            ConfigOptions.shutdown_max_wait: 5
         }
 
     def parse_config(self, config):
@@ -105,6 +110,15 @@ class MetricsConfig:
                     i = int(child.values[0])
                     validate_non_negative(i, child.key)
                     self.conf[child.key] = i
+                elif child.key == ConfigOptions.content_encoding:
+                    s = child.values[0]
+                    validate_non_empty(s, child.key)
+                    validate_string_type(s, child.key, 'Value', 'Key')
+                    content_encoding = s.lower()
+                    if content_encoding not in self._content_encoding_set:
+                        raise Exception('Unknown ContentEncoding %s specified. ContentEncoding '
+                                        'must be deflate, gzip, or none' % s)
+                    self.conf[child.key] = content_encoding
                 else:
                     collectd.warning('Unknown configuration %s, ignored.' % child.key)
         except Exception as e:
