@@ -146,7 +146,7 @@ def test_post_client_recoverable_http_error():
 
 
 def test_post_server_recoverable_http_error():
-    error_codes = [500, 502, 503, 504, 506, 507, 508, 510, 511]
+    error_codes = [500, 501, 502]
 
     for error_code in error_codes:
         reset_test_env()
@@ -160,15 +160,6 @@ def test_post_server_recoverable_http_error():
             assert_utf8_equal(met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
 
 
-def test_post_unrecoverable_http_error():
-    request_exception = requests.exceptions.RequestException()
-    exception_cases = [requests.exceptions.HTTPError(request_exception)]
-
-    for exception_case in exception_cases:
-        reset_test_env()
-        helper_test_post_unrecoverable_exception(exception_case, "unknown_status_code")
-
-
 def test_post_recoverable_requests_exception():
     request_exception = requests.exceptions.RequestException()
     exception_cases = [requests.exceptions.ConnectionError(request_exception),
@@ -177,7 +168,12 @@ def test_post_recoverable_requests_exception():
                        requests.exceptions.StreamConsumedError(request_exception),
                        requests.exceptions.RetryError(request_exception),
                        requests.exceptions.ChunkedEncodingError(request_exception),
-                       requests.exceptions.ContentDecodingError(request_exception)]
+                       requests.exceptions.ContentDecodingError(request_exception),
+                       requests.exceptions.URLRequired(request_exception),
+                       requests.exceptions.MissingSchema(request_exception),
+                       requests.exceptions.InvalidSchema(request_exception),
+                       requests.exceptions.InvalidURL(request_exception),
+                       Exception('unknown_exception')]
 
     for exception_case in exception_cases:
         reset_test_env()
@@ -187,19 +183,6 @@ def test_post_recoverable_requests_exception():
                                                "unknown_status_code", 5)
         for i in range(10):
             assert_utf8_equal(met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
-
-
-def test_post_unrecoverable_requests_exception():
-    request_exception = requests.exceptions.RequestException()
-    exception_cases = [requests.exceptions.URLRequired(request_exception),
-                       requests.exceptions.MissingSchema(request_exception),
-                       requests.exceptions.InvalidSchema(request_exception),
-                       requests.exceptions.InvalidURL(request_exception),
-                       Exception('unknown_exception')]
-
-    for exception_case in exception_cases:
-        reset_test_env()
-        helper_test_post_unrecoverable_exception(exception_case, "unknown_status_code")
 
 
 def test_post_fail_after_retries_with_buffer_full():

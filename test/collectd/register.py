@@ -6,9 +6,9 @@ def register_init(func):
     pass
 
 
-def register_read(func):
+def register_write(func):
     pass
 
 
-def register_write(func):
+def register_shutdown(func):
     pass
