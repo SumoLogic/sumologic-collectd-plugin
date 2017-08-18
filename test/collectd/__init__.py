@@ -1,3 +1,3 @@
-from register import (register_config, register_init, register_read, register_write)
+from . register import (register_config, register_init, register_write, register_shutdown)
 
-from logger import (debug, info, warning, error)
+from . logger import (debug, info, warning, error)

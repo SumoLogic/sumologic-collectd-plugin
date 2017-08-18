@@ -31,9 +31,37 @@ def test_post_normal_no_additional_header():
         HeaderKeys.content_encoding: helper.conf[ConfigOptions.content_encoding]
     }
     for i in range(10):
-        assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % i
+        assert_utf8_equal(helper.conf, requests.mock_server.data[i], 'batch_%s' % i)
 
     met_sender.cancel_timer()
+
+
+def test_post_different_content_encodings():
+    met_buffer = MetricsBuffer(10)
+    deflate_config = {
+        'content_encoding': 'deflate'
+    }
+    gzip_config = {
+        'content_encoding': 'gzip'
+    }
+    none_config = {
+        'content_encoding': 'none'
+    }
+    configs = [deflate_config, gzip_config, none_config]
+
+    for config in configs:
+        reset_test_env()
+        met_config = MetricsConfig()
+        Helper.parse_configs(met_config, config)
+        for i in range(10):
+            met_buffer.put_pending_batch(['batch_%s' % i])
+
+        met_sender = MetricsSender(met_config.conf, met_buffer)
+        sleep_helper(10, 0.100, 100)
+
+        for i in range(10):
+            assert_utf8_equal(met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
+        met_sender.cancel_timer()
 
 
 def test_post_normal_additional_keys():
@@ -64,7 +92,7 @@ def test_post_normal_additional_keys():
     }
 
     for i in range(10):
-        assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % i
+        assert_utf8_equal(met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
 
     met_sender.cancel_timer()
 
@@ -98,7 +126,7 @@ def test_post_normal_addition_dimensions_metadata():
     }
 
     for i in range(10):
-        assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % i
+        assert_utf8_equal(met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
 
     met_sender.cancel_timer()
 
@@ -110,31 +138,26 @@ def test_post_client_recoverable_http_error():
         exception_to_raise = requests.exceptions.HTTPError(requests.exceptions.RequestException())
         requests.mock_response.status_code = error_codes
         met_buffer = MetricsBuffer(10)
-        helper_test_post_recoverable_exception(met_buffer, exception_to_raise, error_code, 5)
+        met_config = MetricsConfig()
+        helper_test_post_recoverable_exception(met_config, met_buffer, exception_to_raise,
+                                               error_code, 5)
         for i in range(10):
-            assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % i
+            assert_utf8_equal(met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
 
 
 def test_post_server_recoverable_http_error():
-    error_codes = [500, 502, 503, 504, 506, 507, 508, 510, 511]
+    error_codes = [500, 501, 502]
 
     for error_code in error_codes:
         reset_test_env()
         exception_to_raise = requests.exceptions.HTTPError(requests.exceptions.RequestException())
         requests.mock_response.status_code = error_code
         met_buffer = MetricsBuffer(10)
-        helper_test_post_recoverable_exception(met_buffer, exception_to_raise, error_code, 5)
+        met_config = MetricsConfig()
+        helper_test_post_recoverable_exception(met_config, met_buffer, exception_to_raise,
+                                               error_code, 5)
         for i in range(10):
-            assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % i
-
-
-def test_post_unrecoverable_http_error():
-    request_exception = requests.exceptions.RequestException()
-    exception_cases = [requests.exceptions.HTTPError(request_exception)]
-
-    for exception_case in exception_cases:
-        reset_test_env()
-        helper_test_post_unrecoverable_exception(exception_case, "unknown_status_code")
+            assert_utf8_equal(met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
 
 
 def test_post_recoverable_requests_exception():
@@ -145,19 +168,8 @@ def test_post_recoverable_requests_exception():
                        requests.exceptions.StreamConsumedError(request_exception),
                        requests.exceptions.RetryError(request_exception),
                        requests.exceptions.ChunkedEncodingError(request_exception),
-                       requests.exceptions.ContentDecodingError(request_exception)]
-
-    for exception_case in exception_cases:
-        reset_test_env()
-        met_buffer = MetricsBuffer(10)
-        helper_test_post_recoverable_exception(met_buffer, exception_case, "unknown_status_code", 5)
-        for i in range(10):
-            assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % i
-
-
-def test_post_unrecoverable_requests_exception():
-    request_exception = requests.exceptions.RequestException()
-    exception_cases = [requests.exceptions.URLRequired(request_exception),
+                       requests.exceptions.ContentDecodingError(request_exception),
+                       requests.exceptions.URLRequired(request_exception),
                        requests.exceptions.MissingSchema(request_exception),
                        requests.exceptions.InvalidSchema(request_exception),
                        requests.exceptions.InvalidURL(request_exception),
@@ -165,27 +177,34 @@ def test_post_unrecoverable_requests_exception():
 
     for exception_case in exception_cases:
         reset_test_env()
-        helper_test_post_unrecoverable_exception(exception_case, "unknown_status_code")
+        met_buffer = MetricsBuffer(10)
+        met_config = MetricsConfig()
+        helper_test_post_recoverable_exception(met_config, met_buffer, exception_case,
+                                               "unknown_status_code", 5)
+        for i in range(10):
+            assert_utf8_equal(met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
 
 
 def test_post_fail_after_retries_with_buffer_full():
     met_buffer = MetricsBuffer(10)
+    met_config = MetricsConfig()
     met_buffer.put_pending_batch(['batch_first'])
     exception_to_raise = requests.exceptions.HTTPError(requests.exceptions.RequestException())
-    helper_test_post_recoverable_exception(met_buffer, exception_to_raise, 429, 10)
+    helper_test_post_recoverable_exception(met_config, met_buffer, exception_to_raise, 429, 10)
     for i in range(10):
-        assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % i
+        assert_utf8_equal(met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
 
 
 def test_post_fail_after_retries_with_buffer_not_full():
     met_buffer = MetricsBuffer(20)
+    met_config = MetricsConfig()
     met_buffer.put_pending_batch(['batch_first'])
     exception_to_raise = requests.exceptions.HTTPError(requests.exceptions.RequestException())
-    helper_test_post_recoverable_exception(met_buffer, exception_to_raise, 429, 10)
+    helper_test_post_recoverable_exception(met_config, met_buffer, exception_to_raise, 429, 10)
 
-    assert zlib.decompress(requests.mock_server.data[0]) == 'batch_first'
+    assert_utf8_equal(met_config.conf, requests.mock_server.data[0], 'batch_first')
     for i in range(1, 10):
-        assert zlib.decompress(requests.mock_server.data[i]) == 'batch_%s' % (i - 1)
+        assert_utf8_equal(met_config.conf, requests.mock_server.data[i], 'batch_%s' % (i - 1))
 
 
 #
@@ -203,9 +222,8 @@ def reset_test_env():
     requests.mock_response.reset()
 
 
-def helper_test_post_recoverable_exception(met_buffer, exception, error_code,
+def helper_test_post_recoverable_exception(met_config, met_buffer, exception, error_code,
                                            stop_raise_exception_after):
-    met_config = MetricsConfig()
 
     configs = {
         'retry_initial_delay': '0',
@@ -258,3 +276,14 @@ def sleep_helper(expected_data_size, sleep_interval, max_tries):
             and current_retry < max_tries:
         time.sleep(sleep_interval)
         current_retry += 1
+
+
+def assert_utf8_equal(config, compressed, original):
+    content_encoding = config[ConfigOptions.content_encoding]
+    original_str = original.encode('utf-8')
+    if content_encoding == 'deflate':
+        assert zlib.decompress(compressed) == original_str
+    elif content_encoding == 'gzip':
+        assert zlib.decompress(compressed, 16+zlib.MAX_WBITS) == original_str
+    else:
+        assert compressed == original_str
