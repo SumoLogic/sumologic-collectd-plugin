@@ -19,14 +19,10 @@ brew install collectd
 sudo apt-get install collectd
 ```
 
-### 3. Install Sumo Logic collectd plugin into collectd
-The Sumo Logic collectd plugin module can be saved in a directory anywhere on your system. Here is an example of installing this plugin into the collectd `lib` directory.
+### 3. Download the Sumo Logic collectd plugin
+The Sumo Logic collectd plugin module can be saved in a directory anywhere on your system.
 ```
-1. Go to collectd root dir (e.g. /opt/collectd on Linux, or /usr/local/Cellar/collectd/5.7.2 on Mac OSX)
-2. cd ./lib
-3. mkdir collectd_python.plugin
-4. cd collectd_python.plugin
-5. git clone git@github.com:SumoLogic/sumologic-collectd-plugin.git
+git clone https://github.com/SumoLogic/sumologic-collectd-plugin.git
 ```
 Sumo Logic collectd plugin uses [requests](http://docs.python-requests.org/en/master/) and [retry](https://pypi.python.org/pypi/retrying) libraries for sumbitting https requests. If they are not installed. Install them using pip.
 ```
@@ -34,7 +30,7 @@ sudo pip install requests
 sudo pip install retry
 ```
 
-### 4. Create HTTP Metrics Source in Sumo Logic
+### 4. Create an HTTP Metrics Source in Sumo Logic
 Create a [Sumo Logic account](https://www.sumologic.com/) if you don't currently have one.
 
 Follow these instructions for [setting up an HTTP Source](https://help.sumologic.com/Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source/zGenerate-a-new-URL-for-an-HTTP-Source) in Sumo Logic.  Be sure to obtain the URL endpoint after creating an HTTP Source.
@@ -43,15 +39,15 @@ Follow these instructions for [setting up an HTTP Source](https://help.sumologic
 Sumo Logic collectd plugin supports following prarmeters. 
 
 #### Required parameters
-The paramers below are required and must be specified in the module config. 
+The parameters below are required and must be specified in the module config. 
 
 |Name|Description|Type|Required|
 |:---|:---|:---|:---|
 |[URL](https://help.sumologic.com/Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source/zGenerate-a-new-URL-for-an-HTTP-Source)|The URL to send logs to. This should be given when [creating the HTTP Source](https://github.com/SumoLogic/sumologic-collectd-plugin/blob/master/README.md#4-create-http-metrics-source-in-sumo-logic) on Sumo Logic web app.|String|True|
-|TypesDB| Data-set specification for collectd raw data. More information about types.db is available in [collectd types.db](https://collectd.org/documentation/manpages/types.db.5.shtml). Collectd ships with a default types.db file that is in the directory of collectd root, `share/collectd/types.db` (e.g. /usr/local/Cellar/collectd/5.7.2/share/collectd/types.db on Mac OSX).|Strings in the format of `types1.db` `types2.db` ...|True|
+|TypesDB| Data-set specification for collectd raw data. More information about types.db is available in [collectd types.db](https://collectd.org/documentation/manpages/types.db.5.shtml). Collectd ships with a default types.db file that is in the directory of collectd root, for example `/usr/share/collectd/types.db`.|Strings in the format of `types1.db` `types2.db` ...|True|
 
 #### Basic parameters
-The paramers below are not strictly required. It is recommended to set these parameters as they prove to be extremely useful to categorize your metrics and search by them.
+The parameters below are not strictly required. It is recommended to set these parameters as they prove to be extremely useful to categorize your metrics and search by them.
 
 |Name|Description|Type|Required|
 |:---|:---|:---|:---|
@@ -69,7 +65,7 @@ An exmple configuration for the plugin is shown below (code to be added to colle
 ```
 LoadPlugin python
 <Plugin python>
-    	ModulePath "/path/to/your/collectd_python.plugin/sumologic-collectd-plugin/src"
+    	ModulePath "/path/to/sumologic-collectd-plugin/src"
     	LogTraces true
     	Interactive false
     	Import "metrics_writer"
@@ -191,7 +187,7 @@ You can configure the Sumo Logic collectd plugin by overriding default values fo
 |RetryJitterMin|Sumo Logic collectd output plugin retries on recoverable exceptions. RetryJitterMin specifies the minimum extra seconds added to delay between attempts. More information can be found in the [retry library](https://pypi.python.org/pypi/retry)|Non-negative Integer|0|Second|
 |RetryJitterMax|Sumo Logic collectd output plugin retries on recoverable exceptions. RetryJitterMax specifies the maximum extra seconds added to delay between attempts. More information can be found in the [retry library](https://pypi.python.org/pypi/retry)|Non-negative Integer|10|Second|
 
-### 2. Engine under the hood
+### 2. Plugin Architecture
 <pre>
 Collectd		MetricsConverter		  MetricsBatcher	        MetricsBuffer				  MetricsSender
 --------	    --------------------------		  --------------	   ------------------------			-----------------
