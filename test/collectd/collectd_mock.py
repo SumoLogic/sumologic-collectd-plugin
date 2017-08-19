@@ -1,7 +1,8 @@
 from . import register
 from . import logger
 
-class collectd_mock:
+
+class CollecdMock:
 
     def debug(self, msg):
         logger.debug(msg)
@@ -20,9 +21,6 @@ class collectd_mock:
 
     def register_init(self, func):
         register.register_init(func)
-
-    def register_read(self, func):
-        register.register_read(func)
 
     def register_write(self, func):
         register.register_write(func)

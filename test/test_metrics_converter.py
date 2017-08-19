@@ -5,7 +5,7 @@ sys.path.append(cwd + '/src')
 import pytest
 from metrics_converter import gen_tag, tags_to_str, convert_to_metrics
 from collectd.values import Values
-from collectd.helper import Helper
+from collectd import Helper
 
 
 def test_gen_tag():

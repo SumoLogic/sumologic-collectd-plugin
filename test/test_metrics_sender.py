@@ -11,17 +11,17 @@ from metrics_config import MetricsConfig, ConfigOptions
 from metrics_sender import MetricsSender, HeaderKeys
 from metrics_buffer import MetricsBuffer
 from collectd.collectd_config import CollectdConfig, ConfigNode
-from collectd.helper import Helper
+from collectd import Helper
 
 
 def test_post_normal_no_additional_header():
-    met_buffer = MetricsBuffer(10)
+    met_buffer = Helper.get_buffer(10)
     helper = Helper()
 
     for i in range(10):
         met_buffer.put_pending_batch(['batch_%s' % i])
 
-    met_sender = MetricsSender(helper.conf, met_buffer)
+    met_sender = Helper.get_sender(helper.conf, met_buffer)
 
     sleep_helper(10, 0.100, 100)
 
@@ -37,7 +37,7 @@ def test_post_normal_no_additional_header():
 
 
 def test_post_different_content_encodings():
-    met_buffer = MetricsBuffer(10)
+    met_buffer = Helper.get_buffer(10)
     deflate_config = {
         'content_encoding': 'deflate'
     }
@@ -51,12 +51,12 @@ def test_post_different_content_encodings():
 
     for config in configs:
         reset_test_env()
-        met_config = MetricsConfig()
+        met_config = Helper.default_config()
         Helper.parse_configs(met_config, config)
         for i in range(10):
             met_buffer.put_pending_batch(['batch_%s' % i])
 
-        met_sender = MetricsSender(met_config.conf, met_buffer)
+        met_sender = Helper.get_sender(met_config.conf, met_buffer)
         sleep_helper(10, 0.100, 100)
 
         for i in range(10):
@@ -65,8 +65,8 @@ def test_post_different_content_encodings():
 
 
 def test_post_normal_additional_keys():
-    met_buffer = MetricsBuffer(10)
-    met_config = MetricsConfig()
+    met_buffer = Helper.get_buffer(10)
+    met_config = Helper.default_config()
 
     configs = {
         'source_name': 'test_source',
@@ -78,7 +78,7 @@ def test_post_normal_additional_keys():
     for i in range(10):
         met_buffer.put_pending_batch(['batch_%s' % i])
 
-    met_sender = MetricsSender(met_config.conf, met_buffer)
+    met_sender = Helper.get_sender(met_config.conf, met_buffer)
 
     sleep_helper(10, 0.100, 100)
 
@@ -98,8 +98,8 @@ def test_post_normal_additional_keys():
 
 
 def test_post_normal_addition_dimensions_metadata():
-    met_buffer = MetricsBuffer(10)
-    met_config = MetricsConfig()
+    met_buffer = Helper.get_buffer(10)
+    met_config = Helper.default_config()
 
     configs = {
         'dimension_tags': ('dim_key1', 'dim_val1', 'dim_key2', 'dim_val2'),
@@ -113,7 +113,7 @@ def test_post_normal_addition_dimensions_metadata():
     for i in range(10):
         met_buffer.put_pending_batch(['batch_%s' % i])
 
-    met_sender = MetricsSender(met_config.conf, met_buffer)
+    met_sender = Helper.get_sender(met_config.conf, met_buffer)
 
     sleep_helper(10, 0.100, 100)
 
@@ -137,8 +137,8 @@ def test_post_client_recoverable_http_error():
         reset_test_env()
         exception_to_raise = requests.exceptions.HTTPError(requests.exceptions.RequestException())
         requests.mock_response.status_code = error_codes
-        met_buffer = MetricsBuffer(10)
-        met_config = MetricsConfig()
+        met_buffer = Helper.get_buffer(10)
+        met_config = Helper.default_config()
         helper_test_post_recoverable_exception(met_config, met_buffer, exception_to_raise,
                                                error_code, 5)
         for i in range(10):
@@ -152,8 +152,8 @@ def test_post_server_recoverable_http_error():
         reset_test_env()
         exception_to_raise = requests.exceptions.HTTPError(requests.exceptions.RequestException())
         requests.mock_response.status_code = error_code
-        met_buffer = MetricsBuffer(10)
-        met_config = MetricsConfig()
+        met_buffer = Helper.get_buffer(10)
+        met_config = Helper.default_config()
         helper_test_post_recoverable_exception(met_config, met_buffer, exception_to_raise,
                                                error_code, 5)
         for i in range(10):
@@ -177,8 +177,8 @@ def test_post_recoverable_requests_exception():
 
     for exception_case in exception_cases:
         reset_test_env()
-        met_buffer = MetricsBuffer(10)
-        met_config = MetricsConfig()
+        met_buffer = Helper.get_buffer(10)
+        met_config = Helper.default_config()
         helper_test_post_recoverable_exception(met_config, met_buffer, exception_case,
                                                "unknown_status_code", 5)
         for i in range(10):
@@ -186,8 +186,8 @@ def test_post_recoverable_requests_exception():
 
 
 def test_post_fail_after_retries_with_buffer_full():
-    met_buffer = MetricsBuffer(10)
-    met_config = MetricsConfig()
+    met_buffer = Helper.get_buffer(10)
+    met_config = Helper.default_config()
     met_buffer.put_pending_batch(['batch_first'])
     exception_to_raise = requests.exceptions.HTTPError(requests.exceptions.RequestException())
     helper_test_post_recoverable_exception(met_config, met_buffer, exception_to_raise, 429, 10)
@@ -196,8 +196,8 @@ def test_post_fail_after_retries_with_buffer_full():
 
 
 def test_post_fail_after_retries_with_buffer_not_full():
-    met_buffer = MetricsBuffer(20)
-    met_config = MetricsConfig()
+    met_buffer = Helper.get_buffer(20)
+    met_config = Helper.default_config()
     met_buffer.put_pending_batch(['batch_first'])
     exception_to_raise = requests.exceptions.HTTPError(requests.exceptions.RequestException())
     helper_test_post_recoverable_exception(met_config, met_buffer, exception_to_raise, 429, 10)
@@ -241,7 +241,7 @@ def helper_test_post_recoverable_exception(met_config, met_buffer, exception, er
     for i in range(10):
         met_buffer.put_pending_batch(['batch_%s' % i])
 
-    met_sender = MetricsSender(met_config.conf, met_buffer)
+    met_sender = Helper.get_sender(met_config.conf, met_buffer)
 
     sleep_helper(10, 0.100, 100)
 
@@ -256,7 +256,7 @@ def helper_test_post_recoverable_exception(met_config, met_buffer, exception, er
 
 def helper_test_post_unrecoverable_exception(exception, error_code):
     with pytest.raises(Exception) as e:
-        met_buffer = MetricsBuffer(10)
+        met_buffer = Helper.get_buffer(10)
         helper = Helper()
 
         requests.mock_response.set(error_code)
@@ -265,7 +265,7 @@ def helper_test_post_unrecoverable_exception(exception, error_code):
         for i in range(10):
             met_buffer.put_pending_batch(['batch_%s' % i])
 
-        MetricsSender(helper.conf, met_buffer)
+        Helper.get_sender(helper.conf, met_buffer)
 
     assert e.type == type(exception)
 
