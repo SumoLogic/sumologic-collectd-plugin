@@ -5,7 +5,6 @@ try:
 except ImportError:
     from io import BytesIO as CompatibleIO
 import gzip
-import collectd
 import requests
 import zlib
 from retry.api import retry_call
@@ -15,7 +14,7 @@ from metrics_converter import gen_tag, tags_to_str
 from timer import Timer
 
 
-class HeaderKeys:
+class HeaderKeys(object):
     """
     Http header keys
     """
@@ -34,13 +33,14 @@ class MetricsSender(Timer):
     Fetches metrics batch from MetricsBuffer and post the http request with error handling and retry
     """
 
-    def __init__(self, conf, met_buf):
+    def __init__(self, conf, met_buf, collectd):
         """
         Init MetricsSender with conf and met_buf
         """
 
         Timer.__init__(self, conf[ConfigOptions.http_post_interval], self._request_scheduler)
 
+        self.collectd = collectd
         self.conf = conf
         self.buffer = met_buf
         self.http_headers = self._build_header()
@@ -56,8 +56,8 @@ class MetricsSender(Timer):
             if batch is not None:
                 self._send_request_with_retries(batch)
         except Exception as e:
-            collectd.warning('Sending metrics batch %s failed after all retries due to %s. '
-                             'Put metrics batch into failed metrics buffer.' % (batch, str(e)))
+            self.collectd.warning('Sending metrics batch %s failed after all retries due to %s. '
+                                  'Put metrics batch into failed metrics buffer.' % (batch, str(e)))
             self.buffer.put_failed_batch(batch)
 
     # Send metrics batch via https with error handling
@@ -65,21 +65,21 @@ class MetricsSender(Timer):
     def _send_request(self, headers, body):
 
         try:
-            collectd.debug('Sending https request with headers %s, body %s' % (headers, body))
+            self.collectd.debug('Sending https request with headers %s, body %s' % (headers, body))
 
             response = requests.post(self.conf[ConfigOptions.url],
                                      data=self.encode_body(body), headers=headers)
 
-            collectd.info('Sent https request with batch size %d got response code %s' %
-                          (len(body), response.status_code))
+            self.collectd.info('Sent https request with batch size %d got response code %s' %
+                               (len(body), response.status_code))
         except requests.exceptions.HTTPError as e:
             self.fail_with_recoverable_exception('An HTTP error occurred', body, e)
         except requests.exceptions.ConnectionError as e:
-            MetricsSender.fail_with_recoverable_exception('A Connection error occurred', body, e)
+            self.fail_with_recoverable_exception('A Connection error occurred', body, e)
         except requests.exceptions.Timeout as e:
-            MetricsSender.fail_with_recoverable_exception('The request timed out', body, e)
+            self.fail_with_recoverable_exception('The request timed out', body, e)
         except requests.exceptions.TooManyRedirects as e:
-            MetricsSender.fail_with_recoverable_exception('Too many redirects', body, e)
+            self.fail_with_recoverable_exception('Too many redirects', body, e)
         except requests.exceptions.StreamConsumedError as e:
             self.fail_with_recoverable_exception(
                 'The content for this response was already consumed', body, e)
@@ -170,14 +170,13 @@ class MetricsSender(Timer):
         else:
             return body_str
 
-    @staticmethod
-    def fail_with_recoverable_exception(msg, batch, e):
+    def fail_with_recoverable_exception(self, msg, batch, e):
         """
         Warn about exception and raise RecoverableException
         """
 
-        collectd.warning(msg + ': Sending batch with size %s failed with recoverable exception %s. '
-                               'Retrying' % (len(batch), str(e)))
+        self.collectd.warning(msg + ': Sending batch with size %s failed with recoverable '
+                                    'exception %s. Retrying' % (len(batch), str(e)))
         raise RecoverableException(e)
 
 
