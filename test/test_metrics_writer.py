@@ -54,3 +54,8 @@ def test_shutdown_call_back():
 
     assert metrics_writer.met_buffer.empty() == True
 
+
+def test_register():
+    metrics_writer = Helper.default_writer()
+    metrics_writer.register()
+

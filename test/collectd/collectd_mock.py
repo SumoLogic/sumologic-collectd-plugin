@@ -24,3 +24,6 @@ class CollecdMock:
 
     def register_write(self, func):
         register.register_write(func)
+
+    def register_shutdown(self, func):
+        register.register_shutdown(func)

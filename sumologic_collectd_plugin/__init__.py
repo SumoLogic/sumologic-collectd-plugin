@@ -1,10 +1,10 @@
-try:
+try:  # pragma: no cover
     import collectd
-    collectd_present = True  # pragma: no cover
+    collectd_present = True
 except (ImportError, AttributeError):
     collectd_present = False
 
-from . metrics_writer import MetricsWriter
+from . metrics_writer import MetricsWriter  # pragma: no cover
 
 
 def config_callback(conf):  # pragma: no cover
