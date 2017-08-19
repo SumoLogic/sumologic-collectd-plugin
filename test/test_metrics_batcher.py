@@ -3,8 +3,6 @@ cwd = os.getcwd()
 import sys
 sys.path.append(cwd + '/src')
 import time
-from metrics_buffer import MetricsBuffer
-from metrics_batcher import MetricsBatcher
 from collectd import Helper
 
 

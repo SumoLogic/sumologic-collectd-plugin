@@ -6,6 +6,7 @@ from metrics_config import MetricsConfig, ConfigOptions
 from metrics_buffer import MetricsBuffer
 from metrics_batcher import MetricsBatcher
 from metrics_sender import MetricsSender
+from metrics_writer import MetricsWriter
 from collectd.collectd_config import CollectdConfig, ConfigNode
 from collectd import CollecdMock
 
@@ -42,6 +43,10 @@ class Helper:
     @staticmethod
     def default_buffer():
         return MetricsBuffer(10, CollecdMock())
+
+    @staticmethod
+    def default_writer():
+        return MetricsWriter(CollecdMock())
 
     @staticmethod
     def types_db_node():

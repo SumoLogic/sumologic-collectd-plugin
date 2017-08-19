@@ -2,7 +2,6 @@ import os
 cwd = os.getcwd()
 import sys
 sys.path.append(cwd + '/src')
-from metrics_buffer import MetricsBuffer
 from collectd import Helper
 
 

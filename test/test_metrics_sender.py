@@ -7,9 +7,8 @@ import pytest
 import requests
 import time
 import zlib
-from metrics_config import MetricsConfig, ConfigOptions
-from metrics_sender import MetricsSender, HeaderKeys
-from metrics_buffer import MetricsBuffer
+from metrics_config import ConfigOptions
+from metrics_sender import HeaderKeys
 from collectd.collectd_config import CollectdConfig, ConfigNode
 from collectd import Helper
 
