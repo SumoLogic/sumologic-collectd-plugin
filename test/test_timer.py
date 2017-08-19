@@ -1,7 +1,7 @@
 import os
 cwd = os.getcwd()
 import sys
-sys.path.append(cwd + '/src')
+sys.path.append(cwd + '/sumologic_collectd_plugin')
 from timer import Timer
 
 

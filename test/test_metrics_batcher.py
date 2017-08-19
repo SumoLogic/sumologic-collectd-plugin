@@ -1,7 +1,3 @@
-import os
-cwd = os.getcwd()
-import sys
-sys.path.append(cwd + '/src')
 import time
 from collectd import Helper
 

@@ -1,7 +1,7 @@
 import os
 cwd = os.getcwd()
 import sys
-sys.path.append(cwd + '/src')
+sys.path.append(cwd + '/sumologic_collectd_plugin')
 import pytest
 from metrics_converter import gen_tag, tags_to_str, convert_to_metrics
 from collectd.values import Values

@@ -3,7 +3,7 @@
 import os
 cwd = os.getcwd()
 import sys
-sys.path.append(cwd + '/src')
+sys.path.append(cwd + '/sumologic_collectd_plugin')
 
 import pytest
 from metrics_config import MetricsConfig, ConfigOptions

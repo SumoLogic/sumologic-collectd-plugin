@@ -1,7 +1,7 @@
 import os
 cwd = os.getcwd()
 import sys
-sys.path.append(cwd + '/src')
+sys.path.append(cwd + '/sumologic_collectd_plugin')
 from metrics_config import MetricsConfig, ConfigOptions
 from metrics_buffer import MetricsBuffer
 from metrics_batcher import MetricsBatcher

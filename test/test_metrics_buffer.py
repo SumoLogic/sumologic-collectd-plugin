@@ -1,7 +1,3 @@
-import os
-cwd = os.getcwd()
-import sys
-sys.path.append(cwd + '/src')
 from collectd import Helper
 
 
