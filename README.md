@@ -73,7 +73,7 @@ LoadPlugin python
     	Import "metrics_writer"
     
     	<Module "metrics_writer">
-	    	TypesDB "/path/to/your/collectd/share/collectd/types.db" "/path/to/my_own_types.db"  # At lease one types.db file must be specified
+	    	TypesDB "/path/to/your/collectd/share/collectd/types.db", "/path/to/my_own_types.db"  # At lease one types.db file must be specified
       	    	URL "https://<deployment>.sumologic.com/receiver/v1/http/<source_token>"  # URL must be specified
 		# Uncomment and update the following lines to override the default metadata configured in the the Sumo Logic Source configuration
 		# SourceName "my_source"
@@ -81,7 +81,7 @@ LoadPlugin python
 	    	# SourceCategory "my_category"
 		# Uncomment and update the following lines to add additional key=value pairs
 	    	# Dimensions "my_dim_key1"="my_dim_val1"
-	    	# Metadata "my_meta_key1"="my_meta_val1" "my_meta_key2"="my_meta_key2"
+	    	# Metadata "my_meta_key1"="my_meta_val1", "my_meta_key2"="my_meta_key2"
     	</Module>
 </Plugin>
 ```
