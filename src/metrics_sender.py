@@ -140,11 +140,11 @@ class MetricsSender(Timer):
 
         # Add custom dimension_tags specified in conf
         if ConfigOptions.dimension_tags in config_keys:
-            headers[HeaderKeys.x_sumo_dimensions] = tags_to_str(self._gen_config_dimension_tags())
+            headers[HeaderKeys.x_sumo_dimensions] = tags_to_str(self._gen_config_dimension_tags(), sep=',')
 
         # Add custom meta_tags specified in conf
         if ConfigOptions.meta_tags in config_keys:
-            headers[HeaderKeys.x_sumo_metadata] = tags_to_str(self._gen_config_meta_tags())
+            headers[HeaderKeys.x_sumo_metadata] = tags_to_str(self._gen_config_meta_tags(), sep=',')
 
         return headers
 
