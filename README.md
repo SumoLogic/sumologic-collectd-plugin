@@ -1,3 +1,5 @@
+**Disclaimer**: This plugin is still being developed. We recommend using this plugin in non-production environments
+
 # Sumo Logic collectd Plugin
 
 A [collectd](https://collectd.org/) output plugin to send Carbon 2.0-formatted metrics to Sumo Logic.
