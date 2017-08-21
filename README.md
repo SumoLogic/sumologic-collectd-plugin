@@ -73,38 +73,20 @@ LoadPlugin python
     	Import "metrics_writer"
     
     	<Module "metrics_writer">
-	    	TypesDB "/path/to/your/collectd/share/collectd/types.db"
-      	    	URL "https://<deployment>.sumologic.com/receiver/v1/http/<source_token>"
+	    	TypesDB "/path/to/your/collectd/share/collectd/types.db" "/path/to/my_own_types.db"  # At lease one types.db file must be specified
+      	    	URL "https://<deployment>.sumologic.com/receiver/v1/http/<source_token>"  # URL must be specified
+		# Uncomment and update the following lines to override the default metadata configured in the the Sumo Logic Source configuration
+		# SourceName "my_source"
+	    	# HostName "my_host"
+	    	# SourceCategory "my_category"
+		# Uncomment and update the following lines to add additional key=value pairs
+	    	# Dimensions "my_dim_key1"="my_dim_val1"
+	    	# Metadata "my_meta_key1"="my_meta_val1" "my_meta_key2"="my_meta_key2"
     	</Module>
 </Plugin>
 ```
 
-You can optionally override any of the following settings within the `metrics_writer` module:
-
-```
-    	<Module "metrics_writer">
-	    	TypesDB "/path/to/your/collectd/share/collectd/types.db"
-      	    	URL "https://<deployment>.sumologic.com/receiver/v1/http/<source_token>"
-
-	    	SourceName my_source
-	    	HostName my_host
-	    	SourceCategory my_category
-
-	    	Dimensions my_dim_key1 my_dim_val1
-	    	Metadata my_meta_key1 my_meta_val1 my_meta_key2 my_meta_key2
-    	</Module>
-```
-
-To specify multiple `types.db` files, include each path as a quoted string following `TypesDB` parameter:
-
-```
-    	<Module "metrics_writer">
-	    	TypesDB "/path/types1.db" "/path/types2.db" "/path/types3.db"
-      	    	URL "https://<deployment>.sumologic.com/receiver/v1/http/<source_token>"
-    	</Module>
-```
-
-Other recommended modules.
+#### Other recommended modules
 It is recommeded to setup the following two plugins in collectd.conf. The functionalities of the two plugins are explained in collectd Wiki [Plugin:LogFile](https://collectd.org/wiki/index.php/Plugin:LogFile) and [Plugin:CSV](https://collectd.org/wiki/index.php/Plugin:CSV)
 ```
 LoadPlugin logfile
