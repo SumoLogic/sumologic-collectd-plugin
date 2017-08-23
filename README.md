@@ -148,7 +148,7 @@ host=my_mac plugin=cpu plugin_instance=0 type=cpu type_instance=user ds_name=val
 ```
 
 #### Compression
-Metrics are batched and compressed before they are sent. The compression algorithm is `deflate`. The algorithm is explained in more detail in [An Explanation of the Deflate Algorithm](https://zlib.net/feldspar.html).
+Metrics are batched and compressed before they are sent. The default compression algorithm is `deflate`. The algorithm is explained in more detail in [An Explanation of the Deflate Algorithm](https://zlib.net/feldspar.html). You can alternatively specify `gzip` for gizp compression or `none` for no compression.
 
 #### Error handling
 Sumo Logic collectd plugin retries on exceptions by default. When all retries fail, the request is either scheduled for a future attempt or dropped based on the buffer status. By default, 1000 requests are buffered. If the buffer becomes full, then requests failed after all retries will be dropped. Otherwise, it is put back to the processing queue for the next run.
