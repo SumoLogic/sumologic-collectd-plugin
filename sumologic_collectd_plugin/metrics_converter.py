@@ -39,11 +39,11 @@ def _remove_empty_tags(tags):
     return [tag for tag in tags if tag]
 
 
-def tags_to_str(tags):
+def tags_to_str(tags, sep=' '):
         """
         Convert list of tags to a single string
         """
-        return ' '.join(_remove_empty_tags(tags))
+        return sep.join(_remove_empty_tags(tags))
 
 
 # Generate meta_tags from data

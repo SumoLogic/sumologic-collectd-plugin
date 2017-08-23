@@ -120,8 +120,8 @@ def test_post_normal_addition_dimensions_metadata():
     assert requests.mock_server.headers == {
         HeaderKeys.content_type: met_config.conf[ConfigOptions.content_type],
         HeaderKeys.content_encoding: met_config.conf[ConfigOptions.content_encoding],
-        HeaderKeys.x_sumo_dimensions: 'dim_key1=dim_val1 dim_key2=dim_val2',
-        HeaderKeys.x_sumo_metadata: 'meta_key1=meta_val1 meta_key2=meta_val2',
+        HeaderKeys.x_sumo_dimensions: 'dim_key1=dim_val1,dim_key2=dim_val2',
+        HeaderKeys.x_sumo_metadata: 'meta_key1=meta_val1,meta_key2=meta_val2',
     }
 
     for i in range(10):

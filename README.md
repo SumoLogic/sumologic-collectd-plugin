@@ -1,3 +1,5 @@
+**Disclaimer**: This plugin is still being developed. We recommend using this plugin in non-production environments
+
 # Sumo Logic collectd Plugin
 
 A [collectd](https://collectd.org/) output plugin to send Carbon 2.0-formatted metrics to Sumo Logic.
@@ -44,18 +46,18 @@ The parameters below are required and must be specified in the module config.
 |Name|Description|Type|Required|
 |:---|:---|:---|:---|
 |[URL](https://help.sumologic.com/Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source/zGenerate-a-new-URL-for-an-HTTP-Source)|The URL to send logs to. This should be given when [creating the HTTP Source](https://github.com/SumoLogic/sumologic-collectd-plugin/blob/master/README.md#4-create-http-metrics-source-in-sumo-logic) on Sumo Logic web app.|String|True|
-|TypesDB| Data-set specification for collectd raw data. More information about types.db is available in [collectd types.db](https://collectd.org/documentation/manpages/types.db.5.shtml). Collectd ships with a default types.db file that is in the directory of collectd root, for example `/usr/share/collectd/types.db`.|Strings in the format of `types1.db` `types2.db` ...|True|
+|TypesDB| Data-set specification for collectd raw data. More information about types.db is available in [collectd types.db](https://collectd.org/documentation/manpages/types.db.5.shtml). Collectd ships with a default types.db file that is in the directory of collectd root, for example `/usr/share/collectd/types.db`.|Strings in the format of `"types1.db", "types2.db"` ...|True|
 
 #### Basic parameters
 The parameters below are not strictly required. It is recommended to set these parameters as they prove to be extremely useful to categorize your metrics and search by them.
 
 |Name|Description|Type|Required|
 |:---|:---|:---|:---|
-|SourceName|Name of the metrics source. `_sourceName` can be used to search metrics from this source.|String|False|
-|HostName|Name of metrics host. `_sourceHost` can be used to search metrics from this host.|String|False|
-|SourceCategory|Category of the collected metrics. `_sourceCategory` can be used to search metrics from this category.|String|False|
-|Dimensions|Key value pairs that contribute to identifying a metric. Collectd data have intrinsic dimensions with keys as `host`, `plugin`, `plugin_instance`, `type`, `type_instance`, `ds_name`, `ds_type`. The Additional dimensions specified here can help separating metrics collected from this collectd instance with metircs collected from other collectd instances. Dimensions cannot contain [reserved symbols](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-symbols) and [reserved keywords](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-keywords).|Srings in the format of `key1` `val1` `key2` `val2` ... |False|
-|Metadata|Key value pairs that do not contribute to identifying a metric. Metadata are primarily used to assist in searching metrics. Collectd data may have internal metadata. The additional metadata specified here can be used to enrich the existing metadata set. Metadata cannot contain [reserved symbols](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-symbols) and [reserved keywords](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-keywords)|Srings in the format of `key1` `val1` `key2` `val2` ...|False|
+|SourceName|Name of the metrics source. `_sourceName` can be used to search metrics from this source. It will override the default configured in the the Sumo Logic Source configuration.|String|False|
+|HostName|Name of metrics host. `_sourceHost` can be used to search metrics from this host. It will override the default configured in the the Sumo Logic Source configuration.|String|False|
+|SourceCategory|Category of the collected metrics. `_sourceCategory` can be used to search metrics from this category. It will override the default configured in the the Sumo Logic Source configuration.|String|False|
+|Dimensions|Key value pairs that contribute to identifying a metric. Collectd data have intrinsic dimensions with keys as `host`, `plugin`, `plugin_instance`, `type`, `type_instance`, `ds_name`, `ds_type`. The Additional dimensions specified here can help separating metrics collected from this collectd instance with metircs collected from other collectd instances. Dimensions cannot contain [reserved symbols](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-symbols) and [reserved keywords](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-keywords).|Srings in the format of `"key1"="val1", "key2"="val2"` ... |False|
+|Metadata|Key value pairs that do not contribute to identifying a metric. Metadata are primarily used to assist in searching metrics. Collectd data may have internal metadata. The additional metadata specified here can be used to enrich the existing metadata set. Metadata cannot contain [reserved symbols](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-symbols) and [reserved keywords](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-keywords)|Srings in the format of `"key1"="val1", "key2"="val2"` ...|False|
 
 #### Additional parameters
 For additional configuration parameters, see [Advanced Parameters](https://github.com/SumoLogic/sumologic-collectd-plugin/blob/master/README.md#1-advanced-parameters) below.
@@ -71,38 +73,20 @@ LoadPlugin python
     	Import "metrics_writer"
     
     	<Module "metrics_writer">
-	    	TypesDB "/path/to/your/collectd/share/collectd/types.db"
-      	    	URL "https://<deployment>.sumologic.com/receiver/v1/http/<source_token>"
+	    	TypesDB "/path/to/your/collectd/share/collectd/types.db", "/path/to/my_own_types.db"  # At lease one types.db file must be specified
+      	    	URL "https://<deployment>.sumologic.com/receiver/v1/http/<source_token>"  # URL must be specified
+		# Uncomment and update the following lines to override the default metadata configured in the the Sumo Logic Source configuration
+		# SourceName "my_source"
+	    	# HostName "my_host"
+	    	# SourceCategory "my_category"
+		# Uncomment and update the following lines to add additional key=value pairs
+	    	# Dimensions "my_dim_key1"="my_dim_val1", "my_dim_key2"="my_dim_val2"
+	    	# Metadata "my_meta_key1"="my_meta_val1", "my_meta_key2"="my_meta_val2"
     	</Module>
 </Plugin>
 ```
 
-You can optionally override any of the following settings within the `metrics_writer` module:
-
-```
-    	<Module "metrics_writer">
-	    	TypesDB "/path/to/your/collectd/share/collectd/types.db"
-      	    	URL "https://<deployment>.sumologic.com/receiver/v1/http/<source_token>"
-
-	    	SourceName my_source
-	    	HostName my_host
-	    	SourceCategory my_category
-
-	    	Dimensions my_dim_key1 my_dim_val1
-	    	Metadata my_meta_key1 my_meta_val1 my_meta_key2 my_meta_key2
-    	</Module>
-```
-
-To specify multiple `types.db` files, include each path as a quoted string following `TypesDB` parameter:
-
-```
-    	<Module "metrics_writer">
-	    	TypesDB "/path/types1.db" "/path/types2.db" "/path/types3.db"
-      	    	URL "https://<deployment>.sumologic.com/receiver/v1/http/<source_token>"
-    	</Module>
-```
-
-Other recommended modules.
+#### Other recommended modules
 It is recommeded to setup the following two plugins in collectd.conf. The functionalities of the two plugins are explained in collectd Wiki [Plugin:LogFile](https://collectd.org/wiki/index.php/Plugin:LogFile) and [Plugin:CSV](https://collectd.org/wiki/index.php/Plugin:CSV)
 ```
 LoadPlugin logfile
@@ -155,8 +139,7 @@ The Sumo Logic collectd plugin will send metrics using the [Carbon 2.0](http://m
 dimensions  metadata value timestamp
 ```
 `dimensions` and `metadata` are key/value pairs of strings separated by two spaces. `dimensions` uniquely identifying a metric, while `metadata` do not contribute to identifying a metric. Instead, they are used to categorize metrics for searching. 
-`value` is a double number
-`timestamp` is a 10-digit UNIX epoch timestamp
+`value` is a double number. `timestamp` is a 10-digit UNIX epoch timestamp
 
 Example data before compression:
 ```
@@ -165,7 +148,7 @@ host=my_mac plugin=cpu plugin_instance=0 type=cpu type_instance=user ds_name=val
 ```
 
 #### Compression
-Metrics are batched and compressed before they are sent. The compression algorithm is `deflate`. The algorithm is explained in more detail in [An Explanation of the Deflate Algorithm](https://zlib.net/feldspar.html).
+Metrics are batched and compressed before they are sent. The default compression algorithm is `deflate`. The algorithm is explained in more detail in [An Explanation of the Deflate Algorithm](https://zlib.net/feldspar.html). You can alternatively specify `gzip` for gizp compression or `none` for no compression.
 
 #### Error handling
 Sumo Logic collectd plugin retries on exceptions by default. When all retries fail, the request is either scheduled for a future attempt or dropped based on the buffer status. By default, 1000 requests are buffered. If the buffer becomes full, then requests failed after all retries will be dropped. Otherwise, it is put back to the processing queue for the next run.
