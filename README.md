@@ -46,7 +46,7 @@ The parameters below are required and must be specified in the module config.
 |Name|Description|Type|Required|
 |:---|:---|:---|:---|
 |[URL](https://help.sumologic.com/Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source/zGenerate-a-new-URL-for-an-HTTP-Source)|The URL to send logs to. This should be given when [creating the HTTP Source](https://github.com/SumoLogic/sumologic-collectd-plugin/blob/master/README.md#4-create-http-metrics-source-in-sumo-logic) on Sumo Logic web app.|String|True|
-|TypesDB| Data-set specification for collectd raw data. More information about types.db is available in [collectd types.db](https://collectd.org/documentation/manpages/types.db.5.shtml). Collectd ships with a default types.db file that is in the directory of collectd root, for example `/usr/share/collectd/types.db`.|Strings in the format of `types1.db` `types2.db` ...|True|
+|TypesDB| Data-set specification for collectd raw data. More information about types.db is available in [collectd types.db](https://collectd.org/documentation/manpages/types.db.5.shtml). Collectd ships with a default types.db file that is in the directory of collectd root, for example `/usr/share/collectd/types.db`.|Strings in the format of `"types1.db", "types2.db"` ...|True|
 
 #### Basic parameters
 The parameters below are not strictly required. It is recommended to set these parameters as they prove to be extremely useful to categorize your metrics and search by them.
@@ -56,8 +56,8 @@ The parameters below are not strictly required. It is recommended to set these p
 |SourceName|Name of the metrics source. `_sourceName` can be used to search metrics from this source.|String|False|
 |HostName|Name of metrics host. `_sourceHost` can be used to search metrics from this host.|String|False|
 |SourceCategory|Category of the collected metrics. `_sourceCategory` can be used to search metrics from this category.|String|False|
-|Dimensions|Key value pairs that contribute to identifying a metric. Collectd data have intrinsic dimensions with keys as `host`, `plugin`, `plugin_instance`, `type`, `type_instance`, `ds_name`, `ds_type`. The Additional dimensions specified here can help separating metrics collected from this collectd instance with metircs collected from other collectd instances. Dimensions cannot contain [reserved symbols](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-symbols) and [reserved keywords](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-keywords).|Srings in the format of `key1` `val1` `key2` `val2` ... |False|
-|Metadata|Key value pairs that do not contribute to identifying a metric. Metadata are primarily used to assist in searching metrics. Collectd data may have internal metadata. The additional metadata specified here can be used to enrich the existing metadata set. Metadata cannot contain [reserved symbols](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-symbols) and [reserved keywords](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-keywords)|Srings in the format of `key1` `val1` `key2` `val2` ...|False|
+|Dimensions|Key value pairs that contribute to identifying a metric. Collectd data have intrinsic dimensions with keys as `host`, `plugin`, `plugin_instance`, `type`, `type_instance`, `ds_name`, `ds_type`. The Additional dimensions specified here can help separating metrics collected from this collectd instance with metircs collected from other collectd instances. Dimensions cannot contain [reserved symbols](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-symbols) and [reserved keywords](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-keywords).|Srings in the format of `"key1"="val1", "key2"="val2"` ... |False|
+|Metadata|Key value pairs that do not contribute to identifying a metric. Metadata are primarily used to assist in searching metrics. Collectd data may have internal metadata. The additional metadata specified here can be used to enrich the existing metadata set. Metadata cannot contain [reserved symbols](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-symbols) and [reserved keywords](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-keywords)|Srings in the format of `"key1"="val1", "key2"="val2"` ...|False|
 
 #### Additional parameters
 For additional configuration parameters, see [Advanced Parameters](https://github.com/SumoLogic/sumologic-collectd-plugin/blob/master/README.md#1-advanced-parameters) below.
@@ -80,8 +80,8 @@ LoadPlugin python
 	    	# HostName "my_host"
 	    	# SourceCategory "my_category"
 		# Uncomment and update the following lines to add additional key=value pairs
-	    	# Dimensions "my_dim_key1"="my_dim_val1"
-	    	# Metadata "my_meta_key1"="my_meta_val1", "my_meta_key2"="my_meta_key2"
+	    	# Dimensions "my_dim_key1"="my_dim_val1", "my_dim_key2"="my_dim_val2"
+	    	# Metadata "my_meta_key1"="my_meta_val1", "my_meta_key2"="my_meta_val2"
     	</Module>
 </Plugin>
 ```
