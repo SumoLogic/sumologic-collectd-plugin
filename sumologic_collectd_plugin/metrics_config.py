@@ -14,7 +14,7 @@ class ConfigOptions(object):
     dimension_tags = 'Dimensions'
     meta_tags = 'Metadata'
     source_name = 'SourceName'
-    host_name = 'HostName'
+    host_name = 'SourceHost'
     source_category = 'SourceCategory'
     # Metrics Batching options
     max_batch_size = 'MaxBatchSize'

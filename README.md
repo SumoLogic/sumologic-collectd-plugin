@@ -54,7 +54,7 @@ The parameters below are not strictly required. It is recommended to set these p
 |Name|Description|Type|Required|
 |:---|:---|:---|:---|
 |SourceName|Name of the metrics source. `_sourceName` can be used to search metrics from this source. It will override the default configured in the the Sumo Logic Source configuration.|String|False|
-|HostName|Name of metrics host. `_sourceHost` can be used to search metrics from this host. It will override the default configured in the the Sumo Logic Source configuration.|String|False|
+|SourceHost|Name of metrics host. `_sourceHost` can be used to search metrics from this host. It will override the default configured in the the Sumo Logic Source configuration.|String|False|
 |SourceCategory|Category of the collected metrics. `_sourceCategory` can be used to search metrics from this category. It will override the default configured in the the Sumo Logic Source configuration.|String|False|
 |Dimensions|Key value pairs that contribute to identifying a metric. Collectd data have intrinsic dimensions with keys as `host`, `plugin`, `plugin_instance`, `type`, `type_instance`, `ds_name`, `ds_type`. The Additional dimensions specified here can help separating metrics collected from this collectd instance with metircs collected from other collectd instances. Dimensions cannot contain [reserved symbols](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-symbols) and [reserved keywords](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-keywords).|Srings in the format of `"key1"="val1", "key2"="val2"` ... |False|
 |Metadata|Key value pairs that do not contribute to identifying a metric. Metadata are primarily used to assist in searching metrics. Collectd data may have internal metadata. The additional metadata specified here can be used to enrich the existing metadata set. Metadata cannot contain [reserved symbols](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-symbols) and [reserved keywords](https://github.com/SumoLogic/sumologic-collectd-plugin#reserved-keywords)|Srings in the format of `"key1"="val1", "key2"="val2"` ...|False|
@@ -77,7 +77,7 @@ LoadPlugin python
       	    	URL "https://<deployment>.sumologic.com/receiver/v1/http/<source_token>"  # URL must be specified
 		# Uncomment and update the following lines to override the default metadata configured in the the Sumo Logic Source configuration
 		# SourceName "my_source"
-	    	# HostName "my_host"
+	    	# SourceHost "my_host"
 	    	# SourceCategory "my_category"
 		# Uncomment and update the following lines to add additional key=value pairs
 	    	# Dimensions "my_dim_key1"="my_dim_val1", "my_dim_key2"="my_dim_val2"
