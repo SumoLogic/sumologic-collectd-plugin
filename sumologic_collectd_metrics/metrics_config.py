@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import collectd
 from metrics_util import validate_non_empty, validate_string_type, validate_positive, \
     validate_non_negative, validate_field
 
 
-class ConfigOptions:
+class ConfigOptions(object):
     """
     Config options
     """
@@ -15,7 +14,7 @@ class ConfigOptions:
     dimension_tags = 'Dimensions'
     meta_tags = 'Metadata'
     source_name = 'SourceName'
-    host_name = 'HostName'
+    host_name = 'SourceHost'
     source_category = 'SourceCategory'
     # Metrics Batching options
     max_batch_size = 'MaxBatchSize'
@@ -45,10 +44,11 @@ class MetricsConfig:
 
     _content_encoding_set = frozenset(['deflate', 'gzip', 'none'])
 
-    def __init__(self):
+    def __init__(self, collectd):
         """
         Init MetricsConfig with default config
         """
+        self.collectd = collectd
         self.conf = self.default_config()
         self.types = {}
 
@@ -120,9 +120,9 @@ class MetricsConfig:
                                         'must be deflate, gzip, or none' % s)
                     self.conf[child.key] = content_encoding
                 else:
-                    collectd.warning('Unknown configuration %s, ignored.' % child.key)
+                    self.collectd.warning('Unknown configuration %s, ignored.' % child.key)
         except Exception as e:
-            collectd.error('Failed to parse configurations due to %s' % str(e))
+            self.collectd.error('Failed to parse configurations due to %s' % str(e))
             raise e
 
         if ConfigOptions.url not in self.conf:
@@ -145,7 +145,7 @@ class MetricsConfig:
             raise Exception('Specify RetryJitterMin %d to be less or equal to RetryJitterMax %d' %
                             (retry_jitter_min, retry_jitter_max))
 
-        collectd.info('Updated MetricsConfig %s with config file %s ' % (self.conf, config))
+        self.collectd.info('Updated MetricsConfig %s with config file %s ' % (self.conf, config))
 
     # parse types.db file
     def _parse_types(self, db):
@@ -166,7 +166,7 @@ class MetricsConfig:
                     ds_fields = ds.split(':')
 
                     if len(ds_fields) != 4:
-                        collectd.warning('Cannot parse data source %s on type %s'
+                        self.collectd.warning('Cannot parse data source %s on type %s'
                                          % (ds, type_name))
                         continue
                     v.append(ds_fields)
@@ -174,10 +174,10 @@ class MetricsConfig:
 
             f.close()
 
-            collectd.info('Parsed types %s with types_db file %s ' % (self.types, db))
+            self.collectd.info('Parsed types %s with types_db file %s ' % (self.types, db))
 
         except Exception as e:
-            collectd.error('Parse types %s failed with %s' %(db, str(e)))
+            self.collectd.error('Parse types %s failed with %s' %(db, str(e)))
             raise e
 
     # parse dimension_tags/meta_tags specified in collectd.conf
@@ -190,4 +190,4 @@ class MetricsConfig:
 
         self.conf[child.key] = zip(*(iter(child.values),) * 2)
 
-        collectd.info('Parsed %s tags %s' % (child.key, self.conf[child.key]))
+        self.collectd.info('Parsed %s tags %s' % (child.key, self.conf[child.key]))

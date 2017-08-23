@@ -1,16 +1,11 @@
-import os
-cwd = os.getcwd()
-import sys
-sys.path.append(cwd + '/src')
 import time
-from metrics_buffer import MetricsBuffer
-from metrics_batcher import MetricsBatcher
+from collectd import Helper
 
 
 def test_metrics_batcher_max_size():
-    met_buffer = MetricsBuffer(100)
+    met_buffer = Helper.get_buffer(100)
     max_batch_size = 10
-    met_batcher = MetricsBatcher(max_batch_size, 60.0, met_buffer)
+    met_batcher = Helper.get_batcher(max_batch_size, 60.0, met_buffer)
 
     for i in range(50):
         met_batcher.push_item('item_%s' % i)
@@ -30,9 +25,9 @@ def test_metrics_batcher_max_size():
 
 
 def test_metrics_batcher_max_interval():
-    met_buffer = MetricsBuffer(100)
+    met_buffer = Helper.get_buffer(100)
     max_batch_interval = 0.05
-    met_batcher = MetricsBatcher(1000, max_batch_interval, met_buffer)
+    met_batcher = Helper.get_batcher(1000, max_batch_interval, met_buffer)
 
     for i in range(50):
         time.sleep(0.010)
@@ -46,9 +41,9 @@ def test_metrics_batcher_max_interval():
 
 
 def test_metrics_batcher_locks():
-    met_buffer = MetricsBuffer(25)
+    met_buffer = Helper.get_buffer(25)
     max_batch_size = 2
-    met_batcher = MetricsBatcher(max_batch_size, 0.100, met_buffer)
+    met_batcher = Helper.get_batcher(max_batch_size, 0.100, met_buffer)
 
     for i in range(50):
         met_batcher.push_item('item_%s' % i)

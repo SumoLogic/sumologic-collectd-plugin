@@ -4,7 +4,6 @@ try:
     import Queue as queue
 except ImportError:
     import queue as queue
-import collectd
 import threading
 from timer import Timer
 
@@ -14,12 +13,14 @@ class MetricsBatcher(Timer):
     Groups metrics in to batches based on max_batch_size and max_batch_interval
     """
 
-    def __init__(self, max_batch_size, max_batch_interval, met_buffer):
+    def __init__(self, max_batch_size, max_batch_interval, met_buffer, collectd):
         """
         Init MetricsBatcher with max_batch_size, max_batch_interval, and met_buffer
         """
 
         Timer.__init__(self, max_batch_interval, self.flush)
+
+        self.collectd = collectd
 
         # initiate max_batch_size and max_batch_interval
         self.max_batch_size = max_batch_size
@@ -50,11 +51,11 @@ class MetricsBatcher(Timer):
     def flush(self):
 
         if self.queue.empty():
-            collectd.debug('queue is empty')
+            self.collectd.debug('queue is empty')
             return
         if self.flushing_lock.acquire(False):
             batch = self._pop_batch()
-            collectd.debug('flushing metrics with batch size %d' % len(batch))
+            self.collectd.debug('flushing metrics with batch size %d' % len(batch))
             self.metrics_buffer.put_pending_batch(batch)
             self.reset_timer()
             self.flushing_lock.release()

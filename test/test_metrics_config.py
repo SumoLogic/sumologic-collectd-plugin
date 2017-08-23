@@ -3,16 +3,17 @@
 import os
 cwd = os.getcwd()
 import sys
-sys.path.append(cwd + '/src')
+sys.path.append(cwd + '/sumologic_collectd_metrics')
 
 import pytest
 from metrics_config import MetricsConfig, ConfigOptions
 from collectd.collectd_config import CollectdConfig, ConfigNode
-from collectd.helper import Helper
+from collectd import Helper
+from collectd import CollecdMock
 
 
 def test_parse_types_db():
-    met_config = MetricsConfig()
+    met_config = Helper.default_config()
     config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])
     met_config.parse_config(config)
 
@@ -20,7 +21,7 @@ def test_parse_types_db():
 
 
 def test_parse_url():
-    met_config = MetricsConfig()
+    met_config = Helper.default_config()
     config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])
     met_config.parse_config(config)
 
@@ -28,7 +29,7 @@ def test_parse_url():
 
 
 def test_parse_dimension_tags():
-    met_config = MetricsConfig()
+    met_config = Helper.default_config()
     tags = ('dim_key1', 'dim_val1', 'dim_key2', 'dim_val2')
     config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
                              tags_node(ConfigOptions.dimension_tags, tags)])
@@ -38,7 +39,7 @@ def test_parse_dimension_tags():
 
 
 def test_parse_meta_tags():
-    met_config = MetricsConfig()
+    met_config = Helper.default_config()
     tags = ('meta_key1', 'meta_val1', 'meta_key2', 'meta_val2')
     config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
                              tags_node(ConfigOptions.meta_tags, tags)])
@@ -49,7 +50,7 @@ def test_parse_meta_tags():
 
 def test_parse_meta_tags_missing_value():
     with pytest.raises(Exception) as e:
-        met_config = MetricsConfig()
+        met_config = Helper.default_config()
         tags = ('meta_key1', 'meta_val1', 'meta_key2')
         config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
                                  tags_node(ConfigOptions.meta_tags, tags)])
@@ -59,7 +60,7 @@ def test_parse_meta_tags_missing_value():
 
 
 def test_parse_http_post_interval():
-    met_config = MetricsConfig()
+    met_config = Helper.default_config()
     http_post_interval = '0.5'
     http_post_interval_node = ConfigNode(ConfigOptions.http_post_interval, [http_post_interval])
     config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
@@ -71,7 +72,7 @@ def test_parse_http_post_interval():
 
 def test_parse_http_post_interval_exception():
     with pytest.raises(Exception) as e:
-        met_config = MetricsConfig()
+        met_config = Helper.default_config()
         http_post_interval = '0'
         http_post_interval_node = ConfigNode(ConfigOptions.http_post_interval, [http_post_interval])
         config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
@@ -82,7 +83,7 @@ def test_parse_http_post_interval_exception():
 
 
 def test_parse_string_config():
-    met_config = MetricsConfig()
+    met_config = Helper.default_config()
 
     configs = {
         'source_name': 'test_source',
@@ -98,7 +99,7 @@ def test_parse_string_config():
 
 
 def test_parse_int_config():
-    met_config = MetricsConfig()
+    met_config = Helper.default_config()
 
     configs = {
         'max_batch_size': '10',
@@ -133,7 +134,7 @@ def test_parse_content_encoding():
     configs = [deflate_config, gzip_config, none_config]
 
     for config in configs:
-        met_config = MetricsConfig()
+        met_config = Helper.default_config()
         Helper.parse_configs(met_config, config)
         assert met_config.conf[ConfigOptions.content_encoding] == \
                config['content_encoding']
@@ -141,7 +142,7 @@ def test_parse_content_encoding():
 
 def test_parse_unknown_content_encoding():
     with pytest.raises(Exception) as e:
-        met_config = MetricsConfig()
+        met_config = Helper.default_config()
         unknown_config = {
             'content_encoding': 'unknown'
         }
@@ -153,7 +154,7 @@ def test_parse_unknown_content_encoding():
 
 def test_parse_retry_config_values_positive():
     with pytest.raises(Exception) as e:
-        met_config = MetricsConfig()
+        met_config = Helper.default_config()
         configs = {
             'max_batch_size': '10',
             'max_batch_interval': '-5'
@@ -165,7 +166,7 @@ def test_parse_retry_config_values_positive():
 
 def test_parse_retry_config_values_non_negative():
     with pytest.raises(Exception) as e:
-        met_config = MetricsConfig()
+        met_config = Helper.default_config()
         configs = {
             'retry_initial_delay': '-1'
         }
@@ -176,7 +177,7 @@ def test_parse_retry_config_values_non_negative():
 
 def test_parse_retry_config_jitter_min_greater_than_max():
     with pytest.raises(Exception) as e:
-        met_config = MetricsConfig()
+        met_config = Helper.default_config()
         configs = {
             'retry_jitter_min': '2',
             'retry_jitter_max': '1'
@@ -187,7 +188,7 @@ def test_parse_retry_config_jitter_min_greater_than_max():
 
 
 def test_parse_unknown_config_option():
-    met_config = MetricsConfig()
+    met_config = Helper.default_config()
     unknown_config = 'unknown_config'
     unknown_config_node = ConfigNode('unknown_config', unknown_config)
     config = CollectdConfig([Helper.url_node(), Helper.types_db_node(), unknown_config_node])
@@ -198,7 +199,7 @@ def test_parse_unknown_config_option():
 
 def test_parse_string_exception():
     with pytest.raises(Exception) as e:
-        met_config = MetricsConfig()
+        met_config = Helper.default_config()
         url_node = ConfigNode(ConfigOptions.url, [''])
         config = CollectdConfig([url_node])
         met_config.parse_config(config)
@@ -208,7 +209,7 @@ def test_parse_string_exception():
 
 def test_parse_int_exception():
     with pytest.raises(ValueError):
-        met_config = MetricsConfig()
+        met_config = Helper.default_config()
         max_batch_size = ''
         max_batch_size_node = ConfigNode(ConfigOptions.max_batch_size, [max_batch_size])
         config = CollectdConfig([Helper.url_node(), Helper.types_db_node(), max_batch_size_node])
@@ -217,7 +218,7 @@ def test_parse_int_exception():
 
 def test_no_url_exception():
     with pytest.raises(Exception) as e:
-        met_config = MetricsConfig()
+        met_config = MetricsConfig(CollecdMock())
         config = CollectdConfig([Helper.types_db_node()])
         met_config.parse_config(config)
 
@@ -226,7 +227,7 @@ def test_no_url_exception():
 
 def test_no_types_db_exception():
     with pytest.raises(Exception) as e:
-        met_config = MetricsConfig()
+        met_config = MetricsConfig(CollecdMock())
         config = CollectdConfig([Helper.url_node()])
         met_config.parse_config(config)
 
@@ -235,7 +236,7 @@ def test_no_types_db_exception():
 
 def test_invalid_http_post_interval_exception():
     with pytest.raises(Exception) as e:
-        met_config = MetricsConfig()
+        met_config = Helper.default_config()
         http_post_interval = '100.0'
         http_post_interval_node = ConfigNode(ConfigOptions.http_post_interval, [http_post_interval])
         config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
@@ -247,7 +248,7 @@ def test_invalid_http_post_interval_exception():
 
 def test_contains_reserved_symbols_exception():
     with pytest.raises(Exception) as e:
-        met_config = MetricsConfig()
+        met_config = Helper.default_config()
         tags = ('meta_key1', 'meta_val1', 'meta_key2', 'meta val2')
         config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
                                  tags_node(ConfigOptions.meta_tags, tags)])
@@ -257,7 +258,7 @@ def test_contains_reserved_symbols_exception():
 
 
 def test_invalid_ds_in_types_db():
-    met_config = MetricsConfig()
+    met_config = Helper.default_config()
     types_db_node = ConfigNode(ConfigOptions.types_db, [cwd + '/test/types_invalid_ds.db'])
     config = CollectdConfig([Helper.url_node(), types_db_node])
     met_config.parse_config(config)
@@ -267,7 +268,7 @@ def test_invalid_ds_in_types_db():
 
 def test_types_db_no_exist_exception():
     with pytest.raises(Exception) as e:
-        met_config = MetricsConfig()
+        met_config = Helper.default_config()
         types_db_node = ConfigNode(ConfigOptions.types_db, [cwd + '/test/types_not_exist.db'])
         config = CollectdConfig([Helper.url_node(), types_db_node])
         met_config.parse_config(config)
@@ -276,7 +277,7 @@ def test_types_db_no_exist_exception():
 
 
 def test_non_ascii_strings():
-    met_config = MetricsConfig()
+    met_config = Helper.default_config()
 
     configs = {
         'source_name': '数据源',
@@ -285,7 +286,6 @@ def test_non_ascii_strings():
     Helper.parse_configs(met_config, configs)
 
     assert met_config.conf[ConfigOptions.source_name] == '数据源'
-
 
 
 def tags_node(key, values):

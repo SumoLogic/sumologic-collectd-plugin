@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import collectd
 from metrics_util import validate_field, validate_type
 
 
-class IntrinsicKeys:
+class IntrinsicKeys(object):
     host = "host"
     plugin = "plugin"
     plugin_instance = "plugin_instance"
@@ -97,7 +96,5 @@ def convert_to_metrics(data, types):
         metric = _gen_metric(dimension_tags, meta_tags, value, data.time)
 
         metrics.append(metric)
-
-    collectd.debug('Converted data %s to metrics %s' % (data, metrics))
 
     return metrics

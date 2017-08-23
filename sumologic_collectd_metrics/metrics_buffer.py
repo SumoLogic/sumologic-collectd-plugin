@@ -4,10 +4,9 @@ try:
     import Queue as queue
 except ImportError:
     import queue as queue
-import collectd
 
 
-class MetricsBuffer:
+class MetricsBuffer(object):
     """
     Buffer metrics batch that have been submitted by collectd write call back, and yet to be posted
     to remote server. When the buffer is full, the oldest metrics batch will be dropped to make
@@ -16,12 +15,12 @@ class MetricsBuffer:
 
     _processing_queue_size = 10
 
-    def __init__(self, max_requests_to_buffer):
+    def __init__(self, max_requests_to_buffer, collectd):
         """
         Init MetricsBuffer with a pending queue for pending requests
         and a failed queue for failed requests
         """
-
+        self.collectd = collectd
         self.processing_queue = queue.Queue(self._processing_queue_size)
         self.pending_queue = queue.Queue(max_requests_to_buffer)
 
@@ -50,7 +49,8 @@ class MetricsBuffer:
 
         if self.pending_queue.full():
             batch_to_drop = self.pending_queue.get()
-            collectd.warning('In memory buffer is full, dropping metrics batch %s' % batch_to_drop)
+            self.collectd.warning('In memory buffer is full, dropping metrics batch %s'
+                                  % batch_to_drop)
 
         self.pending_queue.put(batch)
 
@@ -60,11 +60,11 @@ class MetricsBuffer:
         """
 
         if self.pending_queue.full():
-            collectd.warning('Sending metrics batch %s failed. '
-                             'In memory buffer is full, dropping metrics batch' % batch)
+            self.collectd.warning('Sending metrics batch %s failed. '
+                                  'In memory buffer is full, dropping metrics batch' % batch)
         else:
-            collectd.warning('Sending metrics batch %s failed. '
-                             'Put it back to processing queue' % batch)
+            self.collectd.warning('Sending metrics batch %s failed. '
+                                  'Put it back to processing queue' % batch)
             self.processing_queue.put(batch)
 
     def empty(self):
