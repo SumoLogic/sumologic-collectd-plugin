@@ -1,7 +1,7 @@
 import os
 cwd = os.getcwd()
 import sys
-sys.path.append(cwd + '/sumologic_collectd_plugin')
+sys.path.append(cwd + '/sumologic_collectd_metrics')
 
 import time
 from metrics_config import ConfigOptions

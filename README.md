@@ -67,12 +67,12 @@ An exmple configuration for the plugin is shown below (code to be added to colle
 ```
 LoadPlugin python
 <Plugin python>
-    	ModulePath "/path/to/sumologic-collectd-plugin/src"
+    	ModulePath "/path/to/sumologic-collectd-plugin"
     	LogTraces true
     	Interactive false
-    	Import "metrics_writer"
+    	Import "sumologic_collectd_metrics"
     
-    	<Module "metrics_writer">
+    	<Module "sumologic_collectd_metrics">
 	    	TypesDB "/path/to/your/collectd/share/collectd/types.db", "/path/to/my_own_types.db"  # At lease one types.db file must be specified
       	    	URL "https://<deployment>.sumologic.com/receiver/v1/http/<source_token>"  # URL must be specified
 		# Uncomment and update the following lines to override the default metadata configured in the the Sumo Logic Source configuration
