@@ -70,7 +70,7 @@ class MetricsSender(Timer):
             response = requests.post(self.conf[ConfigOptions.url],
                                      data=self.encode_body(body), headers=headers)
 
-            self.collectd.info('Sent https request with batch size %d got response code %s' %
+            self.collectd.info('Sent https request with batch_size=%d got response_code=%s' %
                                (len(body), response.status_code))
         except requests.exceptions.HTTPError as e:
             self.fail_with_recoverable_exception('An HTTP error occurred', body, e)
