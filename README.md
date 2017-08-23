@@ -139,8 +139,7 @@ The Sumo Logic collectd plugin will send metrics using the [Carbon 2.0](http://m
 dimensions  metadata value timestamp
 ```
 `dimensions` and `metadata` are key/value pairs of strings separated by two spaces. `dimensions` uniquely identifying a metric, while `metadata` do not contribute to identifying a metric. Instead, they are used to categorize metrics for searching. 
-`value` is a double number
-`timestamp` is a 10-digit UNIX epoch timestamp
+`value` is a double number. `timestamp` is a 10-digit UNIX epoch timestamp
 
 Example data before compression:
 ```
