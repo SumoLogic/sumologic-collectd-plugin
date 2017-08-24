@@ -1,7 +1,7 @@
 try:  # pragma: no cover
     import collectd
     collectd_present = True
-except (ImportError, AttributeError):
+except (ImportError, AttributeError):  # pragma: no cover
     collectd_present = False
 
 from . metrics_writer import MetricsWriter  # pragma: no cover
