@@ -1,5 +1,3 @@
-**Disclaimer**: This plugin is still being developed. We recommend using this plugin in non-production environments
-
 Sumo Logic collectd Plugin
 ==========================
 
@@ -35,10 +33,20 @@ Debian / Ubuntu
     sudo apt-get install collectd
 
 
-3. Download the Sumo Logic collectd plugin
-``````````````````````````````````````````
+3. Download and install Sumo Logic collectd plugin
+``````````````````````````````````````````````````
+Option 1: Install as a library
+``````````````````````````````
+::
 
-The Sumo Logic collectd plugin module can be saved in a directory anywhere on your system::
+    pip install sumologic_collectd_metrics
+    
+All required dependencies will be automatically installed with library installation.
+
+Option2: Install with source code
+`````````````````````````````````
+
+The Sumo Logic collectd plugin source code can be saved in a directory anywhere on your system. Dowload it from  `PythonIdex > Package Index > sumologic_collectd_metrics <https://pypi.python.org/pypi/sumologic_collectd_metrics>`_, or::
 
     git clone https://github.com/SumoLogic/sumologic-collectd-plugin.git
 
@@ -107,7 +115,8 @@ An exmple configuration for the plugin is shown below (code to be added to ``col
 
     LoadPlugin python
     <Plugin python>
-    	ModulePath "/path/to/sumologic-collectd-plugin"
+    	# Uncomment and update the following line if sumologic collectd plugin installed with source code
+    	# ModulePath "/path/to/sumologic-collectd-plugin"
     	LogTraces true
     	Interactive false
     	Import "sumologic_collectd_metrics"
