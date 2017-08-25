@@ -209,10 +209,8 @@ You should be able to see metrics displayed in the main graph.
 Advanced Topics
 ---------------
 
-1. Advanced parameters
-``````````````````````
-
-.. _`Advanced parameters`:
+Advanced parameters
+```````````````````
 
 You can configure the Sumo Logic collectd plugin by overriding default values for plugin parameters.  
 
@@ -242,8 +240,8 @@ You can configure the Sumo Logic collectd plugin by overriding default values fo
 | ContentEncoding     | The content encoding used to compress HTTP entity-body                                                                                                                                                                                                                                                                                                                                                                        | ``"deflate", "gzip", or "none"`` | ``"deflate"`` | NA     |
 +---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------+---------------+--------+
 
-2. Plugin Architecture
-``````````````````````
+Plugin Architecture
+```````````````````
 ::
 
     Collectd		MetricsConverter		  MetricsBatcher	        MetricsBuffer				  MetricsSender
