@@ -264,7 +264,6 @@ You can configure the Sumo Logic collectd plugin by overriding default values fo
 
 Plugin Architecture
 ```````````````````
-|
 
 ::
 
@@ -275,8 +274,6 @@ Plugin Architecture
 		  												    <-
 														failed batch
 
-
-|
 
 License
 -------
