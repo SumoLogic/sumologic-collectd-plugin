@@ -233,7 +233,9 @@ You should be able to see metrics displayed in the main graph.
 
 Advanced Topics
 ---------------
+
 |
+
 Advanced parameters
 ```````````````````
 
