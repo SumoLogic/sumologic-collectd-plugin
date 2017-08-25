@@ -218,16 +218,13 @@ To view the metrics sent by the collectd plugin, log into Sumo Logic and open a 
 
     _sourceName=my_source _sourceHost=my_host _sourceCategory=my_category plugin=cpu
 
-    
+
 You should be able to see metrics displayed in the main graph.
 
 
 Advanced Topics
 ---------------
-
 |
-
-
 Advanced parameters
 ```````````````````
 
