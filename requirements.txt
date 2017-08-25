@@ -4,5 +4,4 @@ retry
 
 # test dependencies
 urllib3
-codecov
 pytest-cov
