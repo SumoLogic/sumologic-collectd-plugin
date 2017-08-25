@@ -6,9 +6,6 @@ A `collectd <https://collectd.org/>`_ output plugin to send Carbon 2.0-formatted
 Get Started
 -----------
 
-|
-
-
 1. Python version
 `````````````````
 Sumo Logic collectd plugin is built on top of `collectd-python plugin <https://collectd.org/documentation/manpages/collectd-python.5.shtml>`_. The minimum required version for running the plugin is Python version 2.6. You can download and install the desired Python version from `Python download page <https://www.python.org/downloads/>`_. 
@@ -233,8 +230,6 @@ You should be able to see metrics displayed in the main graph.
 
 Advanced Topics
 ---------------
-
-|
 
 Advanced parameters
 ```````````````````
