@@ -36,7 +36,7 @@ Option 1: Install as a library
 ``````````````````````````````
 ::
 
-    pip install sumologic_collectd_metrics
+    sudo pip install sumologic_collectd_metrics
     
 All required dependencies will be automatically installed with library installation.
 
