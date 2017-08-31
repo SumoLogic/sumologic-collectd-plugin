@@ -205,6 +205,11 @@ Example data before compression::
 
     host=my_mac plugin=cpu plugin_instance=1 type=cpu type_instance=user ds_name=value ds_type=DERIVE  meta_key1=meta_val1 5991.000000 1502148249
     host=my_mac plugin=cpu plugin_instance=0 type=cpu type_instance=user ds_name=value ds_type=DERIVE  meta_key1=meta_val1 98722.000000 1502148249
+    
+    
+Naming Schema
+`````````````
+collectd uses are very powerful naming schema to identify each statistics value. It has been proven very generic and flexible, but may be confusing at first, especially to new users. You can read more about it by following this wiki `collectd naming schema <https://collectd.org/wiki/index.php/Naming_schema>`_. 
 
 
 Compression
