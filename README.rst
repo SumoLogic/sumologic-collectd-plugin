@@ -108,7 +108,7 @@ For additional configuration parameters, see `Advanced parameters`_ below.
 
 Example configuration
 `````````````````````
-An exmple configuration for the plugin is shown below (code to be added to ``collectd.conf`` under ``collectd_root/etc``)::
+An example configuration for the plugin is shown below (code to be added to ``collectd.conf`` under ``collectd_root/etc``)::
 
     LoadPlugin python
     <Plugin python>
