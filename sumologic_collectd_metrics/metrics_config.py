@@ -35,7 +35,8 @@ class ConfigOptions(object):
     # Static option, not configurable yet. Default is application/vnd.sumologic.carbon2
     content_type = 'ContentType'
     shutdown_max_wait = "ShutdownMaxWait"  # seconds
-
+    # Usage Tracking header
+    x_sumo_client = 'XSumoClient'
 
 class MetricsConfig:
     """
@@ -69,7 +70,8 @@ class MetricsConfig:
             ConfigOptions.max_requests_to_buffer: 1000,
             ConfigOptions.content_encoding: 'deflate',
             ConfigOptions.content_type: 'application/vnd.sumologic.carbon2',
-            ConfigOptions.shutdown_max_wait: 5
+            ConfigOptions.shutdown_max_wait: 5,
+            ConfigOptions.x_sumo_client: 'collectd-plugin'
         }
 
     def parse_config(self, config):
