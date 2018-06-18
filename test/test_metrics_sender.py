@@ -28,7 +28,7 @@ def test_post_normal_no_additional_header():
     assert requests.mock_server.headers == {
         HeaderKeys.content_type: helper.conf[ConfigOptions.content_type],
         HeaderKeys.content_encoding: helper.conf[ConfigOptions.content_encoding],
-        HeaderKeys.x_sumo_client: helper.conf[ConfigOptions.x_sumo_client]
+        HeaderKeys.x_sumo_client: 'collectd-plugin'
     }
     for i in range(10):
         assert_utf8_equal(helper.conf, requests.mock_server.data[i], 'batch_%s' % i)
@@ -86,7 +86,7 @@ def test_post_normal_additional_keys():
     assert requests.mock_server.headers == {
         HeaderKeys.content_type: met_config.conf[ConfigOptions.content_type],
         HeaderKeys.content_encoding: met_config.conf[ConfigOptions.content_encoding],
-        HeaderKeys.x_sumo_client: met_config.conf[ConfigOptions.x_sumo_client],
+        HeaderKeys.x_sumo_client: 'collectd-plugin',
         HeaderKeys.x_sumo_source: 'test_source',
         HeaderKeys.x_sumo_host: 'test_host',
         HeaderKeys.x_sumo_category: 'test_category'
@@ -122,7 +122,7 @@ def test_post_normal_addition_dimensions_metadata():
     assert requests.mock_server.headers == {
         HeaderKeys.content_type: met_config.conf[ConfigOptions.content_type],
         HeaderKeys.content_encoding: met_config.conf[ConfigOptions.content_encoding],
-        HeaderKeys.x_sumo_client: met_config.conf[ConfigOptions.x_sumo_client],
+        HeaderKeys.x_sumo_client: 'collectd-plugin',
         HeaderKeys.x_sumo_dimensions: 'dim_key1=dim_val1,dim_key2=dim_val2',
         HeaderKeys.x_sumo_metadata: 'meta_key1=meta_val1,meta_key2=meta_val2',
     }
@@ -251,7 +251,7 @@ def helper_test_post_recoverable_exception(met_config, met_buffer, exception, er
     assert requests.mock_server.headers == {
         HeaderKeys.content_type: met_config.conf[ConfigOptions.content_type],
         HeaderKeys.content_encoding: met_config.conf[ConfigOptions.content_encoding],
-        HeaderKeys.x_sumo_client: met_config.conf[ConfigOptions.x_sumo_client]
+        HeaderKeys.x_sumo_client: 'collectd-plugin'
     }
 
     met_sender.cancel_timer()

@@ -122,7 +122,7 @@ class MetricsSender(Timer):
         headers = {
             HeaderKeys.content_type: self.conf[ConfigOptions.content_type],
             HeaderKeys.content_encoding: self.conf[ConfigOptions.content_encoding],
-            HeaderKeys.x_sumo_client: self.conf[ConfigOptions.x_sumo_client]
+            HeaderKeys.x_sumo_client: 'collectd-plugin'
         }
 
         config_keys = self.conf.keys()
