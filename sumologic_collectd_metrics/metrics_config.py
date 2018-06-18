@@ -68,7 +68,7 @@ class MetricsConfig:
             ConfigOptions.max_requests_to_buffer: 1000,
             ConfigOptions.content_encoding: 'deflate',
             ConfigOptions.content_type: 'application/vnd.sumologic.carbon2',
-            ConfigOptions.shutdown_max_wait: 5,
+            ConfigOptions.shutdown_max_wait: 5
         }
 
     def parse_config(self, config):
