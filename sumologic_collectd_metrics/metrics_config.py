@@ -36,7 +36,6 @@ class ConfigOptions(object):
     content_type = 'ContentType'
     shutdown_max_wait = "ShutdownMaxWait"  # seconds
 
-
 class MetricsConfig:
     """
     Configuration for sumologic collectd plugin

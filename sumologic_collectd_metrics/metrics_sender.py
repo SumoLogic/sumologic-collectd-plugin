@@ -26,6 +26,7 @@ class HeaderKeys(object):
     x_sumo_category = 'X-Sumo-Category'
     x_sumo_dimensions = 'X-Sumo-Dimensions'
     x_sumo_metadata = 'X-Sumo-Metadata'
+    x_sumo_client = 'X-Sumo-Client'
 
 
 class MetricsSender(Timer):
@@ -120,7 +121,8 @@ class MetricsSender(Timer):
 
         headers = {
             HeaderKeys.content_type: self.conf[ConfigOptions.content_type],
-            HeaderKeys.content_encoding: self.conf[ConfigOptions.content_encoding]
+            HeaderKeys.content_encoding: self.conf[ConfigOptions.content_encoding],
+            HeaderKeys.x_sumo_client: 'collectd-plugin'
         }
 
         config_keys = self.conf.keys()
