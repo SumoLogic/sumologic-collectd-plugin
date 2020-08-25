@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import time
-from metrics_config import MetricsConfig, ConfigOptions
-from metrics_buffer import MetricsBuffer
-from metrics_converter import convert_to_metrics
-from metrics_batcher import MetricsBatcher
-from metrics_sender import MetricsSender
+from . metrics_config import MetricsConfig, ConfigOptions
+from . metrics_buffer import MetricsBuffer
+from . metrics_converter import convert_to_metrics
+from . metrics_batcher import MetricsBatcher
+from . metrics_sender import MetricsSender
 
 
 class MetricsWriter(object):

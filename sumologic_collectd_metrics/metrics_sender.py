@@ -7,11 +7,11 @@ except ImportError:
 import gzip
 import requests
 import zlib
-from retry.api import retry_call
-from metrics_config import ConfigOptions
-from metrics_util import RecoverableException
-from metrics_converter import gen_tag, tags_to_str
-from timer import Timer
+from . retry.api import retry_call
+from . metrics_config import ConfigOptions
+from . metrics_util import RecoverableException
+from . metrics_converter import gen_tag, tags_to_str
+from . timer import Timer
 
 
 class HeaderKeys(object):
