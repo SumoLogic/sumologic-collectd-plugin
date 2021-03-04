@@ -1,16 +1,13 @@
-import os
-cwd = os.getcwd()
-import sys
-sys.path.append(cwd + '/sumologic_collectd_metrics')
-
-import pytest
-import requests
-import time
-import zlib
-from metrics_config import ConfigOptions
-from metrics_sender import HeaderKeys
-from collectd.collectd_config import CollectdConfig, ConfigNode
 from collectd import Helper
+from collectd.collectd_config import CollectdConfig, ConfigNode
+from sumologic_collectd_metrics.metrics_sender import HeaderKeys
+from sumologic_collectd_metrics.metrics_config import ConfigOptions
+import zlib
+import time
+import requests
+import pytest
+import sys
+import os
 
 
 def test_post_normal_no_additional_header():
@@ -31,7 +28,8 @@ def test_post_normal_no_additional_header():
         HeaderKeys.x_sumo_client: 'collectd-plugin'
     }
     for i in range(10):
-        assert_utf8_equal(helper.conf, requests.mock_server.data[i], 'batch_%s' % i)
+        assert_utf8_equal(
+            helper.conf, requests.mock_server.data[i], 'batch_%s' % i)
 
     met_sender.cancel_timer()
 
@@ -60,7 +58,8 @@ def test_post_different_content_encodings():
         sleep_helper(10, 0.100, 100)
 
         for i in range(10):
-            assert_utf8_equal(met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
+            assert_utf8_equal(
+                met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
         met_sender.cancel_timer()
 
 
@@ -93,7 +92,8 @@ def test_post_normal_additional_keys():
     }
 
     for i in range(10):
-        assert_utf8_equal(met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
+        assert_utf8_equal(
+            met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
 
     met_sender.cancel_timer()
 
@@ -108,7 +108,8 @@ def test_post_normal_addition_dimensions_metadata():
     }
     for (key, value) in configs.items():
         node = ConfigNode(getattr(ConfigOptions, key), value)
-        config = CollectdConfig([Helper.url_node(), Helper.types_db_node(), node])
+        config = CollectdConfig(
+            [Helper.url_node(), Helper.types_db_node(), node])
         met_config.parse_config(config)
 
     for i in range(10):
@@ -128,7 +129,8 @@ def test_post_normal_addition_dimensions_metadata():
     }
 
     for i in range(10):
-        assert_utf8_equal(met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
+        assert_utf8_equal(
+            met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
 
     met_sender.cancel_timer()
 
@@ -137,14 +139,16 @@ def test_post_client_recoverable_http_error():
     error_codes = [404, 408, 429]
     for error_code in error_codes:
         reset_test_env()
-        exception_to_raise = requests.exceptions.HTTPError(requests.exceptions.RequestException())
+        exception_to_raise = requests.exceptions.HTTPError(
+            requests.exceptions.RequestException())
         requests.mock_response.status_code = error_codes
         met_buffer = Helper.get_buffer(10)
         met_config = Helper.default_config()
         helper_test_post_recoverable_exception(met_config, met_buffer, exception_to_raise,
                                                error_code, 5)
         for i in range(10):
-            assert_utf8_equal(met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
+            assert_utf8_equal(
+                met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
 
 
 def test_post_server_recoverable_http_error():
@@ -152,14 +156,16 @@ def test_post_server_recoverable_http_error():
 
     for error_code in error_codes:
         reset_test_env()
-        exception_to_raise = requests.exceptions.HTTPError(requests.exceptions.RequestException())
+        exception_to_raise = requests.exceptions.HTTPError(
+            requests.exceptions.RequestException())
         requests.mock_response.status_code = error_code
         met_buffer = Helper.get_buffer(10)
         met_config = Helper.default_config()
         helper_test_post_recoverable_exception(met_config, met_buffer, exception_to_raise,
                                                error_code, 5)
         for i in range(10):
-            assert_utf8_equal(met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
+            assert_utf8_equal(
+                met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
 
 
 def test_post_recoverable_requests_exception():
@@ -167,10 +173,13 @@ def test_post_recoverable_requests_exception():
     exception_cases = [requests.exceptions.ConnectionError(request_exception),
                        requests.exceptions.Timeout(request_exception),
                        requests.exceptions.TooManyRedirects(request_exception),
-                       requests.exceptions.StreamConsumedError(request_exception),
+                       requests.exceptions.StreamConsumedError(
+                           request_exception),
                        requests.exceptions.RetryError(request_exception),
-                       requests.exceptions.ChunkedEncodingError(request_exception),
-                       requests.exceptions.ContentDecodingError(request_exception),
+                       requests.exceptions.ChunkedEncodingError(
+                           request_exception),
+                       requests.exceptions.ContentDecodingError(
+                           request_exception),
                        requests.exceptions.URLRequired(request_exception),
                        requests.exceptions.MissingSchema(request_exception),
                        requests.exceptions.InvalidSchema(request_exception),
@@ -184,29 +193,37 @@ def test_post_recoverable_requests_exception():
         helper_test_post_recoverable_exception(met_config, met_buffer, exception_case,
                                                "unknown_status_code", 5)
         for i in range(10):
-            assert_utf8_equal(met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
+            assert_utf8_equal(
+                met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
 
 
 def test_post_fail_after_retries_with_buffer_full():
     met_buffer = Helper.get_buffer(10)
     met_config = Helper.default_config()
     met_buffer.put_pending_batch(['batch_first'])
-    exception_to_raise = requests.exceptions.HTTPError(requests.exceptions.RequestException())
-    helper_test_post_recoverable_exception(met_config, met_buffer, exception_to_raise, 429, 10)
+    exception_to_raise = requests.exceptions.HTTPError(
+        requests.exceptions.RequestException())
+    helper_test_post_recoverable_exception(
+        met_config, met_buffer, exception_to_raise, 429, 10)
     for i in range(10):
-        assert_utf8_equal(met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
+        assert_utf8_equal(
+            met_config.conf, requests.mock_server.data[i], 'batch_%s' % i)
 
 
 def test_post_fail_after_retries_with_buffer_not_full():
     met_buffer = Helper.get_buffer(20)
     met_config = Helper.default_config()
     met_buffer.put_pending_batch(['batch_first'])
-    exception_to_raise = requests.exceptions.HTTPError(requests.exceptions.RequestException())
-    helper_test_post_recoverable_exception(met_config, met_buffer, exception_to_raise, 429, 10)
+    exception_to_raise = requests.exceptions.HTTPError(
+        requests.exceptions.RequestException())
+    helper_test_post_recoverable_exception(
+        met_config, met_buffer, exception_to_raise, 429, 10)
 
-    assert_utf8_equal(met_config.conf, requests.mock_server.data[0], 'batch_first')
+    assert_utf8_equal(
+        met_config.conf, requests.mock_server.data[0], 'batch_first')
     for i in range(1, 10):
-        assert_utf8_equal(met_config.conf, requests.mock_server.data[i], 'batch_%s' % (i - 1))
+        assert_utf8_equal(
+            met_config.conf, requests.mock_server.data[i], 'batch_%s' % (i - 1))
 
 
 #
@@ -237,7 +254,8 @@ def helper_test_post_recoverable_exception(met_config, met_buffer, exception, er
     }
     Helper.parse_configs(met_config, configs)
 
-    requests.post_response_decider.set(True, False, exception, stop_raise_exception_after, 0)
+    requests.post_response_decider.set(
+        True, False, exception, stop_raise_exception_after, 0)
     requests.mock_response.set(error_code)
 
     for i in range(10):

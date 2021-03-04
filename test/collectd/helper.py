@@ -1,14 +1,13 @@
 import os
-cwd = os.getcwd()
 import sys
-sys.path.append(cwd + '/sumologic_collectd_metrics')
-from metrics_config import MetricsConfig, ConfigOptions
-from metrics_buffer import MetricsBuffer
-from metrics_batcher import MetricsBatcher
-from metrics_sender import MetricsSender
-from metrics_writer import MetricsWriter
+from sumologic_collectd_metrics.metrics_config import MetricsConfig, ConfigOptions
+from sumologic_collectd_metrics.metrics_buffer import MetricsBuffer
+from sumologic_collectd_metrics.metrics_batcher import MetricsBatcher
+from sumologic_collectd_metrics.metrics_sender import MetricsSender
+from sumologic_collectd_metrics.metrics_writer import MetricsWriter
 from collectd.collectd_config import CollectdConfig, ConfigNode
 from collectd import CollecdMock
+cwd = os.getcwd()
 
 
 class Helper:
@@ -60,5 +59,6 @@ class Helper:
     def parse_configs(met_config, configs):
         for (key, value) in configs.items():
             node = ConfigNode(getattr(ConfigOptions, key), [value])
-            config = CollectdConfig([Helper.url_node(), Helper.types_db_node(), node])
+            config = CollectdConfig(
+                [Helper.url_node(), Helper.types_db_node(), node])
             met_config.parse_config(config)

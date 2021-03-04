@@ -19,7 +19,7 @@ install: "pip install -r requirements.txt"
 
 # command to run tests
 script:
-  py.test -v test/ --cov=sumologic_collectd_metrics/
+  python -m pytest -v test/ --cov=sumologic_collectd_metrics/
 
 after_success:
   - codecov

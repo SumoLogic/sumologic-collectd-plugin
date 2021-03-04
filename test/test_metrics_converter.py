@@ -1,11 +1,9 @@
-import os
-cwd = os.getcwd()
-import sys
-sys.path.append(cwd + '/sumologic_collectd_metrics')
-import pytest
-from metrics_converter import gen_tag, tags_to_str, convert_to_metrics
-from collectd.values import Values
 from collectd import Helper
+from collectd.values import Values
+from sumologic_collectd_metrics.metrics_converter import gen_tag, tags_to_str, convert_to_metrics
+import pytest
+import sys
+import os
 
 
 def test_gen_tag():
@@ -99,7 +97,8 @@ def test_convert_to_metrics_type_format_exception():
         helper = Helper()
         convert_to_metrics(d, helper.types)
 
-    assert 'Number values [1.23] differ from types defined for test_type_2' in str(e)
+    assert 'Number values [1.23] differ from types defined for test_type_2' in str(
+        e)
 
 
 def test_convert_to_metrics_type_nonexist_exception():

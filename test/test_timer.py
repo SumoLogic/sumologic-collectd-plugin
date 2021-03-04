@@ -1,8 +1,6 @@
-import os
-cwd = os.getcwd()
+from sumologic_collectd_metrics.timer import Timer
 import sys
-sys.path.append(cwd + '/sumologic_collectd_metrics')
-from timer import Timer
+import os
 
 
 def test_cancel_timer_normal():
@@ -20,6 +18,7 @@ def test_cancel_timer_not_start():
     assert timer.timer is None
 
     timer.cancel_timer()
+
 
 def test_reset_timer_normal():
     timer = Timer(0.1, task)

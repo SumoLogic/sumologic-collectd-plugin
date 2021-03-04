@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 
+from collectd import CollecdMock
+from collectd import Helper
+from collectd.collectd_config import CollectdConfig, ConfigNode
+from sumologic_collectd_metrics.metrics_config import MetricsConfig, ConfigOptions
+import pytest
+import sys
 import os
 cwd = os.getcwd()
-import sys
-sys.path.append(cwd + '/sumologic_collectd_metrics')
-
-import pytest
-from metrics_config import MetricsConfig, ConfigOptions
-from collectd.collectd_config import CollectdConfig, ConfigNode
-from collectd import Helper
-from collectd import CollecdMock
 
 
 def test_parse_types_db():
@@ -35,7 +33,8 @@ def test_parse_dimension_tags():
                              tags_node(ConfigOptions.dimension_tags, tags)])
     met_config.parse_config(config)
 
-    assert list(met_config.conf[ConfigOptions.dimension_tags]) == list(tuple_to_pair(tags))
+    assert list(met_config.conf[ConfigOptions.dimension_tags]) == list(
+        tuple_to_pair(tags))
 
 
 def test_parse_meta_tags():
@@ -45,7 +44,8 @@ def test_parse_meta_tags():
                              tags_node(ConfigOptions.meta_tags, tags)])
     met_config.parse_config(config)
 
-    assert list(met_config.conf[ConfigOptions.meta_tags]) == list(tuple_to_pair(tags))
+    assert list(met_config.conf[ConfigOptions.meta_tags]) == list(
+        tuple_to_pair(tags))
 
 
 def test_parse_meta_tags_missing_value():
@@ -56,30 +56,35 @@ def test_parse_meta_tags_missing_value():
                                  tags_node(ConfigOptions.meta_tags, tags)])
         met_config.parse_config(config)
 
-    assert "Missing tags key/value in options ('meta_key1', 'meta_val1', 'meta_key2')." in str(e)
+    assert "Missing tags key/value in options ('meta_key1', 'meta_val1', 'meta_key2')." in str(
+        e)
 
 
 def test_parse_http_post_interval():
     met_config = Helper.default_config()
     http_post_interval = '0.5'
-    http_post_interval_node = ConfigNode(ConfigOptions.http_post_interval, [http_post_interval])
+    http_post_interval_node = ConfigNode(
+        ConfigOptions.http_post_interval, [http_post_interval])
     config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
                              http_post_interval_node])
     met_config.parse_config(config)
 
-    assert met_config.conf[ConfigOptions.http_post_interval] == float(http_post_interval)
+    assert met_config.conf[ConfigOptions.http_post_interval] == float(
+        http_post_interval)
 
 
 def test_parse_http_post_interval_exception():
     with pytest.raises(Exception) as e:
         met_config = Helper.default_config()
         http_post_interval = '0'
-        http_post_interval_node = ConfigNode(ConfigOptions.http_post_interval, [http_post_interval])
+        http_post_interval_node = ConfigNode(
+            ConfigOptions.http_post_interval, [http_post_interval])
         config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
                                  http_post_interval_node])
         met_config.parse_config(config)
 
-    assert 'Value 0.0 for key HttpPostInterval is not a positive number' in str(e)
+    assert 'Value 0.0 for key HttpPostInterval is not a positive number' in str(
+        e)
 
 
 def test_parse_string_config():
@@ -137,7 +142,7 @@ def test_parse_content_encoding():
         met_config = Helper.default_config()
         Helper.parse_configs(met_config, config)
         assert met_config.conf[ConfigOptions.content_encoding] == \
-               config['content_encoding']
+            config['content_encoding']
 
 
 def test_parse_unknown_content_encoding():
@@ -161,7 +166,8 @@ def test_parse_retry_config_values_positive():
         }
         Helper.parse_configs(met_config, configs)
 
-    assert 'Value -5 for key MaxBatchInterval is not a positive number' in str(e)
+    assert 'Value -5 for key MaxBatchInterval is not a positive number' in str(
+        e)
 
 
 def test_parse_retry_config_values_non_negative():
@@ -184,14 +190,16 @@ def test_parse_retry_config_jitter_min_greater_than_max():
         }
         Helper.parse_configs(met_config, configs)
 
-    assert 'Specify RetryJitterMin 2 to be less or equal to RetryJitterMax 1' in str(e)
+    assert 'Specify RetryJitterMin 2 to be less or equal to RetryJitterMax 1' in str(
+        e)
 
 
 def test_parse_unknown_config_option():
     met_config = Helper.default_config()
     unknown_config = 'unknown_config'
     unknown_config_node = ConfigNode('unknown_config', unknown_config)
-    config = CollectdConfig([Helper.url_node(), Helper.types_db_node(), unknown_config_node])
+    config = CollectdConfig(
+        [Helper.url_node(), Helper.types_db_node(), unknown_config_node])
     met_config.parse_config(config)
 
     assert hasattr(met_config, 'unknown_config') is False
@@ -211,8 +219,10 @@ def test_parse_int_exception():
     with pytest.raises(ValueError):
         met_config = Helper.default_config()
         max_batch_size = ''
-        max_batch_size_node = ConfigNode(ConfigOptions.max_batch_size, [max_batch_size])
-        config = CollectdConfig([Helper.url_node(), Helper.types_db_node(), max_batch_size_node])
+        max_batch_size_node = ConfigNode(
+            ConfigOptions.max_batch_size, [max_batch_size])
+        config = CollectdConfig(
+            [Helper.url_node(), Helper.types_db_node(), max_batch_size_node])
         met_config.parse_config(config)
 
 
@@ -238,7 +248,8 @@ def test_invalid_http_post_interval_exception():
     with pytest.raises(Exception) as e:
         met_config = Helper.default_config()
         http_post_interval = '100.0'
-        http_post_interval_node = ConfigNode(ConfigOptions.http_post_interval, [http_post_interval])
+        http_post_interval_node = ConfigNode(
+            ConfigOptions.http_post_interval, [http_post_interval])
         config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
                                  http_post_interval_node])
         met_config.parse_config(config)
@@ -254,12 +265,14 @@ def test_contains_reserved_symbols_exception():
                                  tags_node(ConfigOptions.meta_tags, tags)])
         met_config.parse_config(config)
 
-    assert 'Value meta val2 for Key Metadata must not contain reserved symbol " "' in str(e)
+    assert 'Value meta val2 for Key Metadata must not contain reserved symbol " "' in str(
+        e)
 
 
 def test_invalid_ds_in_types_db():
     met_config = Helper.default_config()
-    types_db_node = ConfigNode(ConfigOptions.types_db, [cwd + '/test/types_invalid_ds.db'])
+    types_db_node = ConfigNode(ConfigOptions.types_db, [
+                               cwd + '/test/types_invalid_ds.db'])
     config = CollectdConfig([Helper.url_node(), types_db_node])
     met_config.parse_config(config)
 
@@ -269,7 +282,8 @@ def test_invalid_ds_in_types_db():
 def test_types_db_no_exist_exception():
     with pytest.raises(Exception) as e:
         met_config = Helper.default_config()
-        types_db_node = ConfigNode(ConfigOptions.types_db, [cwd + '/test/types_not_exist.db'])
+        types_db_node = ConfigNode(ConfigOptions.types_db, [
+                                   cwd + '/test/types_not_exist.db'])
         config = CollectdConfig([Helper.url_node(), types_db_node])
         met_config.parse_config(config)
 
