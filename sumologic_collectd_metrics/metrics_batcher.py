@@ -5,7 +5,7 @@ try:
 except ImportError:
     import queue as queue
 import threading
-from timer import Timer
+from . timer import Timer
 
 
 class MetricsBatcher(Timer):
@@ -55,7 +55,8 @@ class MetricsBatcher(Timer):
             return
         if self.flushing_lock.acquire(False):
             batch = self._pop_batch()
-            self.collectd.debug('flushing metrics with batch size %d' % len(batch))
+            self.collectd.debug(
+                'flushing metrics with batch size %d' % len(batch))
             self.metrics_buffer.put_pending_batch(batch)
             self.reset_timer()
             self.flushing_lock.release()

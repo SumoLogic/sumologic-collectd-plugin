@@ -8,10 +8,10 @@ import gzip
 import requests
 import zlib
 from retry.api import retry_call
-from metrics_config import ConfigOptions
-from metrics_util import RecoverableException
-from metrics_converter import gen_tag, tags_to_str
-from timer import Timer
+from . metrics_config import ConfigOptions
+from . metrics_util import RecoverableException
+from . metrics_converter import gen_tag, tags_to_str
+from . timer import Timer
 
 
 class HeaderKeys(object):
@@ -39,7 +39,8 @@ class MetricsSender(Timer):
         Init MetricsSender with conf and met_buf
         """
 
-        Timer.__init__(self, conf[ConfigOptions.http_post_interval], self._request_scheduler)
+        Timer.__init__(
+            self, conf[ConfigOptions.http_post_interval], self._request_scheduler)
 
         self.collectd = collectd
         self.conf = conf
@@ -66,7 +67,8 @@ class MetricsSender(Timer):
     def _send_request(self, headers, body):
 
         try:
-            self.collectd.debug('Sending https request with headers %s, body %s' % (headers, body))
+            self.collectd.debug(
+                'Sending https request with headers %s, body %s' % (headers, body))
 
             response = requests.post(self.conf[ConfigOptions.url],
                                      data=self.encode_body(body), headers=headers)
@@ -74,23 +76,28 @@ class MetricsSender(Timer):
             self.collectd.info('Sent https request with batch_size=%d got response_code=%s' %
                                (len(body), response.status_code))
         except requests.exceptions.HTTPError as e:
-            self.fail_with_recoverable_exception('An HTTP error occurred', body, e)
+            self.fail_with_recoverable_exception(
+                'An HTTP error occurred', body, e)
         except requests.exceptions.ConnectionError as e:
-            self.fail_with_recoverable_exception('A Connection error occurred', body, e)
+            self.fail_with_recoverable_exception(
+                'A Connection error occurred', body, e)
         except requests.exceptions.Timeout as e:
-            self.fail_with_recoverable_exception('The request timed out', body, e)
+            self.fail_with_recoverable_exception(
+                'The request timed out', body, e)
         except requests.exceptions.TooManyRedirects as e:
             self.fail_with_recoverable_exception('Too many redirects', body, e)
         except requests.exceptions.StreamConsumedError as e:
             self.fail_with_recoverable_exception(
                 'The content for this response was already consumed', body, e)
         except requests.exceptions.RetryError as e:
-            self.fail_with_recoverable_exception('Custom retries logic failed', body, e)
+            self.fail_with_recoverable_exception(
+                'Custom retries logic failed', body, e)
         except requests.exceptions.ChunkedEncodingError as e:
             self.fail_with_recoverable_exception(
                 'The server declared chunked encoding but sent an invalid chunk', body, e)
         except requests.exceptions.ContentDecodingError as e:
-            self.fail_with_recoverable_exception('Failed to decode response', body, e)
+            self.fail_with_recoverable_exception(
+                'Failed to decode response', body, e)
         except requests.exceptions.URLRequired as e:
             self.fail_with_recoverable_exception(
                 'A valid URL is required to make a request', body, e)
@@ -98,9 +105,11 @@ class MetricsSender(Timer):
             self.fail_with_recoverable_exception(
                 'The URL schema (e.g. http or https) is missing', body, e)
         except requests.exceptions.InvalidSchema as e:
-            self.fail_with_recoverable_exception('See schemas in defaults.py', body, e)
+            self.fail_with_recoverable_exception(
+                'See schemas in defaults.py', body, e)
         except requests.exceptions.InvalidURL as e:
-            self.fail_with_recoverable_exception('The URL provided was invalid', body, e)
+            self.fail_with_recoverable_exception(
+                'The URL provided was invalid', body, e)
         except Exception as e:
             self.fail_with_recoverable_exception('unknown exception', body, e)
 
@@ -138,11 +147,13 @@ class MetricsSender(Timer):
 
         # Add custom dimension_tags specified in conf
         if ConfigOptions.dimension_tags in config_keys:
-            headers[HeaderKeys.x_sumo_dimensions] = tags_to_str(self._gen_config_dimension_tags(), sep=',')
+            headers[HeaderKeys.x_sumo_dimensions] = tags_to_str(
+                self._gen_config_dimension_tags(), sep=',')
 
         # Add custom meta_tags specified in conf
         if ConfigOptions.meta_tags in config_keys:
-            headers[HeaderKeys.x_sumo_metadata] = tags_to_str(self._gen_config_meta_tags(), sep=',')
+            headers[HeaderKeys.x_sumo_metadata] = tags_to_str(
+                self._gen_config_meta_tags(), sep=',')
 
         return headers
 

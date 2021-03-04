@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from metrics_util import validate_non_empty, validate_string_type, validate_positive, \
+from . metrics_util import validate_non_empty, validate_string_type, validate_positive, \
     validate_non_negative, validate_field
 
 
@@ -36,6 +36,7 @@ class ConfigOptions(object):
     content_type = 'ContentType'
     shutdown_max_wait = "ShutdownMaxWait"  # seconds
 
+
 class MetricsConfig:
     """
     Configuration for sumologic collectd plugin
@@ -51,7 +52,8 @@ class MetricsConfig:
         self.conf = self.default_config()
         self.types = {}
 
-        collectd.info('Initialized MetricsConfig with default config %s' % self.conf)
+        collectd.info(
+            'Initialized MetricsConfig with default config %s' % self.conf)
 
     @staticmethod
     def default_config():
@@ -119,23 +121,26 @@ class MetricsConfig:
                                         'must be deflate, gzip, or none' % s)
                     self.conf[child.key] = content_encoding
                 else:
-                    self.collectd.warning('Unknown configuration %s, ignored.' % child.key)
+                    self.collectd.warning(
+                        'Unknown configuration %s, ignored.' % child.key)
         except Exception as e:
-            self.collectd.error('Failed to parse configurations due to %s' % str(e))
+            self.collectd.error(
+                'Failed to parse configurations due to %s' % str(e))
             raise e
 
         if ConfigOptions.url not in self.conf:
             raise Exception('Specify %s in collectd.conf.' % ConfigOptions.url)
 
         if not self.types:
-            raise Exception('Specify %s in collectd.conf.' % ConfigOptions.types_db)
+            raise Exception('Specify %s in collectd.conf.' %
+                            ConfigOptions.types_db)
 
         http_post_interval = self.conf[ConfigOptions.http_post_interval]
         max_batch_interval = self.conf[ConfigOptions.max_batch_interval]
 
         if http_post_interval > max_batch_interval:
             raise Exception('Specify HttpPostInterval %f as float between 0 and '
-                            'MaxBatchInterval %d' %(http_post_interval, max_batch_interval))
+                            'MaxBatchInterval %d' % (http_post_interval, max_batch_interval))
 
         retry_jitter_min = self.conf[ConfigOptions.retry_jitter_min]
         retry_jitter_max = self.conf[ConfigOptions.retry_jitter_max]
@@ -144,7 +149,8 @@ class MetricsConfig:
             raise Exception('Specify RetryJitterMin %d to be less or equal to RetryJitterMax %d' %
                             (retry_jitter_min, retry_jitter_max))
 
-        self.collectd.info('Updated MetricsConfig %s with config file %s ' % (self.conf, config))
+        self.collectd.info(
+            'Updated MetricsConfig %s with config file %s ' % (self.conf, config))
 
     # parse types.db file
     def _parse_types(self, db):
@@ -166,27 +172,30 @@ class MetricsConfig:
 
                     if len(ds_fields) != 4:
                         self.collectd.warning('Cannot parse data source %s on type %s'
-                                         % (ds, type_name))
+                                              % (ds, type_name))
                         continue
                     v.append(ds_fields)
                 self.types[type_name] = v
 
             f.close()
 
-            self.collectd.info('Parsed types %s with types_db file %s ' % (self.types, db))
+            self.collectd.info(
+                'Parsed types %s with types_db file %s ' % (self.types, db))
 
         except Exception as e:
-            self.collectd.error('Parse types %s failed with %s' %(db, str(e)))
+            self.collectd.error('Parse types %s failed with %s' % (db, str(e)))
             raise e
 
     # parse dimension_tags/meta_tags specified in collectd.conf
     def _parse_tags(self, child):
         if len(child.values) % 2 != 0:
-            raise Exception('Missing tags key/value in options %s.' % str(child.values))
+            raise Exception('Missing tags key/value in options %s.' %
+                            str(child.values))
 
         for v in child.values:
             validate_field(v, child.key, 'Value', 'Key')
 
         self.conf[child.key] = zip(*(iter(child.values),) * 2)
 
-        self.collectd.info('Parsed %s tags %s' % (child.key, self.conf[child.key]))
+        self.collectd.info('Parsed %s tags %s' %
+                           (child.key, self.conf[child.key]))

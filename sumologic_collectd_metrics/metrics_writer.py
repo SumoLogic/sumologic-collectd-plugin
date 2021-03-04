@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import time
-from metrics_config import MetricsConfig, ConfigOptions
-from metrics_buffer import MetricsBuffer
-from metrics_converter import convert_to_metrics
-from metrics_batcher import MetricsBatcher
-from metrics_sender import MetricsSender
+from . metrics_config import MetricsConfig, ConfigOptions
+from . metrics_buffer import MetricsBuffer
+from . metrics_converter import convert_to_metrics
+from . metrics_batcher import MetricsBatcher
+from . metrics_sender import MetricsSender
 
 
 class MetricsWriter(object):
@@ -38,13 +38,15 @@ class MetricsWriter(object):
         """
 
         self.met_buffer = MetricsBuffer(self.met_config.conf[ConfigOptions.max_requests_to_buffer],
-                                   self.collectd)
+                                        self.collectd)
         self.met_batcher = MetricsBatcher(self.met_config.conf[ConfigOptions.max_batch_size],
-                                     self.met_config.conf[ConfigOptions.max_batch_interval],
-                                     self.met_buffer, self.collectd)
-        self.met_sender = MetricsSender(self.met_config.conf, self.met_buffer, self.collectd)
+                                          self.met_config.conf[ConfigOptions.max_batch_interval],
+                                          self.met_buffer, self.collectd)
+        self.met_sender = MetricsSender(
+            self.met_config.conf, self.met_buffer, self.collectd)
 
-        self.collectd.info('Initialized MetricsBuffer, MetricsBatcher, and MetricsSender')
+        self.collectd.info(
+            'Initialized MetricsBuffer, MetricsBatcher, and MetricsSender')
 
     def write_callback(self, raw_data, data=None):
         """
@@ -53,7 +55,8 @@ class MetricsWriter(object):
 
         metrics = convert_to_metrics(raw_data, self.met_config.types)
 
-        self.collectd.debug('Converted data %s to metrics %s' % (raw_data, metrics))
+        self.collectd.debug('Converted data %s to metrics %s' %
+                            (raw_data, metrics))
 
         for metric in metrics:
             self.met_batcher.push_item(metric)
@@ -63,7 +66,8 @@ class MetricsWriter(object):
         Shutdown callback. Flushes in memory metrics batches. Default, times out at 5 seconds.
         """
 
-        self.collectd.info('Received shutdown signal, start flushing in memory metrics batches.')
+        self.collectd.info(
+            'Received shutdown signal, start flushing in memory metrics batches.')
 
         now = time.time()
         stop = now + self.met_config.conf[ConfigOptions.shutdown_max_wait]
@@ -77,7 +81,7 @@ class MetricsWriter(object):
 
         self.collectd.info('Flushing complete. There are %d metrics batches left.' %
                            (self.met_buffer.pending_queue.qsize() +
-                           self.met_buffer.processing_queue.qsize()))
+                            self.met_buffer.processing_queue.qsize()))
 
     def register(self):
         """
