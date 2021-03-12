@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 
-_reserved_symbols = frozenset([' ', '='])
+
+
+_reserved_symbols = {
+    ' ': None,
+    '=': ':',
+}
 
 
 def validate_non_empty(s, key):
@@ -35,10 +40,14 @@ def validate_field(s, f, l1, l2):
 
     validate_string_type(s, f, l1, l2)
 
-    for reserved_symbol in _reserved_symbols:
+    for reserved_symbol, replacement in _reserved_symbols.items():
         if reserved_symbol in s:
-            raise Exception('%s %s for %s %s must not contain reserved symbol \"%s\"' %
-                            (l1, s, l2, f, reserved_symbol))
+            if replacement is None:
+                raise Exception('%s %s for %s %s must not contain reserved symbol \"%s\"' %
+                                (l1, s, l2, f, reserved_symbol))
+            else:
+                s = s.replace(reserved_symbol, replacement)
+    return s
 
 
 def validate_type(data, types):

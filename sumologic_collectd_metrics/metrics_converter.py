@@ -23,8 +23,8 @@ def gen_tag(key, value):
         """
         Tag is of form key=value
         """
-        validate_field(key, value, 'Key', 'Value')
-        validate_field(value, key, 'Value', 'Key')
+        key = validate_field(key, value, 'Key', 'Value')
+        value = validate_field(value, key, 'Value', 'Key')
         if not key:
             raise Exception('Key for value %s cannot be empty' % value)
         elif key.lower() in _reserved_keywords:
