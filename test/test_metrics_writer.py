@@ -65,6 +65,17 @@ def test_write_callback_boolean_value():
     assert [metrics_writer.met_batcher.queue.get()] == d.metrics_str()
 
 
+def test_write_callback_boolean_tag():
+    metrics_writer = Helper.default_writer()
+    config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])
+    metrics_writer.parse_config(config)
+    metrics_writer.init_callback()
+    d = Values(host=True)
+    metrics_writer.write_callback(d)
+    assert metrics_writer.met_batcher.queue.qsize() == 1
+    assert [metrics_writer.met_batcher.queue.get()] == d.metrics_str()
+
+
 def test_shutdown_call_back():
     metrics_writer = Helper.default_writer()
     config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])

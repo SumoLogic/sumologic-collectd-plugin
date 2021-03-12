@@ -38,7 +38,8 @@ def validate_field(s, f, l1, l2):
     Field must be string that does not contains '=' or ' '
     """
 
-    validate_string_type(s, f, l1, l2)
+    # Convert field to string
+    s = str(s)
 
     for reserved_symbol, replacement in _reserved_symbols.items():
         if reserved_symbol in s:
