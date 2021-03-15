@@ -31,17 +31,17 @@ def test_gen_tag_key_word_exception():
 
 
 def test_gen_key_not_string_exception():
-    with pytest.raises(Exception) as e:
-        gen_tag(('tag_key', ), 'tag_value')
+    value = gen_tag(('tag_key', ), 'tag_value')
+    expected = '[(\'tag_key\',)=tag_value'
 
-    assert "Key ('tag_key',) for Value tag_value must be string type." in str(e)
+    assert expected, value
 
 
 def test_gen_value_not_string_exception():
-    with pytest.raises(Exception) as e:
-        gen_tag('tag_key', 1)
+    value = gen_tag(('tag_key', ), 1)
+    expected = 'tag_key=1'
 
-    assert "Value 1 for Key tag_key must be string type." in str(e)
+    assert expected, value
 
 
 def test_tags_to_str():
