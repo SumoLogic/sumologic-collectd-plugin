@@ -102,3 +102,6 @@ ENV/
 
 # IDEs
 .vscode
+
+# Vagrant
+.vagrant
