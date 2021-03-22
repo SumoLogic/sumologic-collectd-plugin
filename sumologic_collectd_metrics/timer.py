@@ -26,7 +26,7 @@ class Timer:
         self.timer.daemon = True
         # Lock to resolve racing condition for start_timer and reset_timer
         if self.start_timer_lock.acquire(False):
-            if not self.timer.isAlive():
+            if not self.timer.is_alive():
                 self.timer.start()
             self.start_timer_lock.release()
 
