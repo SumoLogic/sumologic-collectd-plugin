@@ -3,7 +3,7 @@
 try:
     import Queue as queue
 except ImportError:
-    import queue as queue
+    import queue
 
 
 class MetricsBuffer(object):

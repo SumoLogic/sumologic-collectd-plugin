@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from .metrics_util import validate_field, validate_type
 import math
+from .metrics_util import validate_field, validate_type
 
 
 class IntrinsicKeys(object):

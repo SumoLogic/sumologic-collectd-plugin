@@ -1,16 +1,13 @@
-import os
-cwd = os.getcwd()
-import sys
-sys.path.append(cwd + '/sumologic_collectd_metrics')
+# -*- coding: utf-8 -*-
 
-import pytest
-import requests
 import time
 import zlib
-from metrics_config import ConfigOptions
-from metrics_sender import HeaderKeys
-from collectd.collectd_config import CollectdConfig, ConfigNode
+import pytest
+import requests
 from collectd import Helper
+from collectd.collectd_config import CollectdConfig, ConfigNode
+from sumologic_collectd_metrics.metrics_config import ConfigOptions
+from sumologic_collectd_metrics.metrics_sender import HeaderKeys
 
 
 def test_post_normal_no_additional_header():

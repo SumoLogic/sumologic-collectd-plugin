@@ -1,14 +1,17 @@
+# -*- coding: utf-8 -*-
+
 import os
+from sumologic_collectd_metrics.metrics_batcher import MetricsBatcher
+from sumologic_collectd_metrics.metrics_buffer import MetricsBuffer
+from sumologic_collectd_metrics.metrics_config import (ConfigOptions,
+                                                       MetricsConfig)
+from sumologic_collectd_metrics.metrics_sender import MetricsSender
+from sumologic_collectd_metrics.metrics_writer import MetricsWriter
+from . import CollecdMock
+from .collectd_config import CollectdConfig, ConfigNode
+
+
 cwd = os.getcwd()
-import sys
-sys.path.append(cwd + '/sumologic_collectd_metrics')
-from metrics_config import MetricsConfig, ConfigOptions
-from metrics_buffer import MetricsBuffer
-from metrics_batcher import MetricsBatcher
-from metrics_sender import MetricsSender
-from metrics_writer import MetricsWriter
-from collectd.collectd_config import CollectdConfig, ConfigNode
-from collectd import CollecdMock
 
 
 class Helper:

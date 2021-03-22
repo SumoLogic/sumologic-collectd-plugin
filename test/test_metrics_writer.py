@@ -1,13 +1,10 @@
-import os
-cwd = os.getcwd()
-import sys
-sys.path.append(cwd + '/sumologic_collectd_metrics')
+# -*- coding: utf-8 -*-
 
 import time
-from metrics_config import ConfigOptions
+from collectd import Helper
 from collectd.collectd_config import CollectdConfig
 from collectd.values import Values
-from collectd import Helper
+from sumologic_collectd_metrics.metrics_config import ConfigOptions
 
 
 def test_config_callback():
@@ -95,4 +92,3 @@ def test_shutdown_call_back():
 def test_register():
     metrics_writer = Helper.default_writer()
     metrics_writer.register()
-

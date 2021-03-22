@@ -5,8 +5,8 @@ try:
 except ImportError:
     from io import BytesIO as CompatibleIO
 import gzip
-import requests
 import zlib
+import requests
 from retry.api import retry_call
 from .metrics_config import ConfigOptions
 from .metrics_util import RecoverableException
