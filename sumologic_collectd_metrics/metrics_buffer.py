@@ -39,8 +39,8 @@ class MetricsBuffer(object):
 
         if not self.processing_queue.empty():
             return self.processing_queue.get()
-        else:
-            return self.pending_queue.get()
+
+        return self.pending_queue.get()
 
     def put_pending_batch(self, batch):
         """

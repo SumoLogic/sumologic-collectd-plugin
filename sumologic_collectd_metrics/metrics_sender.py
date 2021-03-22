@@ -164,13 +164,14 @@ class MetricsSender(Timer):
         content_encoding = self.conf[ConfigOptions.content_encoding]
         if content_encoding == 'deflate':
             return zlib.compress(body_str)
-        elif content_encoding == 'gzip':
+
+        if content_encoding == 'gzip':
             encoded_stream = CompatibleIO()
             with GzipFile(fileobj=encoded_stream, mode="w") as file:
                 file.write(body_str)
             return encoded_stream.getvalue()
-        else:
-            return body_str
+
+        return body_str
 
     def fail_with_recoverable_exception(self, msg, batch, e):
         """
@@ -188,11 +189,11 @@ class GzipFile(gzip.GzipFile):
     def __enter__(self, *args):
         if hasattr(gzip.GzipFile, '__enter__'):
             return gzip.GzipFile.__enter__(self)
-        else:
-            return self
+
+        return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         if hasattr(gzip.GzipFile, '__exit__'):
             return gzip.GzipFile.__exit__(self, exc_type, exc_value, traceback)
-        else:
-            return self.close()
+
+        return self.close()
