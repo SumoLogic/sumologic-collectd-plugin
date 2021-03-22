@@ -86,7 +86,7 @@ def test_shutdown_call_back():
 
     time.sleep(2)
 
-    assert metrics_writer.met_buffer.empty() == True
+    assert metrics_writer.met_buffer.empty() is True
 
 
 def test_register():
