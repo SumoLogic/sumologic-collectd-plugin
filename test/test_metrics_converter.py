@@ -1,11 +1,10 @@
-import os
-cwd = os.getcwd()
-import sys
-sys.path.append(cwd + '/sumologic_collectd_metrics')
+# -*- coding: utf-8 -*-
+
 import pytest
-from metrics_converter import gen_tag, tags_to_str, convert_to_metrics
-from collectd.values import Values
 from collectd import Helper
+from collectd.values import Values
+from sumologic_collectd_metrics.metrics_converter import (convert_to_metrics,
+                                                          gen_tag, tags_to_str)
 
 
 def test_gen_tag():

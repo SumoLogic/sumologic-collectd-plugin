@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import os
-cwd = os.getcwd()
-import sys
-sys.path.append(cwd + '/sumologic_collectd_metrics')
-
 import pytest
-from metrics_config import MetricsConfig, ConfigOptions
 from collectd.collectd_config import CollectdConfig, ConfigNode
 from collectd import Helper
 from collectd import CollecdMock
+from sumologic_collectd_metrics.metrics_config import MetricsConfig, ConfigOptions
+
+
+cwd = os.getcwd()
 
 
 def test_parse_types_db():

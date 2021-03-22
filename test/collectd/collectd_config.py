@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 class CollectdConfig:
     def __init__(self, children):
         self.children = children

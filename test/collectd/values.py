@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 class Constants:
     host = 'test_host'
     plugin = 'test_plugin'

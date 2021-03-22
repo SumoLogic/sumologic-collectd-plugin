@@ -1,8 +1,6 @@
-import os
-cwd = os.getcwd()
-import sys
-sys.path.append(cwd + '/sumologic_collectd_metrics')
-from timer import Timer
+# -*- coding: utf-8 -*-
+
+from sumologic_collectd_metrics.timer import Timer
 
 
 def test_cancel_timer_normal():

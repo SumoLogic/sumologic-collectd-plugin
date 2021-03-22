@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 def debug(msg):
     print('collect.debug: %s' % msg)
 

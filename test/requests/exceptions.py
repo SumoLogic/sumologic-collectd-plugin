@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from urllib3.exceptions import HTTPError as BaseHTTPError
 
 

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 class PostResponseDecider:
     def __init__(self):
         self.raise_recoverable_exception = False
