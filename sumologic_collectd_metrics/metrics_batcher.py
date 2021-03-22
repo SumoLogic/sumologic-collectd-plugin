@@ -5,7 +5,7 @@ try:
 except ImportError:
     import queue as queue
 import threading
-from timer import Timer
+from .timer import Timer
 
 
 class MetricsBatcher(Timer):
