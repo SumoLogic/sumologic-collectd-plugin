@@ -76,7 +76,7 @@ class MetricsBatcher(Timer):
 
         batch = []
 
-        for i in range(self._batch_size()):
+        for _ in range(self._batch_size()):
             batch.append(self.queue.get())
 
         return batch
