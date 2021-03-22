@@ -73,7 +73,8 @@ def test_convert_to_metrics_single():
 
 
 def test_convert_to_metrics_multiple():
-    data = Values(type='test_type_2', values=[1.23, 4.56], ds_names=['test_ds_name1', 'test_ds_name2'],
+    data = Values(type='test_type_2', values=[1.23, 4.56],
+                  ds_names=['test_ds_name1', 'test_ds_name2'],
                   ds_types=['test_ds_type1', 'test_ds_type2'])
     helper = Helper()
     metrics = convert_to_metrics(data, helper.types)
@@ -93,7 +94,8 @@ def test_convert_to_metrics_no_meta():
 
 def test_convert_to_metrics_type_format_exception():
     with pytest.raises(Exception) as e:
-        data = Values(type='test_type_2', values=[1.23], ds_names=['test_ds_name1', 'test_ds_name2'],
+        data = Values(type='test_type_2', values=[1.23],
+                      ds_names=['test_ds_name1', 'test_ds_name2'],
                       ds_types=['test_ds_type1', 'test_ds_type2'])
         helper = Helper()
         convert_to_metrics(data, helper.types)
@@ -103,7 +105,8 @@ def test_convert_to_metrics_type_format_exception():
 
 def test_convert_to_metrics_type_nonexist_exception():
     with pytest.raises(Exception) as e:
-        data = Values(type='test_type_3', values=[1.23], ds_names=['test_ds_name1', 'test_ds_name2'],
+        data = Values(type='test_type_3', values=[1.23],
+                      ds_names=['test_ds_name1', 'test_ds_name2'],
                       ds_types=['test_ds_type1', 'test_ds_type2'])
         helper = Helper()
         convert_to_metrics(data, helper.types)
