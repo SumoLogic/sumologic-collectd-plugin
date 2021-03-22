@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import math
+
 from .metrics_util import validate_field, validate_type
 
 
@@ -92,7 +93,7 @@ def convert_to_metrics(data, types):
 
     for (value, data_type) in zip(data.values, types[data.type]):
         if (math.isnan(value)):
-            continue;
+            continue
         ds_name = data_type[0]
         ds_type = data_type[1]
 
