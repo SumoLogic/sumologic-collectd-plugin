@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from metrics_util import validate_field, validate_type
+from .metrics_util import validate_field, validate_type
 import math
 
 

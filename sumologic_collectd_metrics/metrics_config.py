@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from metrics_util import validate_non_empty, validate_string_type, validate_positive, \
+from .metrics_util import validate_non_empty, validate_string_type, validate_positive, \
     validate_non_negative, validate_field
 
 
