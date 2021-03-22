@@ -27,13 +27,15 @@ def gen_tag(key, value):
     value = validate_field(value, key, 'Value', 'Key')
     if not key:
         raise Exception('Key for value %s cannot be empty' % value)
-    elif key.lower() in _reserved_keywords:
+
+    if key.lower() in _reserved_keywords:
         raise Exception('Key %s (case-insensitive) must not contain reserved keywords %s' %
                         (key, _reserved_keywords))
-    elif not value:
+
+    if not value:
         return ''
-    else:
-        return key + '=' + value
+
+    return key + '=' + value
 
 
 def _remove_empty_tags(tags):
