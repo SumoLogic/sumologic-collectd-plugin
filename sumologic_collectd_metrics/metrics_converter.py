@@ -92,7 +92,7 @@ def convert_to_metrics(data, types):
     metrics = []
 
     for (value, data_type) in zip(data.values, types[data.type]):
-        if (math.isnan(value)):
+        if math.isnan(value):
             continue
         ds_name = data_type[0]
         ds_type = data_type[1]
