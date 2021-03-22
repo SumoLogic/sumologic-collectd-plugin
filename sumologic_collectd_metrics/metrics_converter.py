@@ -63,9 +63,9 @@ def _gen_metric(dimension_tags, meta_tags, value, timestamp):
     if not meta_tags:
         return '%s  %f %i' % (tags_to_str(dimension_tags), value, timestamp)
 
-    else:
-        return '%s  %s %f %i' % (tags_to_str(dimension_tags),
-                                    tags_to_str(meta_tags), value, timestamp)
+
+    return '%s  %s %f %i' % (tags_to_str(dimension_tags),
+                             tags_to_str(meta_tags), value, timestamp)
 
 
 # Generate dimension tags
