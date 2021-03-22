@@ -30,10 +30,10 @@ def test_write_callback():
     config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])
     metrics_writer.parse_config(config)
     metrics_writer.init_callback()
-    d = Values()
-    metrics_writer.write_callback(d)
+    data = Values()
+    metrics_writer.write_callback(data)
     assert metrics_writer.met_batcher.queue.qsize() == 1
-    assert [metrics_writer.met_batcher.queue.get()] == d.metrics_str()
+    assert [metrics_writer.met_batcher.queue.get()] == data.metrics_str()
 
 
 def test_write_callback_host_with_equal_char():
@@ -41,11 +41,11 @@ def test_write_callback_host_with_equal_char():
     config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])
     metrics_writer.parse_config(config)
     metrics_writer.init_callback()
-    d = Values(host="[invalid=host]")
+    data = Values(host="[invalid=host]")
     expected_value = ['host=[invalid:host] plugin=test_plugin plugin_instance=test_plugin_instance' \
     ' type=test_type type_instance=test_type_instance ds_name=test_ds_name ds_type=test_ds_type' \
     '  test_meta_key=test_meta_val 3.140000 1501775008']
-    metrics_writer.write_callback(d)
+    metrics_writer.write_callback(data)
 
     assert metrics_writer.met_batcher.queue.qsize() == 1
     assert [metrics_writer.met_batcher.queue.get()] == expected_value
@@ -56,10 +56,10 @@ def test_write_callback_boolean_value():
     config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])
     metrics_writer.parse_config(config)
     metrics_writer.init_callback()
-    d = Values(values=[True])
-    metrics_writer.write_callback(d)
+    data = Values(values=[True])
+    metrics_writer.write_callback(data)
     assert metrics_writer.met_batcher.queue.qsize() == 1
-    assert [metrics_writer.met_batcher.queue.get()] == d.metrics_str()
+    assert [metrics_writer.met_batcher.queue.get()] == data.metrics_str()
 
 
 def test_write_callback_boolean_tag():
@@ -67,10 +67,10 @@ def test_write_callback_boolean_tag():
     config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])
     metrics_writer.parse_config(config)
     metrics_writer.init_callback()
-    d = Values(host=True)
-    metrics_writer.write_callback(d)
+    data = Values(host=True)
+    metrics_writer.write_callback(data)
     assert metrics_writer.met_batcher.queue.qsize() == 1
-    assert [metrics_writer.met_batcher.queue.get()] == d.metrics_str()
+    assert [metrics_writer.met_batcher.queue.get()] == data.metrics_str()
 
 
 def test_shutdown_call_back():

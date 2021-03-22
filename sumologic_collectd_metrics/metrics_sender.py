@@ -166,8 +166,8 @@ class MetricsSender(Timer):
             return zlib.compress(body_str)
         elif content_encoding == 'gzip':
             encoded_stream = CompatibleIO()
-            with GzipFile(fileobj=encoded_stream, mode="w") as f:
-                f.write(body_str)
+            with GzipFile(fileobj=encoded_stream, mode="w") as file:
+                file.write(body_str)
             return encoded_stream.getvalue()
         else:
             return body_str

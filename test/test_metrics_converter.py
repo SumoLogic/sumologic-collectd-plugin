@@ -65,48 +65,48 @@ def test_tags_to_str_with_empty_tags():
 
 
 def test_convert_to_metrics_single():
-    d = Values()
+    data = Values()
     helper = Helper()
-    metrics = convert_to_metrics(d, helper.types)
+    metrics = convert_to_metrics(data, helper.types)
 
-    assert metrics == d.metrics_str()
+    assert metrics == data.metrics_str()
 
 
 def test_convert_to_metrics_multiple():
-    d = Values(type='test_type_2', values=[1.23, 4.56], ds_names=['test_ds_name1', 'test_ds_name2'],
-               ds_types=['test_ds_type1', 'test_ds_type2'])
+    data = Values(type='test_type_2', values=[1.23, 4.56], ds_names=['test_ds_name1', 'test_ds_name2'],
+                  ds_types=['test_ds_type1', 'test_ds_type2'])
     helper = Helper()
-    metrics = convert_to_metrics(d, helper.types)
+    metrics = convert_to_metrics(data, helper.types)
 
-    assert metrics == d.metrics_str()
+    assert metrics == data.metrics_str()
 
 
 def test_convert_to_metrics_no_meta():
-    d = Values(type='test_type_2', meta={}, values=[1.23, 4.56],
-               ds_names=['test_ds_name1', 'test_ds_name2'],
-               ds_types=['test_ds_type1', 'test_ds_type2'])
+    data = Values(type='test_type_2', meta={}, values=[1.23, 4.56],
+                  ds_names=['test_ds_name1', 'test_ds_name2'],
+                  ds_types=['test_ds_type1', 'test_ds_type2'])
     helper = Helper()
-    metrics = convert_to_metrics(d, helper.types)
+    metrics = convert_to_metrics(data, helper.types)
 
-    assert metrics == d.metrics_str()
+    assert metrics == data.metrics_str()
 
 
 def test_convert_to_metrics_type_format_exception():
     with pytest.raises(Exception) as e:
-        d = Values(type='test_type_2', values=[1.23], ds_names=['test_ds_name1', 'test_ds_name2'],
-                   ds_types=['test_ds_type1', 'test_ds_type2'])
+        data = Values(type='test_type_2', values=[1.23], ds_names=['test_ds_name1', 'test_ds_name2'],
+                      ds_types=['test_ds_type1', 'test_ds_type2'])
         helper = Helper()
-        convert_to_metrics(d, helper.types)
+        convert_to_metrics(data, helper.types)
 
     assert 'Number values [1.23] differ from types defined for test_type_2' in str(e)
 
 
 def test_convert_to_metrics_type_nonexist_exception():
     with pytest.raises(Exception) as e:
-        d = Values(type='test_type_3', values=[1.23], ds_names=['test_ds_name1', 'test_ds_name2'],
-                   ds_types=['test_ds_type1', 'test_ds_type2'])
+        data = Values(type='test_type_3', values=[1.23], ds_names=['test_ds_name1', 'test_ds_name2'],
+                      ds_types=['test_ds_type1', 'test_ds_type2'])
         helper = Helper()
-        convert_to_metrics(d, helper.types)
+        convert_to_metrics(data, helper.types)
 
     assert 'Do not know how to handle type test_type_3. ' \
            'Do you have all your types.db files configured?' in str(e)

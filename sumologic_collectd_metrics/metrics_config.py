@@ -79,8 +79,8 @@ class MetricsConfig:
         try:
             for child in config.children:
                 if child.key == ConfigOptions.types_db:
-                    for v in child.values:
-                        self._parse_types(v)
+                    for _v in child.values:
+                        self._parse_types(_v)
                 elif child.key == ConfigOptions.url:
                     url = child.values[0]
                     self.conf[child.key] = url
@@ -89,34 +89,34 @@ class MetricsConfig:
                     self._parse_tags(child)
                 elif child.key in [ConfigOptions.source_name, ConfigOptions.host_name,
                                    ConfigOptions.source_category]:
-                    s = child.values[0]
-                    validate_non_empty(s, child.key)
-                    validate_string_type(s, child.key, 'Value', 'Key')
-                    self.conf[child.key] = s
+                    _s = child.values[0]
+                    validate_non_empty(_s, child.key)
+                    validate_string_type(_s, child.key, 'Value', 'Key')
+                    self.conf[child.key] = _s
                 elif child.key == ConfigOptions.http_post_interval:
-                    f = float(child.values[0])
-                    validate_positive(f, child.key)
-                    self.conf[child.key] = f
+                    _f = float(child.values[0])
+                    validate_positive(_f, child.key)
+                    self.conf[child.key] = _f
                 elif child.key in [ConfigOptions.max_batch_size, ConfigOptions.max_batch_interval,
                                    ConfigOptions.retry_max_attempts, ConfigOptions.retry_max_delay,
                                    ConfigOptions.retry_backoff,
                                    ConfigOptions.max_requests_to_buffer]:
-                    i = int(child.values[0])
-                    validate_positive(i, child.key)
-                    self.conf[child.key] = i
+                    _i = int(child.values[0])
+                    validate_positive(_i, child.key)
+                    self.conf[child.key] = _i
                 elif child.key in [ConfigOptions.retry_initial_delay,
                                    ConfigOptions.retry_jitter_min, ConfigOptions.retry_jitter_max]:
-                    i = int(child.values[0])
-                    validate_non_negative(i, child.key)
-                    self.conf[child.key] = i
+                    _i = int(child.values[0])
+                    validate_non_negative(_i, child.key)
+                    self.conf[child.key] = _i
                 elif child.key == ConfigOptions.content_encoding:
-                    s = child.values[0]
-                    validate_non_empty(s, child.key)
-                    validate_string_type(s, child.key, 'Value', 'Key')
-                    content_encoding = s.lower()
+                    _s = child.values[0]
+                    validate_non_empty(_s, child.key)
+                    validate_string_type(_s, child.key, 'Value', 'Key')
+                    content_encoding = _s.lower()
                     if content_encoding not in self._content_encoding_set:
                         raise Exception('Unknown ContentEncoding %s specified. ContentEncoding '
-                                        'must be deflate, gzip, or none' % s)
+                                        'must be deflate, gzip, or none' % _s)
                     self.conf[child.key] = content_encoding
                 else:
                     self.collectd.warning('Unknown configuration %s, ignored.' % child.key)
@@ -150,28 +150,28 @@ class MetricsConfig:
     def _parse_types(self, db):
 
         try:
-            f = open(db, 'r')
+            file = open(db, 'r')
 
-            for line in f:
+            for line in file:
                 fields = line.split()
                 if len(fields) < 2:
                     continue
                 type_name = fields[0]
                 if type_name[0] == '#':
                     continue
-                v = []
-                for ds in fields[1:]:
-                    ds = ds.rstrip(',')
-                    ds_fields = ds.split(':')
+                values = []
+                for data_source in fields[1:]:
+                    data_source = data_source.rstrip(',')
+                    ds_fields = data_source.split(':')
 
                     if len(ds_fields) != 4:
                         self.collectd.warning('Cannot parse data source %s on type %s'
-                                         % (ds, type_name))
+                                         % (data_source, type_name))
                         continue
-                    v.append(ds_fields)
-                self.types[type_name] = v
+                    values.append(ds_fields)
+                self.types[type_name] = values
 
-            f.close()
+            file.close()
 
             self.collectd.info('Parsed types %s with types_db file %s ' % (self.types, db))
 
@@ -184,8 +184,8 @@ class MetricsConfig:
         if len(child.values) % 2 != 0:
             raise Exception('Missing tags key/value in options %s.' % str(child.values))
 
-        for v in child.values:
-            validate_field(v, child.key, 'Value', 'Key')
+        for value in child.values:
+            validate_field(value, child.key, 'Value', 'Key')
 
         self.conf[child.key] = zip(*(iter(child.values),) * 2)
 
