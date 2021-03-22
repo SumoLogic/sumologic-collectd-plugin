@@ -26,7 +26,7 @@ def validate_string_type(value, field, label1, label2):
     Field must be string type
     """
 
-    if type(value) is not str:
+    if not isinstance(value, str):
         raise Exception('%s %s for %s %s must be string type. Type is %s' %
                         (label1, value, label2, field, type(value)))
 
