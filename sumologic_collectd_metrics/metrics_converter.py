@@ -20,20 +20,20 @@ _reserved_keywords = frozenset(['_sourcehost', '_sourcename', '_sourcecategory',
 
 
 def gen_tag(key, value):
-        """
-        Tag is of form key=value
-        """
-        key = validate_field(key, value, 'Key', 'Value')
-        value = validate_field(value, key, 'Value', 'Key')
-        if not key:
-            raise Exception('Key for value %s cannot be empty' % value)
-        elif key.lower() in _reserved_keywords:
-            raise Exception('Key %s (case-insensitive) must not contain reserved keywords %s' %
-                            (key, _reserved_keywords))
-        elif not value:
-            return ''
-        else:
-            return key + '=' + value
+    """
+    Tag is of form key=value
+    """
+    key = validate_field(key, value, 'Key', 'Value')
+    value = validate_field(value, key, 'Value', 'Key')
+    if not key:
+        raise Exception('Key for value %s cannot be empty' % value)
+    elif key.lower() in _reserved_keywords:
+        raise Exception('Key %s (case-insensitive) must not contain reserved keywords %s' %
+                        (key, _reserved_keywords))
+    elif not value:
+        return ''
+    else:
+        return key + '=' + value
 
 
 def _remove_empty_tags(tags):
@@ -41,43 +41,43 @@ def _remove_empty_tags(tags):
 
 
 def tags_to_str(tags, sep=' '):
-        """
-        Convert list of tags to a single string
-        """
-        return sep.join(_remove_empty_tags(tags))
+    """
+    Convert list of tags to a single string
+    """
+    return sep.join(_remove_empty_tags(tags))
 
 
 # Generate meta_tags from data
 def _gen_meta_tags(data):
 
-        return [gen_tag(key, value) for key, value in data.meta.items()]
+    return [gen_tag(key, value) for key, value in data.meta.items()]
 
 
 def _gen_metric(dimension_tags, meta_tags, value, timestamp):
-        """
-        Convert (dimension_tags, meta_tags, value, timestamp) to metric string
-        """
+    """
+    Convert (dimension_tags, meta_tags, value, timestamp) to metric string
+    """
 
-        if not meta_tags:
-            return '%s  %f %i' % (tags_to_str(dimension_tags), value, timestamp)
+    if not meta_tags:
+        return '%s  %f %i' % (tags_to_str(dimension_tags), value, timestamp)
 
-        else:
-            return '%s  %s %f %i' % (tags_to_str(dimension_tags),
-                                     tags_to_str(meta_tags), value, timestamp)
+    else:
+        return '%s  %s %f %i' % (tags_to_str(dimension_tags),
+                                    tags_to_str(meta_tags), value, timestamp)
 
 
 # Generate dimension tags
 def _gen_dimension_tags(data, ds_name, ds_type):
 
-        tags = [gen_tag(key, getattr(data, key)) for key in
-                [IntrinsicKeys.host, IntrinsicKeys.plugin, IntrinsicKeys.plugin_instance,
-                 IntrinsicKeys.type, IntrinsicKeys.type_instance]] + \
-               [gen_tag(IntrinsicKeys.ds_name, ds_name),
-                gen_tag(IntrinsicKeys.ds_type, ds_type)]
+    tags = [gen_tag(key, getattr(data, key)) for key in
+            [IntrinsicKeys.host, IntrinsicKeys.plugin, IntrinsicKeys.plugin_instance,
+                IntrinsicKeys.type, IntrinsicKeys.type_instance]] + \
+            [gen_tag(IntrinsicKeys.ds_name, ds_name),
+            gen_tag(IntrinsicKeys.ds_type, ds_type)]
 
-        dimension_tags = _remove_empty_tags(tags)
+    dimension_tags = _remove_empty_tags(tags)
 
-        return dimension_tags
+    return dimension_tags
 
 
 def convert_to_metrics(data, types):
