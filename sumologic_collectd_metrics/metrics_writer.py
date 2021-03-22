@@ -46,7 +46,7 @@ class MetricsWriter(object):
 
         self.collectd.info('Initialized MetricsBuffer, MetricsBatcher, and MetricsSender')
 
-    def write_callback(self, raw_data, data=None):
+    def write_callback(self, raw_data, _=None):
         """
         Write callback
         """
