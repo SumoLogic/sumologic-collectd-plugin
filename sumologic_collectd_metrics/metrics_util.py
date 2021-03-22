@@ -6,47 +6,47 @@ _reserved_symbols = {
 }
 
 
-def validate_non_empty(s, key):
-    if not s:
+def validate_non_empty(value, key):
+    if not value:
         raise Exception('Value for key %s cannot be empty' % key)
 
 
-def validate_positive(v, key):
-    if not v > 0:
-        raise Exception('Value %s for key %s is not a positive number' % (v, key))
+def validate_positive(value, key):
+    if not value > 0:
+        raise Exception('Value %s for key %s is not a positive number' % (value, key))
 
 
-def validate_non_negative(v, key):
-    if v < 0:
-        raise Exception('Value %s for key %s is a negative number' % (v, key))
+def validate_non_negative(value, key):
+    if value < 0:
+        raise Exception('Value %s for key %s is a negative number' % (value, key))
 
 
-def validate_string_type(s, f, l1, l2):
+def validate_string_type(value, field, label1, label2):
     """
     Field must be string type
     """
 
-    if type(s) is not str:
+    if type(value) is not str:
         raise Exception('%s %s for %s %s must be string type. Type is %s' %
-                        (l1, s, l2, f, type(s)))
+                        (label1, value, label2, field, type(value)))
 
 
-def validate_field(s, f, l1, l2):
+def validate_field(value, field, label1, label2):
     """
     Field must be string that does not contains '=' or ' '
     """
 
     # Convert field to string
-    s = str(s)
+    value = str(value)
 
     for reserved_symbol, replacement in _reserved_symbols.items():
-        if reserved_symbol in s:
+        if reserved_symbol in value:
             if replacement is None:
                 raise Exception('%s %s for %s %s must not contain reserved symbol \"%s\"' %
-                                (l1, s, l2, f, reserved_symbol))
+                                (label1, value, label2, field, reserved_symbol))
             else:
-                s = s.replace(reserved_symbol, replacement)
-    return s
+                value = value.replace(reserved_symbol, replacement)
+    return value
 
 
 def validate_type(data, types):
