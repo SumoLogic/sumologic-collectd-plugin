@@ -42,7 +42,8 @@ def test_write_callback_host_with_equal_char():
     metrics_writer.parse_config(config)
     metrics_writer.init_callback()
     data = Values(host="[invalid=host]")
-    expected_value = ['host=[invalid:host] plugin=test_plugin plugin_instance=test_plugin_instance' \
+    expected_value = ['host=[invalid:host]' \
+    ' plugin=test_plugin plugin_instance=test_plugin_instance' \
     ' type=test_type type_instance=test_type_instance ds_name=test_ds_name ds_type=test_ds_type' \
     '  test_meta_key=test_meta_val 3.140000 1501775008']
     metrics_writer.write_callback(data)
