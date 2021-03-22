@@ -69,5 +69,3 @@ class RecoverableException(Exception):
     """
     Exception that are recoverable.
     """
-
-    pass

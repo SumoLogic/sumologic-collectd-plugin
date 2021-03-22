@@ -4,3 +4,15 @@ good-names=
     j, 
     e,
     db,
+
+[MESSAGES CONTROL]
+disable=
+    broad-except,
+    missing-class-docstring,
+    missing-function-docstring,
+    missing-module-docstring,
+    too-few-public-methods,
+    too-many-branches,
+    too-many-statements,
+    useless-object-inheritance,
+    duplicate-code,
