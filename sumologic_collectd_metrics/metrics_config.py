@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from .metrics_util import validate_non_empty, validate_string_type, validate_positive, \
-    validate_non_negative, validate_field
+from .metrics_util import (validate_field, validate_non_empty,
+                           validate_non_negative, validate_positive,
+                           validate_string_type)
 
 
 class ConfigOptions(object):
@@ -9,6 +10,8 @@ class ConfigOptions(object):
     Config options
     """
     types_db = 'TypesDB'
+    # type to use in case it is missing in TypesDB
+    default_type = 'DefaultType'
     url = 'URL'
     # Http header options
     dimension_tags = 'Dimensions'
@@ -47,6 +50,7 @@ class MetricsConfig:
         """
         Init MetricsConfig with default config
         """
+        self.default_type = None
         self.collectd = collectd
         self.conf = self.default_config()
         self.types = {}
@@ -68,7 +72,8 @@ class MetricsConfig:
             ConfigOptions.max_requests_to_buffer: 1000,
             ConfigOptions.content_encoding: 'deflate',
             ConfigOptions.content_type: 'application/vnd.sumologic.carbon2',
-            ConfigOptions.shutdown_max_wait: 5
+            ConfigOptions.shutdown_max_wait: 5,
+            ConfigOptions.default_type: None,
         }
 
     def parse_config(self, config):
@@ -118,6 +123,8 @@ class MetricsConfig:
                         raise Exception('Unknown ContentEncoding %s specified. ContentEncoding '
                                         'must be deflate, gzip, or none' % _s)
                     self.conf[child.key] = content_encoding
+                elif child.key == ConfigOptions.default_type:
+                    self.default_type = self._parse_type(child.values[0].split())
                 else:
                     self.collectd.warning('Unknown configuration %s, ignored.' % child.key)
         except Exception as e:
@@ -127,7 +134,7 @@ class MetricsConfig:
         if ConfigOptions.url not in self.conf:
             raise Exception('Specify %s in collectd.conf.' % ConfigOptions.url)
 
-        if not self.types:
+        if not self.types and not self.default_type:
             raise Exception('Specify %s in collectd.conf.' % ConfigOptions.types_db)
 
         http_post_interval = self.conf[ConfigOptions.http_post_interval]
@@ -146,6 +153,21 @@ class MetricsConfig:
 
         self.collectd.info('Updated MetricsConfig %s with config file %s ' % (self.conf, config))
 
+    # parse single type
+    def _parse_type(self, fields, type_name='default'):
+        values = []
+        for data_source in fields:
+            data_source = data_source.rstrip(',')
+            ds_fields = data_source.split(':')
+
+            if ds_fields is None:
+                self.collectd.warning('Cannot parse data source %s on type %s'
+                                    % (data_source, type_name))
+                continue
+            values.append(ds_fields)
+
+        return values
+
     # parse types.db file
     def _parse_types(self, db):
 
@@ -159,17 +181,8 @@ class MetricsConfig:
                 type_name = fields[0]
                 if type_name[0] == '#':
                     continue
-                values = []
-                for data_source in fields[1:]:
-                    data_source = data_source.rstrip(',')
-                    ds_fields = data_source.split(':')
 
-                    if len(ds_fields) != 4:
-                        self.collectd.warning('Cannot parse data source %s on type %s'
-                                         % (data_source, type_name))
-                        continue
-                    values.append(ds_fields)
-                self.types[type_name] = values
+                self.types[type_name] = self._parse_type(fields[1:], type_name)
 
             file.close()
 

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import time
-from .metrics_config import MetricsConfig, ConfigOptions
-from .metrics_buffer import MetricsBuffer
-from .metrics_converter import convert_to_metrics
+
 from .metrics_batcher import MetricsBatcher
+from .metrics_buffer import MetricsBuffer
+from .metrics_config import ConfigOptions, MetricsConfig
+from .metrics_converter import convert_to_metrics
 from .metrics_sender import MetricsSender
 
 
@@ -51,7 +52,7 @@ class MetricsWriter(object):
         Write callback
         """
 
-        metrics = convert_to_metrics(raw_data, self.met_config.types)
+        metrics = convert_to_metrics(raw_data, self.met_config.types, self.met_config.default_type)
 
         self.collectd.debug('Converted data %s to metrics %s' % (raw_data, metrics))
 

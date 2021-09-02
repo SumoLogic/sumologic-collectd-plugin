@@ -49,20 +49,28 @@ def validate_field(value, field, label1, label2):
     return value
 
 
-def validate_type(data, types):
+def validate_type(data, types, default_type):
     """
     Validate type are defined in types.db and matching data values
+    Takes default_type which is treated as fallback if data.type is not in types
+    Returns types (original or build with default_type)
     """
 
     # Verify type is defined in types.db
     if data.type not in types:
-        raise Exception('Do not know how to handle type %s. Do you have all your types.db files'
-                        ' configured?' % data.type)
+        if default_type is None:
+            raise Exception('Do not know how to handle type %s. Do you have all your types.db files'
+                            ' configured?' % data.type)
+        types = {
+            data.type: default_type
+        }
 
     # Verify values conform to the type defined
     if len(data.values) != len(types[data.type]):
         raise Exception('Number values %s differ from types defined for %s' %
                         (data.values, data.type))
+
+    return types
 
 
 class RecoverableException(Exception):

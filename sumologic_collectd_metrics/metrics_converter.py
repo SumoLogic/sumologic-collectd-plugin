@@ -83,11 +83,11 @@ def _gen_dimension_tags(data, ds_name, ds_type):
     return dimension_tags
 
 
-def convert_to_metrics(data, types):
+def convert_to_metrics(data, types, default_type):
     """
     Convert data into metrics
     """
-    validate_type(data, types)
+    types = validate_type(data, types, default_type)
 
     metrics = []
 

@@ -67,7 +67,7 @@ def test_tags_to_str_with_empty_tags():
 def test_convert_to_metrics_single():
     data = Values()
     helper = Helper()
-    metrics = convert_to_metrics(data, helper.types)
+    metrics = convert_to_metrics(data, helper.types, None)
 
     assert metrics == data.metrics_str()
 
@@ -77,7 +77,7 @@ def test_convert_to_metrics_multiple():
                   ds_names=['test_ds_name1', 'test_ds_name2'],
                   ds_types=['test_ds_type1', 'test_ds_type2'])
     helper = Helper()
-    metrics = convert_to_metrics(data, helper.types)
+    metrics = convert_to_metrics(data, helper.types, None)
 
     assert metrics == data.metrics_str()
 
@@ -87,7 +87,7 @@ def test_convert_to_metrics_no_meta():
                   ds_names=['test_ds_name1', 'test_ds_name2'],
                   ds_types=['test_ds_type1', 'test_ds_type2'])
     helper = Helper()
-    metrics = convert_to_metrics(data, helper.types)
+    metrics = convert_to_metrics(data, helper.types, None)
 
     assert metrics == data.metrics_str()
 
@@ -98,7 +98,7 @@ def test_convert_to_metrics_type_format_exception():
                       ds_names=['test_ds_name1', 'test_ds_name2'],
                       ds_types=['test_ds_type1', 'test_ds_type2'])
         helper = Helper()
-        convert_to_metrics(data, helper.types)
+        convert_to_metrics(data, helper.types, None)
 
     assert 'Number values [1.23] differ from types defined for test_type_2' in str(e)
 
@@ -109,7 +109,7 @@ def test_convert_to_metrics_type_nonexist_exception():
                       ds_names=['test_ds_name1', 'test_ds_name2'],
                       ds_types=['test_ds_type1', 'test_ds_type2'])
         helper = Helper()
-        convert_to_metrics(data, helper.types)
+        convert_to_metrics(data, helper.types, None)
 
     assert 'Do not know how to handle type test_type_3. ' \
            'Do you have all your types.db files configured?' in str(e)
