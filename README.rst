@@ -8,7 +8,7 @@ Get Started
 
 1. Python version
 `````````````````
-Sumo Logic collectd plugin is built on top of `collectd-python plugin <https://collectd.org/documentation/manpages/collectd-python.5.shtml>`_. The minimum required version for running the plugin is Python version 2.6. You can download and install the desired Python version from `Python download page <https://www.python.org/downloads/>`_. 
+Sumo Logic collectd plugin is built on top of `collectd-python plugin <https://collectd.org/documentation/manpages/collectd-python.5.shtml>`_. The minimum required version for running the plugin is Python version 2.7. You can download and install the desired Python version from `Python download page <https://www.python.org/downloads/>`_. 
 
 
 2. Install collectd on your machine
