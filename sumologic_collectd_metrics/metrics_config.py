@@ -172,19 +172,16 @@ class MetricsConfig:
     def _parse_types(self, db):
 
         try:
-            file = open(db, 'r')
+            with open(db, 'r') as file:  # pylint: disable=W1514  # due to python2.7
+                for line in file:
+                    fields = line.split()
+                    if len(fields) < 2:
+                        continue
+                    type_name = fields[0]
+                    if type_name[0] == '#':
+                        continue
 
-            for line in file:
-                fields = line.split()
-                if len(fields) < 2:
-                    continue
-                type_name = fields[0]
-                if type_name[0] == '#':
-                    continue
-
-                self.types[type_name] = self._parse_type(fields[1:], type_name)
-
-            file.close()
+                    self.types[type_name] = self._parse_type(fields[1:], type_name)
 
             self.collectd.info('Parsed types %s with types_db file %s ' % (self.types, db))
 
