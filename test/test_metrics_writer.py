@@ -9,7 +9,7 @@ from sumologic_collectd_metrics.metrics_config import ConfigOptions
 
 def test_config_callback():
     metrics_writer = Helper.default_writer()
-    config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])
+    config = CollectdConfig([Helper.url_node()])
     metrics_writer.parse_config(config)
 
     metrics_writer.met_config.conf[ConfigOptions.url] = Helper.url
@@ -17,7 +17,7 @@ def test_config_callback():
 
 def test_init_callback():
     metrics_writer = Helper.default_writer()
-    config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])
+    config = CollectdConfig([Helper.url_node()])
     metrics_writer.parse_config(config)
     metrics_writer.init_callback()
     assert metrics_writer.met_buffer is not None
@@ -27,7 +27,7 @@ def test_init_callback():
 
 def test_write_callback():
     metrics_writer = Helper.default_writer()
-    config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])
+    config = CollectdConfig([Helper.url_node()])
     metrics_writer.parse_config(config)
     metrics_writer.init_callback()
     data = Values()
@@ -38,7 +38,7 @@ def test_write_callback():
 
 def test_write_callback_host_with_equal_char():
     metrics_writer = Helper.default_writer()
-    config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])
+    config = CollectdConfig([Helper.url_node()])
     metrics_writer.parse_config(config)
     metrics_writer.init_callback()
     data = Values(host="[invalid=host]")
@@ -54,7 +54,7 @@ def test_write_callback_host_with_equal_char():
 
 def test_write_callback_boolean_value():
     metrics_writer = Helper.default_writer()
-    config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])
+    config = CollectdConfig([Helper.url_node()])
     metrics_writer.parse_config(config)
     metrics_writer.init_callback()
     data = Values(values=[True])
@@ -65,7 +65,7 @@ def test_write_callback_boolean_value():
 
 def test_write_callback_boolean_tag():
     metrics_writer = Helper.default_writer()
-    config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])
+    config = CollectdConfig([Helper.url_node()])
     metrics_writer.parse_config(config)
     metrics_writer.init_callback()
     data = Values(host=True)
@@ -76,7 +76,7 @@ def test_write_callback_boolean_tag():
 
 def test_shutdown_call_back():
     metrics_writer = Helper.default_writer()
-    config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])
+    config = CollectdConfig([Helper.url_node()])
     metrics_writer.parse_config(config)
     metrics_writer.init_callback()
 
