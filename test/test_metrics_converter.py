@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from sumologic_collectd_metrics.metrics_converter import (convert_to_metrics,
-                                                          gen_tag, tags_to_str)
 
 from collectd import CollecdMock
 from collectd.values import Values
+from sumologic_collectd_metrics.metrics_converter import (convert_to_metrics,
+                                                          gen_tag, tags_to_str)
 
 
 def test_gen_tag():

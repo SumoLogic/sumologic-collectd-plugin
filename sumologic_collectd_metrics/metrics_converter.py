@@ -2,7 +2,7 @@
 
 import math
 
-from .metrics_util import validate_field, validate_type
+from .metrics_util import validate_field
 
 
 class IntrinsicKeys(object):
