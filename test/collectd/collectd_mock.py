@@ -34,4 +34,7 @@ class CollecdMock:
         register.register_shutdown(func)
 
     def get_dataset(self, name):
-        return self.TYPES[name]
+        try:
+            return self.TYPES[name]
+        except KeyError:
+            raise TypeError("Unknown type")

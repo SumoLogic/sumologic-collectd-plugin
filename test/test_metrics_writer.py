@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import time
+
+import pytest
+
 from collectd import Helper
 from collectd.collectd_config import CollectdConfig
 from collectd.values import Values
@@ -72,6 +75,18 @@ def test_write_callback_boolean_tag():
     metrics_writer.write_callback(data)
     assert metrics_writer.met_batcher.queue.qsize() == 1
     assert [metrics_writer.met_batcher.queue.get()] == data.metrics_str()
+
+
+def test_write_callback_invalid_metric_name():
+    with pytest.raises(Exception) as e:
+        metrics_writer = Helper.default_writer()
+        config = CollectdConfig([Helper.url_node()])
+        metrics_writer.parse_config(config)
+        metrics_writer.init_callback()
+        data = Values(type='test')
+        metrics_writer.write_callback(data)
+
+    assert 'Do not know how to handle type test' in str(e)
 
 
 def test_shutdown_call_back():
