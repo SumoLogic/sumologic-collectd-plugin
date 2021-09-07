@@ -3,11 +3,11 @@
 import os
 
 import pytest
-from sumologic_collectd_metrics.metrics_config import (ConfigOptions,
-                                                       MetricsConfig)
 
 from collectd import CollecdMock, Helper
 from collectd.collectd_config import CollectdConfig, ConfigNode
+from sumologic_collectd_metrics.metrics_config import (ConfigOptions,
+                                                       MetricsConfig)
 
 cwd = os.getcwd()
 

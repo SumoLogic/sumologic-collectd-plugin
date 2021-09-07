@@ -54,7 +54,7 @@ class MetricsWriter(object):
         try:
             data_set = self.collectd.get_dataset(raw_data.type)
         except TypeError:
-            raise Exception('Do not know how to handle type %s' % raw_data.type)
+            raise Exception('Do not know how to handle type %s' % raw_data.type)  # pylint: disable=W0707
 
         metrics = convert_to_metrics(raw_data, data_set)
 

@@ -53,7 +53,7 @@ class MetricsBatcher(Timer):
         if self.queue.empty():
             self.collectd.debug('queue is empty')
             return
-        if self.flushing_lock.acquire(False):
+        if self.flushing_lock.acquire(False):  # pylint: disable=R1732
             batch = self._pop_batch()
             self.collectd.debug('flushing metrics with batch size %d' % len(batch))
             self.metrics_buffer.put_pending_batch(batch)
