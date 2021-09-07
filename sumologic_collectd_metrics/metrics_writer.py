@@ -31,7 +31,6 @@ class MetricsWriter(object):
         self.met_config.parse_config(conf)
 
         self.collectd.info('Parsed configuration %s' % self.met_config.conf)
-        self.collectd.info('Parsed types %s' % self.met_config.types)
 
     def init_callback(self):
         """

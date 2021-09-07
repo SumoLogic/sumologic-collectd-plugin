@@ -1,27 +1,20 @@
 # -*- coding: utf-8 -*-
 
 import os
-import pytest
-from collectd.collectd_config import CollectdConfig, ConfigNode
-from collectd import Helper
-from collectd import CollecdMock
-from sumologic_collectd_metrics.metrics_config import MetricsConfig, ConfigOptions
 
+import pytest
+from sumologic_collectd_metrics.metrics_config import (ConfigOptions,
+                                                       MetricsConfig)
+
+from collectd import CollecdMock, Helper
+from collectd.collectd_config import CollectdConfig, ConfigNode
 
 cwd = os.getcwd()
 
 
-def test_parse_types_db():
-    met_config = Helper.default_config()
-    config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])
-    met_config.parse_config(config)
-
-    assert len(met_config.types) == 271
-
-
 def test_parse_url():
     met_config = Helper.default_config()
-    config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])
+    config = CollectdConfig([Helper.url_node()])
     met_config.parse_config(config)
 
     assert met_config.conf[ConfigOptions.url] == Helper.url
@@ -30,7 +23,7 @@ def test_parse_url():
 def test_parse_dimension_tags():
     met_config = Helper.default_config()
     tags = ('dim_key1', 'dim_val1', 'dim_key2', 'dim_val2')
-    config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
+    config = CollectdConfig([Helper.url_node(),
                              tags_node(ConfigOptions.dimension_tags, tags)])
     met_config.parse_config(config)
 
@@ -40,7 +33,7 @@ def test_parse_dimension_tags():
 def test_parse_meta_tags():
     met_config = Helper.default_config()
     tags = ('meta_key1', 'meta_val1', 'meta_key2', 'meta_val2')
-    config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
+    config = CollectdConfig([Helper.url_node(),
                              tags_node(ConfigOptions.meta_tags, tags)])
     met_config.parse_config(config)
 
@@ -51,7 +44,7 @@ def test_parse_meta_tags_missing_value():
     with pytest.raises(Exception) as e:
         met_config = Helper.default_config()
         tags = ('meta_key1', 'meta_val1', 'meta_key2')
-        config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
+        config = CollectdConfig([Helper.url_node(),
                                  tags_node(ConfigOptions.meta_tags, tags)])
         met_config.parse_config(config)
 
@@ -62,7 +55,7 @@ def test_parse_http_post_interval():
     met_config = Helper.default_config()
     http_post_interval = '0.5'
     http_post_interval_node = ConfigNode(ConfigOptions.http_post_interval, [http_post_interval])
-    config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
+    config = CollectdConfig([Helper.url_node(),
                              http_post_interval_node])
     met_config.parse_config(config)
 
@@ -74,7 +67,7 @@ def test_parse_http_post_interval_exception():
         met_config = Helper.default_config()
         http_post_interval = '0'
         http_post_interval_node = ConfigNode(ConfigOptions.http_post_interval, [http_post_interval])
-        config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
+        config = CollectdConfig([Helper.url_node(),
                                  http_post_interval_node])
         met_config.parse_config(config)
 
@@ -190,7 +183,7 @@ def test_parse_unknown_config_option():
     met_config = Helper.default_config()
     unknown_config = 'unknown_config'
     unknown_config_node = ConfigNode('unknown_config', unknown_config)
-    config = CollectdConfig([Helper.url_node(), Helper.types_db_node(), unknown_config_node])
+    config = CollectdConfig([Helper.url_node(), unknown_config_node])
     met_config.parse_config(config)
 
     assert hasattr(met_config, 'unknown_config') is False
@@ -211,26 +204,17 @@ def test_parse_int_exception():
         met_config = Helper.default_config()
         max_batch_size = ''
         max_batch_size_node = ConfigNode(ConfigOptions.max_batch_size, [max_batch_size])
-        config = CollectdConfig([Helper.url_node(), Helper.types_db_node(), max_batch_size_node])
+        config = CollectdConfig([Helper.url_node(), max_batch_size_node])
         met_config.parse_config(config)
 
 
 def test_no_url_exception():
     with pytest.raises(Exception) as e:
         met_config = MetricsConfig(CollecdMock())
-        config = CollectdConfig([Helper.types_db_node()])
+        config = CollectdConfig([])
         met_config.parse_config(config)
 
     assert 'Specify URL in collectd.conf' in str(e)
-
-
-def test_no_types_db_exception():
-    with pytest.raises(Exception) as e:
-        met_config = MetricsConfig(CollecdMock())
-        config = CollectdConfig([Helper.url_node()])
-        met_config.parse_config(config)
-
-    assert 'Specify TypesDB in collectd.conf' in str(e)
 
 
 def test_invalid_http_post_interval_exception():
@@ -238,7 +222,7 @@ def test_invalid_http_post_interval_exception():
         met_config = Helper.default_config()
         http_post_interval = '100.0'
         http_post_interval_node = ConfigNode(ConfigOptions.http_post_interval, [http_post_interval])
-        config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
+        config = CollectdConfig([Helper.url_node(),
                                  http_post_interval_node])
         met_config.parse_config(config)
 
@@ -249,30 +233,11 @@ def test_contains_reserved_symbols_exception():
     with pytest.raises(Exception) as e:
         met_config = Helper.default_config()
         tags = ('meta_key1', 'meta_val1', 'meta_key2', 'meta val2')
-        config = CollectdConfig([Helper.url_node(), Helper.types_db_node(),
+        config = CollectdConfig([Helper.url_node(),
                                  tags_node(ConfigOptions.meta_tags, tags)])
         met_config.parse_config(config)
 
     assert 'Value meta val2 for Key Metadata must not contain reserved symbol " "' in str(e)
-
-
-def test_invalid_ds_in_types_db():
-    met_config = Helper.default_config()
-    types_db_node = ConfigNode(ConfigOptions.types_db, [cwd + '/test/types_invalid_ds.db'])
-    config = CollectdConfig([Helper.url_node(), types_db_node])
-    met_config.parse_config(config)
-
-    assert 'bytes' not in met_config.conf.keys()
-
-
-def test_types_db_no_exist_exception():
-    with pytest.raises(Exception) as e:
-        met_config = Helper.default_config()
-        types_db_node = ConfigNode(ConfigOptions.types_db, [cwd + '/test/types_not_exist.db'])
-        config = CollectdConfig([Helper.url_node(), types_db_node])
-        met_config.parse_config(config)
-
-    assert 'No such file or directory' in str(e)
 
 
 def test_non_ascii_strings():

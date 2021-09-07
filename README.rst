@@ -76,8 +76,6 @@ The parameters below are required and must be specified in the module config.
 +------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------+----------+
 | `URL <https://help.sumologic.com/Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source/zGenerate-a-new-URL-for-an-HTTP-Source>`_ | The URL to send metrics to. This should be given when `creating the HTTP Source <https://help.sumologic.com/Send-Data/Sources/02Sources-for-Hosted-Collectors/HTTP-Source/zGenerate-a-new-URL-for-an-HTTP-Source>`_ on Sumo Logic web app.                                                                             | String                                                        | True     |
 +------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------+----------+
-| TypesDB                                                                                                                                  | Data-set specification for collectd raw data. More information about types.db is available in collectd `types.db <https://collectd.org/documentation/manpages/types.db.5.shtml>`_. Collectd ships with a default types.db file that is in the directory of collectd root, for example ``/usr/share/collectd/types.db`` | Strings in the format of ``"types1.db"``, ``"types2.db"`` ... | True     |
-+------------------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------+----------+
 
 
 Basic parameters
@@ -119,7 +117,6 @@ An example configuration for the plugin is shown below (code to be added to ``co
     	Import "sumologic_collectd_metrics"
     
     	<Module "sumologic_collectd_metrics">
-	    TypesDB "/path/to/your/collectd/share/collectd/types.db", "/path/to/my_own_types.db"  # At lease one types.db file must be specified
       	    URL "https://<deployment>.sumologic.com/receiver/v1/http/<source_token>"  # URL must be specified
 	    # Uncomment and update the following lines to override the default metadata configured in the the Sumo Logic Source configuration
 	    # SourceName "my_source"

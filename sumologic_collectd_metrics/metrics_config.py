@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from .metrics_util import validate_non_empty, validate_string_type, validate_positive, \
-    validate_non_negative, validate_field
+from .metrics_util import (validate_field, validate_non_empty,
+                           validate_non_negative, validate_positive,
+                           validate_string_type)
 
 
 class ConfigOptions(object):
     """
     Config options
     """
-    types_db = 'TypesDB'
     url = 'URL'
     # Http header options
     dimension_tags = 'Dimensions'
@@ -49,7 +49,6 @@ class MetricsConfig:
         """
         self.collectd = collectd
         self.conf = self.default_config()
-        self.types = {}
 
         collectd.info('Initialized MetricsConfig with default config %s' % self.conf)
 
@@ -78,10 +77,7 @@ class MetricsConfig:
 
         try:
             for child in config.children:
-                if child.key == ConfigOptions.types_db:
-                    for _v in child.values:
-                        self._parse_types(_v)
-                elif child.key == ConfigOptions.url:
+                if child.key == ConfigOptions.url:
                     url = child.values[0]
                     self.conf[child.key] = url
                     validate_non_empty(url, child.key)
@@ -127,9 +123,6 @@ class MetricsConfig:
         if ConfigOptions.url not in self.conf:
             raise Exception('Specify %s in collectd.conf.' % ConfigOptions.url)
 
-        if not self.types:
-            raise Exception('Specify %s in collectd.conf.' % ConfigOptions.types_db)
-
         http_post_interval = self.conf[ConfigOptions.http_post_interval]
         max_batch_interval = self.conf[ConfigOptions.max_batch_interval]
 
@@ -145,39 +138,6 @@ class MetricsConfig:
                             (retry_jitter_min, retry_jitter_max))
 
         self.collectd.info('Updated MetricsConfig %s with config file %s ' % (self.conf, config))
-
-    # parse types.db file
-    def _parse_types(self, db):
-
-        try:
-            file = open(db, 'r')
-
-            for line in file:
-                fields = line.split()
-                if len(fields) < 2:
-                    continue
-                type_name = fields[0]
-                if type_name[0] == '#':
-                    continue
-                values = []
-                for data_source in fields[1:]:
-                    data_source = data_source.rstrip(',')
-                    ds_fields = data_source.split(':')
-
-                    if len(ds_fields) != 4:
-                        self.collectd.warning('Cannot parse data source %s on type %s'
-                                         % (data_source, type_name))
-                        continue
-                    values.append(ds_fields)
-                self.types[type_name] = values
-
-            file.close()
-
-            self.collectd.info('Parsed types %s with types_db file %s ' % (self.types, db))
-
-        except Exception as e:
-            self.collectd.error('Parse types %s failed with %s' %(db, str(e)))
-            raise e
 
     # parse dimension_tags/meta_tags specified in collectd.conf
     def _parse_tags(self, child):

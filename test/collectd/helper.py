@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
 import os
+
 from sumologic_collectd_metrics.metrics_batcher import MetricsBatcher
 from sumologic_collectd_metrics.metrics_buffer import MetricsBuffer
 from sumologic_collectd_metrics.metrics_config import (ConfigOptions,
                                                        MetricsConfig)
 from sumologic_collectd_metrics.metrics_sender import MetricsSender
 from sumologic_collectd_metrics.metrics_writer import MetricsWriter
+
 from . import CollecdMock
 from .collectd_config import CollectdConfig, ConfigNode
-
 
 cwd = os.getcwd()
 
@@ -17,17 +18,15 @@ cwd = os.getcwd()
 class Helper:
 
     url = 'http://www.sumologic.com'
-    types_db = cwd + '/test/types.db'
 
     def __init__(self):
         config = Helper.default_config()
         self.conf = config.conf
-        self.types = config.types
 
     @staticmethod
     def default_config():
         met_config = MetricsConfig(CollecdMock())
-        config = CollectdConfig([Helper.url_node(), Helper.types_db_node()])
+        config = CollectdConfig([Helper.url_node()])
         met_config.parse_config(config)
         return met_config
 
@@ -52,10 +51,6 @@ class Helper:
         return MetricsWriter(CollecdMock())
 
     @staticmethod
-    def types_db_node():
-        return ConfigNode(ConfigOptions.types_db, [Helper.types_db])
-
-    @staticmethod
     def url_node():
         return ConfigNode(ConfigOptions.url, [Helper.url])
 
@@ -63,5 +58,5 @@ class Helper:
     def parse_configs(met_config, configs):
         for (key, value) in configs.items():
             node = ConfigNode(getattr(ConfigOptions, key), [value])
-            config = CollectdConfig([Helper.url_node(), Helper.types_db_node(), node])
+            config = CollectdConfig([Helper.url_node(), node])
             met_config.parse_config(config)
