@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import time
-from .metrics_config import MetricsConfig, ConfigOptions
-from .metrics_buffer import MetricsBuffer
-from .metrics_converter import convert_to_metrics
+
 from .metrics_batcher import MetricsBatcher
+from .metrics_buffer import MetricsBuffer
+from .metrics_config import ConfigOptions, MetricsConfig
+from .metrics_converter import convert_to_metrics
 from .metrics_sender import MetricsSender
 
 
@@ -51,7 +52,12 @@ class MetricsWriter(object):
         Write callback
         """
 
-        metrics = convert_to_metrics(raw_data, self.met_config.types)
+        try:
+            data_set = self.collectd.get_dataset(raw_data.type)
+        except TypeError:
+            raise Exception('Do not know how to handle type %s' % raw_data.type)
+
+        metrics = convert_to_metrics(raw_data, data_set)
 
         self.collectd.debug('Converted data %s to metrics %s' % (raw_data, metrics))
 

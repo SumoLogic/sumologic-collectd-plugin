@@ -83,15 +83,13 @@ def _gen_dimension_tags(data, ds_name, ds_type):
     return dimension_tags
 
 
-def convert_to_metrics(data, types):
+def convert_to_metrics(data, data_set):
     """
     Convert data into metrics
     """
-    validate_type(data, types)
-
     metrics = []
 
-    for (value, data_type) in zip(data.values, types[data.type]):
+    for (value, data_type) in zip(data.values, data_set):
         if math.isnan(value):
             continue
         ds_name = data_type[0]
