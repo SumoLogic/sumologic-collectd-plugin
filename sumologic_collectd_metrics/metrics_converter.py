@@ -2,7 +2,7 @@
 
 import math
 
-from .metrics_util import validate_field
+from .metrics_util import sanitize_field
 
 
 class IntrinsicKeys(object):
@@ -24,8 +24,8 @@ def gen_tag(key, value):
     """
     Tag is of form key=value
     """
-    key = validate_field(key)
-    value = validate_field(value)
+    key = sanitize_field(key)
+    value = sanitize_field(value)
     if not key:
         raise Exception('Key for value %s cannot be empty' % value)
 

@@ -31,7 +31,7 @@ def validate_string_type(value, field, label1, label2):
                         (label1, value, label2, field, type(value)))
 
 
-def validate_field(value):
+def sanitize_field(value):
     """
     Field must be string that does not contains '=' or ' '
     """
