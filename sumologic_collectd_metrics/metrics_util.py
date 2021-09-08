@@ -31,7 +31,7 @@ def validate_string_type(value, field, label1, label2):
                         (label1, value, label2, field, type(value)))
 
 
-def validate_field(value, field, label1, label2):
+def validate_field(value):
     """
     Field must be string that does not contains '=' or ' '
     """
@@ -43,22 +43,6 @@ def validate_field(value, field, label1, label2):
         if reserved_symbol in value:
             value = value.replace(reserved_symbol, replacement)
     return value
-
-
-def validate_type(data, types):
-    """
-    Validate type are defined in types.db and matching data values
-    """
-
-    # Verify type is defined in types.db
-    if data.type not in types:
-        raise Exception('Do not know how to handle type %s. Do you have all your types.db files'
-                        ' configured?' % data.type)
-
-    # Verify values conform to the type defined
-    if len(data.values) != len(types[data.type]):
-        raise Exception('Number values %s differ from types defined for %s' %
-                        (data.values, data.type))
 
 
 class RecoverableException(Exception):

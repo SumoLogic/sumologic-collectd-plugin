@@ -144,9 +144,6 @@ class MetricsConfig:
         if len(child.values) % 2 != 0:
             raise Exception('Missing tags key/value in options %s.' % str(child.values))
 
-        for value in child.values:
-            validate_field(value, child.key, 'Value', 'Key')
-
         self.conf[child.key] = zip(*(iter(child.values),) * 2)
 
         self.collectd.info('Parsed %s tags %s' % (child.key, self.conf[child.key]))
