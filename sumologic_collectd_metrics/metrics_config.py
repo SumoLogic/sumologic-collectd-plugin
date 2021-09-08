@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from .metrics_util import (validate_field, validate_non_empty,
-                           validate_non_negative, validate_positive,
-                           validate_string_type)
+from .metrics_util import (validate_non_empty, validate_non_negative,
+                           validate_positive, validate_string_type)
 
 
 class ConfigOptions(object):
