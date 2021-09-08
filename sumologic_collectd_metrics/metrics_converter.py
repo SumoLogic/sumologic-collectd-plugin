@@ -24,8 +24,8 @@ def gen_tag(key, value):
     """
     Tag is of form key=value
     """
-    key = validate_field(key, value, 'Key', 'Value')
-    value = validate_field(value, key, 'Value', 'Key')
+    key = validate_field(key)
+    value = validate_field(value)
     if not key:
         raise Exception('Key for value %s cannot be empty' % value)
 
