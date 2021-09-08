@@ -44,6 +44,10 @@ def test_gen_value_not_string_exception():
     assert expected, value
 
 
+def test_gen_value_reserved():
+    assert gen_tag('tag_key space=', 'tag_value=t st') == 'tag_key_space:=tag_value:t_st'
+
+
 def test_tags_to_str():
     tags = ['tag_key1=tag_val1', 'tag_key2=tag_val2', 'tag_key3=tag_val3']
     tag_str = tags_to_str(tags)
