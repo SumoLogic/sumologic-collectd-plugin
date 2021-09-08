@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 _reserved_symbols = {
-    ' ': None,
+    ' ': '_',
     '=': ':',
 }
 
@@ -41,10 +41,6 @@ def validate_field(value, field, label1, label2):
 
     for reserved_symbol, replacement in _reserved_symbols.items():
         if reserved_symbol in value:
-            if replacement is None:
-                raise Exception('%s %s for %s %s must not contain reserved symbol \"%s\"' %
-                                (label1, value, label2, field, reserved_symbol))
-
             value = value.replace(reserved_symbol, replacement)
     return value
 
