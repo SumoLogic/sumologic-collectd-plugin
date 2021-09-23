@@ -31,6 +31,16 @@ def validate_string_type(value, field, label1, label2):
                         (label1, value, label2, field, type(value)))
 
 
+def validate_boolean_type(field, value):
+    """
+    Field must be string type
+    """
+
+    if not isinstance(value, bool):
+        raise Exception('Value for %s must be boolean type, but it was "%s"(%s)' %
+                        (field, value, type(value)))
+
+
 def sanitize_field(value):
     """
     Field must be string that does not contains '=' or ' '

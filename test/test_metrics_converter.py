@@ -4,6 +4,7 @@ import pytest
 
 from collectd import CollecdMock
 from collectd.values import Values
+
 from sumologic_collectd_metrics.metrics_converter import (convert_to_metrics,
                                                           gen_tag, tags_to_str)
 
@@ -72,7 +73,7 @@ def test_tags_to_str_with_empty_tags():
 def test_convert_to_metrics_single():
     data = Values()
     dataset = CollecdMock().get_dataset('test_type')
-    metrics = convert_to_metrics(data, dataset)
+    metrics = convert_to_metrics(data, dataset, None)
 
     assert metrics == data.metrics_str()
 
@@ -82,7 +83,7 @@ def test_convert_to_metrics_multiple():
                   ds_names=['test_ds_name1', 'test_ds_name2'],
                   ds_types=['test_ds_type1', 'test_ds_type2'])
     dataset = CollecdMock().get_dataset('test_type_2')
-    metrics = convert_to_metrics(data, dataset)
+    metrics = convert_to_metrics(data, dataset, None)
 
     assert metrics == data.metrics_str()
 
@@ -92,6 +93,14 @@ def test_convert_to_metrics_no_meta():
                   ds_names=['test_ds_name1', 'test_ds_name2'],
                   ds_types=['test_ds_type1', 'test_ds_type2'])
     dataset = CollecdMock().get_dataset('test_type_2')
-    metrics = convert_to_metrics(data, dataset)
+    metrics = convert_to_metrics(data, dataset, None)
 
     assert metrics == data.metrics_str()
+
+
+def test_convert_to_metrics_with_metric_dimension():
+    data = Values()
+    dataset = CollecdMock().get_dataset('test_type')
+    metrics = convert_to_metrics(data, dataset, '_')
+
+    assert metrics == data.metrics_str('_')
