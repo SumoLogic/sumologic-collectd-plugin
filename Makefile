@@ -12,7 +12,7 @@ pylint:
 # https://packaging.python.org/tutorials/packaging-projects/
 .PHONY: build
 build:
-	rm dist -r
+	rm dist -rf
 	python -m pip install virtualenv
 	python -m pip install --upgrade build
 	python -m build
