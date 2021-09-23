@@ -87,6 +87,9 @@ def _gen_metric_dimension(data, sep):
     """
     Generates metric dimension and returns it as one-element list
     """
+    if sep is None:
+        return []
+
     return [
         gen_tag(
             IntrinsicKeys.metric,
@@ -99,18 +102,17 @@ def convert_to_metrics(data, data_set, sep):
     Convert data into metrics
     """
     metrics = []
+    metric_dimension = _gen_metric_dimension(data, sep)
+    meta_tags = _gen_meta_tags(data)
 
     for (value, data_type) in zip(data.values, data_set):
         if math.isnan(value):
             continue
 
-        metric_dimension = _gen_metric_dimension(data, sep) if sep is not None else []
-
         ds_name = data_type[0]
         ds_type = data_type[1]
 
         dimension_tags = _gen_dimension_tags(data, ds_name, ds_type) + metric_dimension
-        meta_tags = _gen_meta_tags(data)
         metric = _gen_metric(dimension_tags, meta_tags, value, data.time)
 
         metrics.append(metric)
