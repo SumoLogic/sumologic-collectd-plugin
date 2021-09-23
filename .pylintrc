@@ -16,3 +16,4 @@ disable=
     too-many-statements,
     useless-object-inheritance,
     duplicate-code,
+    consider-using-f-string,  # not supported in python2.7
