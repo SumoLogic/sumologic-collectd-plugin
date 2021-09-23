@@ -56,7 +56,9 @@ class MetricsWriter(object):
         except TypeError:
             raise Exception('Do not know how to handle type %s' % raw_data.type)  # pylint: disable=W0707
 
-        metrics = convert_to_metrics(raw_data, data_set)
+        metrics = convert_to_metrics(raw_data,
+                                     data_set,
+                                     self.met_config.conf[ConfigOptions.metric_dimension_separator])
 
         self.collectd.debug('Converted data %s to metrics %s' % (raw_data, metrics))
 

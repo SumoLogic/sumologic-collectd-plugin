@@ -13,6 +13,7 @@ class IntrinsicKeys(object):
     type_instance = "type_instance"
     ds_name = "ds_name"
     ds_type = "ds_type"
+    metric = "metric"
 
 
 # reserved keywords are case-insensitive
@@ -82,8 +83,18 @@ def _gen_dimension_tags(data, ds_name, ds_type):
 
     return dimension_tags
 
+def _gen_metric_dimension(data, sep):
+    """
+    Generates metric dimension and returns it as one-element list
+    """
+    return [
+        gen_tag(
+            IntrinsicKeys.metric,
+            sep.join(v for v in (data.type, data.type_instance) if v)
+            )
+        ]
 
-def convert_to_metrics(data, data_set):
+def convert_to_metrics(data, data_set, sep):
     """
     Convert data into metrics
     """
@@ -92,10 +103,13 @@ def convert_to_metrics(data, data_set):
     for (value, data_type) in zip(data.values, data_set):
         if math.isnan(value):
             continue
+
+        metric_dimension = _gen_metric_dimension(data, sep) if sep is not None else []
+
         ds_name = data_type[0]
         ds_type = data_type[1]
 
-        dimension_tags = _gen_dimension_tags(data, ds_name, ds_type)
+        dimension_tags = _gen_dimension_tags(data, ds_name, ds_type) + metric_dimension
         meta_tags = _gen_meta_tags(data)
         metric = _gen_metric(dimension_tags, meta_tags, value, data.time)
 

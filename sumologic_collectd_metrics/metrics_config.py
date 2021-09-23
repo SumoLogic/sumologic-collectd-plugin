@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from .metrics_util import (validate_non_empty, validate_non_negative,
-                           validate_positive, validate_string_type)
+from .metrics_util import (validate_boolean_type, validate_non_empty,
+                           validate_non_negative, validate_positive,
+                           validate_string_type)
 
 
 class ConfigOptions(object):
@@ -34,6 +35,8 @@ class ConfigOptions(object):
     # Static option, not configurable yet. Default is application/vnd.sumologic.carbon2
     content_type = 'ContentType'
     shutdown_max_wait = "ShutdownMaxWait"  # seconds
+    add_metric_dimension = 'AddMetricDimension'
+    metric_dimension_separator = 'MetricDimensionSeparator'
 
 class MetricsConfig:
     """
@@ -66,7 +69,9 @@ class MetricsConfig:
             ConfigOptions.max_requests_to_buffer: 1000,
             ConfigOptions.content_encoding: 'deflate',
             ConfigOptions.content_type: 'application/vnd.sumologic.carbon2',
-            ConfigOptions.shutdown_max_wait: 5
+            ConfigOptions.shutdown_max_wait: 5,
+            ConfigOptions.add_metric_dimension: False,
+            ConfigOptions.metric_dimension_separator: '.',
         }
 
     def parse_config(self, config):
@@ -113,6 +118,14 @@ class MetricsConfig:
                         raise Exception('Unknown ContentEncoding %s specified. ContentEncoding '
                                         'must be deflate, gzip, or none' % _s)
                     self.conf[child.key] = content_encoding
+                elif child.key == ConfigOptions.add_metric_dimension:
+                    _b = child.values[0]
+                    validate_boolean_type(child.key, _b)
+                    self.conf[child.key] = _b
+                elif child.key == ConfigOptions.metric_dimension_separator:
+                    _s = child.values[0]
+                    validate_string_type(_s, child.key, 'Value', 'Key')
+                    self.conf[child.key] = _s
                 else:
                     self.collectd.warning('Unknown configuration %s, ignored.' % child.key)
         except Exception as e:
@@ -121,6 +134,11 @@ class MetricsConfig:
 
         if ConfigOptions.url not in self.conf:
             raise Exception('Specify %s in collectd.conf.' % ConfigOptions.url)
+
+        # Set metric dimension separator to None if we do not want to add it
+        if ConfigOptions.add_metric_dimension not in self.conf \
+            or not self.conf[ConfigOptions.add_metric_dimension]:
+            self.conf[ConfigOptions.metric_dimension_separator] = None
 
         http_post_interval = self.conf[ConfigOptions.http_post_interval]
         max_batch_interval = self.conf[ConfigOptions.max_batch_interval]
