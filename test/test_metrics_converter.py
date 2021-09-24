@@ -75,7 +75,7 @@ def test_convert_to_metrics_single():
     dataset = CollecdMock().get_dataset('test_type')
     metrics = convert_to_metrics(data, dataset, None)
 
-    assert metrics == data.metrics_str()
+    assert metrics == data.metrics_str(None)
 
 
 def test_convert_to_metrics_multiple():
@@ -85,7 +85,7 @@ def test_convert_to_metrics_multiple():
     dataset = CollecdMock().get_dataset('test_type_2')
     metrics = convert_to_metrics(data, dataset, None)
 
-    assert metrics == data.metrics_str()
+    assert metrics == data.metrics_str(None)
 
 
 def test_convert_to_metrics_no_meta():
@@ -95,7 +95,7 @@ def test_convert_to_metrics_no_meta():
     dataset = CollecdMock().get_dataset('test_type_2')
     metrics = convert_to_metrics(data, dataset, None)
 
-    assert metrics == data.metrics_str()
+    assert metrics == data.metrics_str(None)
 
 
 def test_convert_to_metrics_with_metric_dimension():

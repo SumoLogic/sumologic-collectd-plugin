@@ -70,7 +70,7 @@ class MetricsConfig:
             ConfigOptions.content_encoding: 'deflate',
             ConfigOptions.content_type: 'application/vnd.sumologic.carbon2',
             ConfigOptions.shutdown_max_wait: 5,
-            ConfigOptions.add_metric_dimension: False,
+            ConfigOptions.add_metric_dimension: True,
             ConfigOptions.metric_dimension_separator: '.',
         }
 
