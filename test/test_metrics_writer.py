@@ -48,7 +48,7 @@ def test_write_callback_host_with_equal_char():
     expected_value = ['host=[invalid:host]' \
     ' plugin=test_plugin plugin_instance=test_plugin_instance' \
     ' type=test_type type_instance=test_type_instance ds_name=test_ds_name ds_type=test_ds_type' \
-    '  test_meta_key=test_meta_val 3.140000 1501775008']
+    ' metric=test_type.test_type_instance  test_meta_key=test_meta_val 3.140000 1501775008']
     metrics_writer.write_callback(data)
 
     assert metrics_writer.met_batcher.queue.qsize() == 1

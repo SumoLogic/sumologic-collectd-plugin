@@ -41,7 +41,7 @@ class Values:
         self.ds_names = ds_names
         self.ds_types = ds_types
 
-    def metrics_str(self, sep=None):
+    def metrics_str(self, sep='.'):
         """
         Builds metric string. If sep is not None,
         it includes metric dimension using sep as separator
