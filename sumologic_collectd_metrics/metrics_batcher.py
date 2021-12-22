@@ -18,10 +18,8 @@ class MetricsBatcher(Timer):
         Init MetricsBatcher with max_batch_size, max_batch_interval, and met_buffer
         """
 
-        Timer.__init__(self, max_batch_interval, self.flush)
-
         self.collectd = collectd
-
+        Timer.__init__(self, max_batch_interval, self.flush)
         # initiate max_batch_size and max_batch_interval
         self.max_batch_size = max_batch_size
         self.max_batch_interval = max_batch_interval
