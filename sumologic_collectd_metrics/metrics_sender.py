@@ -39,9 +39,8 @@ class MetricsSender(Timer):
         Init MetricsSender with conf and met_buf
         """
 
-        Timer.__init__(self, conf[ConfigOptions.http_post_interval], self._request_scheduler)
-
         self.collectd = collectd
+        Timer.__init__(self, conf[ConfigOptions.http_post_interval], self._request_scheduler)
         self.conf = conf
         self.buffer = met_buf
         self.http_headers = self._build_header()
