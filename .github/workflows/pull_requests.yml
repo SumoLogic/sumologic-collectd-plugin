@@ -19,11 +19,11 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
-      run: make install
+      run: make install-test
     - name: Test with pytest
       run: make pytest
 
-  pylint:
+  lint:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
@@ -31,5 +31,5 @@ jobs:
       uses: actions/setup-python@v2
     - name: Install dependencies
       run: make install
-    - name: Lint with pylint
-      run: make pylint
+    - name: Lint
+      run: make lint

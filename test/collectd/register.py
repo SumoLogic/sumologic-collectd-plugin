@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 def register_config(func):
     pass
 

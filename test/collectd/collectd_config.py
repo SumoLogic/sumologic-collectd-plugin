@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
+
 class CollectdConfig:
     def __init__(self, children):
         self.children = children
 
     def children(self):
         return self.children
+
 
 class ConfigNode:
     def __init__(self, key, values):

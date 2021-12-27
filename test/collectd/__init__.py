@@ -1,7 +1,8 @@
-from . register import (register_config, register_init, register_write, register_shutdown)
+# Due to circular import problems in sumologic_collectd_metrics/__init__.py, this
+# import needs to happen before the Helper
+from .register import register_config  # isort: skip
 
-from . logger import (debug, info, warning, error)
-
-from . collectd_mock import CollecdMock
-
-from . helper import Helper
+from .collectd_mock import CollecdMock
+from .helper import Helper
+from .logger import debug, error, info, warning
+from .register import register_init, register_shutdown, register_write

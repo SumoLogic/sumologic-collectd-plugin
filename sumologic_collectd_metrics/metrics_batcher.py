@@ -4,7 +4,9 @@ try:
     import Queue as queue
 except ImportError:
     import queue
+
 import threading
+
 from .timer import Timer
 
 
@@ -34,8 +36,10 @@ class MetricsBatcher(Timer):
         # start timer
         self.start_timer()
 
-        collectd.info('Initialized MetricsBatcher with max_batch_size %s, max_batch_interval %s' %
-                      (max_batch_size, max_batch_interval))
+        collectd.info(
+            "Initialized MetricsBatcher with max_batch_size %s, max_batch_interval %s"
+            % (max_batch_size, max_batch_interval)
+        )
 
     def push_item(self, item):
         """
@@ -49,11 +53,11 @@ class MetricsBatcher(Timer):
     def flush(self):
 
         if self.queue.empty():
-            self.collectd.debug('queue is empty')
+            self.collectd.debug("queue is empty")
             return
         if self.flushing_lock.acquire(False):  # pylint: disable=R1732
             batch = self._pop_batch()
-            self.collectd.debug('flushing metrics with batch size %d' % len(batch))
+            self.collectd.debug("flushing metrics with batch size %d" % len(batch))
             self.metrics_buffer.put_pending_batch(batch)
             self.reset_timer()
             self.flushing_lock.release()
