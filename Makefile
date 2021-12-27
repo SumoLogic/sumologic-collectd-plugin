@@ -1,13 +1,24 @@
 test: install pytest
 
-install:
-	python -m pip install -r requirements.txt
+install: install-lint install-test
+
+install-test:
+	python -m pip install -r requirements-test.txt
+
+install-lint:
+	python -m pip install -r requirements-lint.txt
 
 pytest:
 	python -m pytest -v test/ --cov=sumologic_collectd_metrics/
 
-pylint:
+lint:
 	python -m pylint **/*.py
+	black --check .
+	isort --check .
+
+format:
+	black .
+	isort .
 
 # https://packaging.python.org/tutorials/packaging-projects/
 .PHONY: build

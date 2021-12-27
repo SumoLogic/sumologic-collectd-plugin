@@ -17,8 +17,19 @@ class IntrinsicKeys(object):
 
 
 # reserved keywords are case-insensitive
-_reserved_keywords = frozenset(['_sourcehost', '_sourcename', '_sourcecategory', '_collectorid',
-                                '_collector', '_source', '_sourceid', '_contenttype', '_rawname'])
+_reserved_keywords = frozenset(
+    [
+        "_sourcehost",
+        "_sourcename",
+        "_sourcecategory",
+        "_collectorid",
+        "_collector",
+        "_source",
+        "_sourceid",
+        "_contenttype",
+        "_rawname",
+    ]
+)
 
 
 def gen_tag(key, value):
@@ -28,23 +39,25 @@ def gen_tag(key, value):
     key = sanitize_field(key)
     value = sanitize_field(value)
     if not key:
-        raise Exception('Key for value %s cannot be empty' % value)
+        raise Exception("Key for value %s cannot be empty" % value)
 
     if key.lower() in _reserved_keywords:
-        raise Exception('Key %s (case-insensitive) must not contain reserved keywords %s' %
-                        (key, _reserved_keywords))
+        raise Exception(
+            "Key %s (case-insensitive) must not contain reserved keywords %s"
+            % (key, _reserved_keywords)
+        )
 
     if not value:
-        return ''
+        return ""
 
-    return key + '=' + value
+    return key + "=" + value
 
 
 def _remove_empty_tags(tags):
     return [tag for tag in tags if tag]
 
 
-def tags_to_str(tags, sep=' '):
+def tags_to_str(tags, sep=" "):
     """
     Convert list of tags to a single string
     """
@@ -63,25 +76,37 @@ def _gen_metric(dimension_tags, meta_tags, value, timestamp):
     """
 
     if not meta_tags:
-        return '%s  %f %i' % (tags_to_str(dimension_tags), value, timestamp)
+        return "%s  %f %i" % (tags_to_str(dimension_tags), value, timestamp)
 
-
-    return '%s  %s %f %i' % (tags_to_str(dimension_tags),
-                             tags_to_str(meta_tags), value, timestamp)
+    return "%s  %s %f %i" % (
+        tags_to_str(dimension_tags),
+        tags_to_str(meta_tags),
+        value,
+        timestamp,
+    )
 
 
 # Generate dimension tags
 def _gen_dimension_tags(data, ds_name, ds_type):
 
-    tags = [gen_tag(key, getattr(data, key)) for key in
-            [IntrinsicKeys.host, IntrinsicKeys.plugin, IntrinsicKeys.plugin_instance,
-                IntrinsicKeys.type, IntrinsicKeys.type_instance]] + \
-            [gen_tag(IntrinsicKeys.ds_name, ds_name),
-            gen_tag(IntrinsicKeys.ds_type, ds_type)]
+    tags = [
+        gen_tag(key, getattr(data, key))
+        for key in [
+            IntrinsicKeys.host,
+            IntrinsicKeys.plugin,
+            IntrinsicKeys.plugin_instance,
+            IntrinsicKeys.type,
+            IntrinsicKeys.type_instance,
+        ]
+    ] + [
+        gen_tag(IntrinsicKeys.ds_name, ds_name),
+        gen_tag(IntrinsicKeys.ds_type, ds_type),
+    ]
 
     dimension_tags = _remove_empty_tags(tags)
 
     return dimension_tags
+
 
 def _gen_metric_dimension(data, sep):
     """
@@ -93,9 +118,10 @@ def _gen_metric_dimension(data, sep):
     return [
         gen_tag(
             IntrinsicKeys.metric,
-            sep.join(v for v in (data.type, data.type_instance) if v)
-            )
-        ]
+            sep.join(v for v in (data.type, data.type_instance) if v),
+        )
+    ]
+
 
 def convert_to_metrics(data, data_set, sep):
     """

@@ -11,13 +11,13 @@ class RequestException(IOError):
 
     def __init__(self, *args, **kwargs):
         """Initialize RequestException with `request` and `response` objects."""
-        response = kwargs.pop('response', None)
+        response = kwargs.pop("response", None)
         self.response = response
-        self.request = kwargs.pop('request', None)
-        if (response is not None and not self.request and
-                hasattr(response, 'request')):
+        self.request = kwargs.pop("request", None)
+        if response is not None and not self.request and hasattr(response, "request"):
             self.request = self.response.request
         super(RequestException, self).__init__(*args, **kwargs)
+
 
 class HTTPError(RequestException):
     """An HTTP error occurred."""
@@ -101,14 +101,17 @@ class UnrewindableBodyError(RequestException):
 
 class RequestsWarning(Warning):
     """Base warning for Requests."""
+
     pass
 
 
 class FileModeWarning(RequestsWarning, DeprecationWarning):
     """A file was opened in text mode, but Requests determined its binary length."""
+
     pass
 
 
 class RequestsDependencyWarning(RequestsWarning):
     """An imported dependency doesn't match the expected version range."""
+
     pass

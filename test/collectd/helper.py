@@ -4,8 +4,7 @@ import os
 
 from sumologic_collectd_metrics.metrics_batcher import MetricsBatcher
 from sumologic_collectd_metrics.metrics_buffer import MetricsBuffer
-from sumologic_collectd_metrics.metrics_config import (ConfigOptions,
-                                                       MetricsConfig)
+from sumologic_collectd_metrics.metrics_config import ConfigOptions, MetricsConfig
 from sumologic_collectd_metrics.metrics_sender import MetricsSender
 from sumologic_collectd_metrics.metrics_writer import MetricsWriter
 
@@ -17,7 +16,7 @@ cwd = os.getcwd()
 
 class Helper:
 
-    url = 'http://www.sumologic.com'
+    url = "http://www.sumologic.com"
 
     def __init__(self):
         config = Helper.default_config()

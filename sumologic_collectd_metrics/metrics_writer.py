@@ -10,7 +10,6 @@ from .metrics_sender import MetricsSender
 
 
 class MetricsWriter(object):
-
     def __init__(self, collectd):
         """
         Since the collectd module is only available when the plugin is running
@@ -30,21 +29,29 @@ class MetricsWriter(object):
         self.met_config = MetricsConfig(self.collectd)
         self.met_config.parse_config(conf)
 
-        self.collectd.info('Parsed configuration %s' % self.met_config.conf)
+        self.collectd.info("Parsed configuration %s" % self.met_config.conf)
 
     def init_callback(self):
         """
         Init MetricsBuffer, MetricsBatcher, and MetricsSender
         """
 
-        self.met_buffer = MetricsBuffer(self.met_config.conf[ConfigOptions.max_requests_to_buffer],
-                                   self.collectd)
-        self.met_batcher = MetricsBatcher(self.met_config.conf[ConfigOptions.max_batch_size],
-                                     self.met_config.conf[ConfigOptions.max_batch_interval],
-                                     self.met_buffer, self.collectd)
-        self.met_sender = MetricsSender(self.met_config.conf, self.met_buffer, self.collectd)
+        self.met_buffer = MetricsBuffer(
+            self.met_config.conf[ConfigOptions.max_requests_to_buffer], self.collectd
+        )
+        self.met_batcher = MetricsBatcher(
+            self.met_config.conf[ConfigOptions.max_batch_size],
+            self.met_config.conf[ConfigOptions.max_batch_interval],
+            self.met_buffer,
+            self.collectd,
+        )
+        self.met_sender = MetricsSender(
+            self.met_config.conf, self.met_buffer, self.collectd
+        )
 
-        self.collectd.info('Initialized MetricsBuffer, MetricsBatcher, and MetricsSender')
+        self.collectd.info(
+            "Initialized MetricsBuffer, MetricsBatcher, and MetricsSender"
+        )
 
     def write_callback(self, raw_data, _=None):
         """
@@ -54,13 +61,17 @@ class MetricsWriter(object):
         try:
             data_set = self.collectd.get_dataset(raw_data.type)
         except TypeError:
-            raise Exception('Do not know how to handle type %s' % raw_data.type)  # pylint: disable=W0707
+            raise Exception(  # pylint: disable=W0707
+                "Do not know how to handle type %s" % raw_data.type
+            )
 
-        metrics = convert_to_metrics(raw_data,
-                                     data_set,
-                                     self.met_config.conf[ConfigOptions.metric_dimension_separator])
+        metrics = convert_to_metrics(
+            raw_data,
+            data_set,
+            self.met_config.conf[ConfigOptions.metric_dimension_separator],
+        )
 
-        self.collectd.debug('Converted data %s to metrics %s' % (raw_data, metrics))
+        self.collectd.debug("Converted data %s to metrics %s" % (raw_data, metrics))
 
         for metric in metrics:
             self.met_batcher.push_item(metric)
@@ -70,7 +81,9 @@ class MetricsWriter(object):
         Shutdown callback. Flushes in memory metrics batches. Default, times out at 5 seconds.
         """
 
-        self.collectd.info('Received shutdown signal, start flushing in memory metrics batches.')
+        self.collectd.info(
+            "Received shutdown signal, start flushing in memory metrics batches."
+        )
 
         now = time.time()
         stop = now + self.met_config.conf[ConfigOptions.shutdown_max_wait]
@@ -82,9 +95,13 @@ class MetricsWriter(object):
         while time.time() < stop and (not self.met_buffer.empty()):
             time.sleep(flush_interval)
 
-        self.collectd.info('Flushing complete. There are %d metrics batches left.' %
-                           (self.met_buffer.pending_queue.qsize() +
-                           self.met_buffer.processing_queue.qsize()))
+        self.collectd.info(
+            "Flushing complete. There are %d metrics batches left."
+            % (
+                self.met_buffer.pending_queue.qsize()
+                + self.met_buffer.processing_queue.qsize()
+            )
+        )
 
     def register(self):
         """

@@ -24,8 +24,10 @@ class MetricsBuffer(object):
         self.processing_queue = queue.Queue(self._processing_queue_size)
         self.pending_queue = queue.Queue(max_requests_to_buffer)
 
-        collectd.info('Initialized MetricsBuffer with max_requests_to_buffer %s' %
-                      max_requests_to_buffer)
+        collectd.info(
+            "Initialized MetricsBuffer with max_requests_to_buffer %s"
+            % max_requests_to_buffer
+        )
 
     def get_batch(self):
         """
@@ -49,8 +51,9 @@ class MetricsBuffer(object):
 
         if self.pending_queue.full():
             batch_to_drop = self.pending_queue.get()
-            self.collectd.warning('In memory buffer is full, dropping metrics batch %s'
-                                  % batch_to_drop)
+            self.collectd.warning(
+                "In memory buffer is full, dropping metrics batch %s" % batch_to_drop
+            )
 
         self.pending_queue.put(batch)
 
@@ -60,11 +63,15 @@ class MetricsBuffer(object):
         """
 
         if self.pending_queue.full():
-            self.collectd.warning('Sending metrics batch %s failed. '
-                                  'In memory buffer is full, dropping metrics batch' % batch)
+            self.collectd.warning(
+                "Sending metrics batch %s failed. "
+                "In memory buffer is full, dropping metrics batch" % batch
+            )
         else:
-            self.collectd.warning('Sending metrics batch %s failed. '
-                                  'Put it back to processing queue' % batch)
+            self.collectd.warning(
+                "Sending metrics batch %s failed. "
+                "Put it back to processing queue" % batch
+            )
             self.processing_queue.put(batch)
 
     def empty(self):

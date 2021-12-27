@@ -19,6 +19,7 @@ def test_cancel_timer_not_start():
 
     timer.cancel_timer()
 
+
 def test_reset_timer_normal():
     timer = Timer(0.1, task)
     timer.start_timer()
@@ -45,4 +46,4 @@ def test_reset_timer_not_start():
 
 
 def task():
-    print('Timer task ... ')
+    print("Timer task ... ")

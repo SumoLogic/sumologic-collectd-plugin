@@ -5,8 +5,11 @@ from . import logger, register
 
 class CollecdMock:
     TYPES = {
-        'test_type': [('test_ds_name', 'test_ds_type', 0, None)],
-        'test_type_2': [('test_ds_name1', 'test_ds_type1', 0, None), ('test_ds_name2', 'test_ds_type2', 0, None)],
+        "test_type": [("test_ds_name", "test_ds_type", 0, None)],
+        "test_type_2": [
+            ("test_ds_name1", "test_ds_type1", 0, None),
+            ("test_ds_name2", "test_ds_type2", 0, None),
+        ],
     }
 
     def debug(self, msg):

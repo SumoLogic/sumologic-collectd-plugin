@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import time
+
 from collectd import Helper
 
 
@@ -10,7 +11,7 @@ def test_metrics_batcher_max_size():
     met_batcher = Helper.get_batcher(max_batch_size, 60.0, met_buffer)
 
     for i in range(50):
-        met_batcher.push_item('item_%s' % i)
+        met_batcher.push_item("item_%s" % i)
 
     assert met_buffer.pending_queue.qsize() == 5
     for i in range(5):
@@ -18,7 +19,7 @@ def test_metrics_batcher_max_size():
 
         expected_batch = []
         for j in range(max_batch_size):
-            expected_batch.append('item_%s' % (i * max_batch_size + j))
+            expected_batch.append("item_%s" % (i * max_batch_size + j))
 
         assert len(batch) == max_batch_size
         assert batch == expected_batch
@@ -33,7 +34,7 @@ def test_metrics_batcher_max_interval():
 
     for i in range(50):
         time.sleep(0.010)
-        met_batcher.push_item('item_%s' % i)
+        met_batcher.push_item("item_%s" % i)
 
     while not met_buffer.pending_queue.empty():
         batch = met_buffer.pending_queue.get()
@@ -48,7 +49,7 @@ def test_metrics_batcher_locks():
     met_batcher = Helper.get_batcher(max_batch_size, 0.100, met_buffer)
 
     for i in range(50):
-        met_batcher.push_item('item_%s' % i)
+        met_batcher.push_item("item_%s" % i)
 
     assert met_buffer.pending_queue.qsize() == 25
     for i in range(25):
@@ -56,7 +57,7 @@ def test_metrics_batcher_locks():
 
         expected_batch = []
         for j in range(max_batch_size):
-            expected_batch.append('item_%s' % (i * max_batch_size + j))
+            expected_batch.append("item_%s" % (i * max_batch_size + j))
 
         assert len(batch) == max_batch_size
         assert batch == expected_batch
