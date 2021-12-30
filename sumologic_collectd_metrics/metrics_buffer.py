@@ -24,6 +24,10 @@ class MetricsBuffer(object):
         self.processing_queue = queue.Queue(self._processing_queue_size)
         self.pending_queue = queue.Queue(max_requests_to_buffer)
 
+        # metrics
+        self.dropped_batch_count = 0
+        self.dropped_metric_count = 0
+
         collectd.info(
             "Initialized MetricsBuffer with max_requests_to_buffer %s"
             % max_requests_to_buffer
@@ -54,6 +58,7 @@ class MetricsBuffer(object):
             self.collectd.warning(
                 "In memory buffer is full, dropping metrics batch %s" % batch_to_drop
             )
+            self._drop_batch(batch_to_drop)
 
         self.pending_queue.put(batch)
 
@@ -67,6 +72,7 @@ class MetricsBuffer(object):
                 "Sending metrics batch %s failed. "
                 "In memory buffer is full, dropping metrics batch" % batch
             )
+            self._drop_batch(batch)
         else:
             self.collectd.warning(
                 "Sending metrics batch %s failed. "
@@ -74,5 +80,17 @@ class MetricsBuffer(object):
             )
             self.processing_queue.put(batch)
 
+    def _drop_batch(self, batch):
+        """
+        Drop the supplied batch. This will typically happen due to one of the queues being full.
+
+        This function doesn't do anything other than updating some stats.
+        """
+        self.dropped_batch_count += 1
+        self.dropped_metric_count += len(batch)
+
     def empty(self):
         return self.processing_queue.empty() and self.pending_queue.empty()
+
+    def size(self):
+        return self.processing_queue.qsize() + self.pending_queue.qsize()

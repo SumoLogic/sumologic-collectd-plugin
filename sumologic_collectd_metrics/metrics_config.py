@@ -42,6 +42,8 @@ class ConfigOptions(object):
     shutdown_max_wait = "ShutdownMaxWait"  # seconds
     add_metric_dimension = "AddMetricDimension"
     metric_dimension_separator = "MetricDimensionSeparator"
+    # Enable internal metrics
+    enable_internal_metrics = "EnableInternalMetrics"
 
 
 class MetricsConfig:
@@ -78,6 +80,7 @@ class MetricsConfig:
             ConfigOptions.shutdown_max_wait: 5,
             ConfigOptions.add_metric_dimension: True,
             ConfigOptions.metric_dimension_separator: ".",
+            ConfigOptions.enable_internal_metrics: False,
         }
 
     def parse_config(self, config):
@@ -139,7 +142,10 @@ class MetricsConfig:
                             "must be deflate, gzip, or none" % _s
                         )
                     self.conf[child.key] = content_encoding
-                elif child.key == ConfigOptions.add_metric_dimension:
+                elif child.key in (
+                    ConfigOptions.add_metric_dimension,
+                    ConfigOptions.enable_internal_metrics,
+                ):
                     _b = child.values[0]
                     validate_boolean_type(child.key, _b)
                     self.conf[child.key] = _b

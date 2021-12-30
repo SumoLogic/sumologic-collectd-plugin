@@ -65,6 +65,23 @@ def test_put_failed_batch_queue_full():
         assert met_buffer.pending_queue.get() == ["batch_%s" % i]
 
 
+def test_dropped_stats():
+    batch_size = 5
+    met_buffer = Helper.default_buffer()
+    buffer_capacity = met_buffer.pending_queue.maxsize
+    for i in range(buffer_capacity):
+        met_buffer.put_pending_batch(["batch_%s" % i] * batch_size)
+
+    before_dropped_metrics = met_buffer.dropped_metric_count
+    before_dropped_batches = met_buffer.dropped_batch_count
+    met_buffer.put_failed_batch(["batch_%s" % buffer_capacity] * batch_size)
+    after_dropped_metrics = met_buffer.dropped_metric_count
+    after_dropped_batches = met_buffer.dropped_batch_count
+
+    assert after_dropped_metrics == before_dropped_metrics + batch_size
+    assert after_dropped_batches == before_dropped_batches + 1
+
+
 def test_put_failed_batch_queue_not_full():
     met_buffer = Helper.default_buffer()
     for i in range(5):

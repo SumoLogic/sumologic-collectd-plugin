@@ -35,6 +35,25 @@ def test_post_normal_no_additional_header():
     met_sender.cancel_timer()
 
 
+def test_sent_stats():
+    batch_size = 5
+    batch_count = 10
+    met_buffer = Helper.get_buffer(batch_count)
+    helper = Helper()
+
+    for i in range(10):
+        met_buffer.put_pending_batch(["batch_%s" % i] * batch_size)
+
+    met_sender = Helper.get_sender(helper.conf, met_buffer)
+
+    sleep_helper(10, 0.100, 100)
+
+    met_sender.cancel_timer()
+
+    assert met_sender.sent_batch_count == batch_count
+    assert met_sender.sent_metric_count == batch_count * batch_size
+
+
 def test_post_different_content_encodings():
     met_buffer = Helper.get_buffer(10)
     deflate_config = {"content_encoding": "deflate"}

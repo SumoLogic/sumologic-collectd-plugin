@@ -22,6 +22,9 @@ class MetricsWriter(object):
         self.met_batcher = None
         self.met_sender = None
 
+        # metrics
+        self.received_metric_count = 0
+
     def parse_config(self, conf):
         """
         Parse conf file
@@ -64,7 +67,6 @@ class MetricsWriter(object):
             raise Exception(  # pylint: disable=W0707
                 "Do not know how to handle type %s" % raw_data.type
             )
-
         metrics = convert_to_metrics(
             raw_data,
             data_set,
@@ -75,6 +77,47 @@ class MetricsWriter(object):
 
         for metric in metrics:
             self.met_batcher.push_item(metric)
+        self.received_metric_count += len(metrics)
+
+    def read_internal_metrics_callback(self):
+        """
+        Dispatch metrics describing the plugin's state.
+        """
+        values = [
+            self.collectd.Values(
+                type_instance="batch_queue_size",
+                type="gauge",
+                values=[self.met_buffer.size()],
+            ),
+            self.collectd.Values(
+                type_instance="received_metrics",
+                type="gauge",
+                values=[self.received_metric_count],
+            ),
+            self.collectd.Values(
+                type_instance="sent_batches",
+                type="gauge",
+                values=[self.met_sender.sent_batch_count],
+            ),
+            self.collectd.Values(
+                type_instance="sent_metrics",
+                type="gauge",
+                values=[self.met_sender.sent_metric_count],
+            ),
+            self.collectd.Values(
+                type_instance="dropped_batches",
+                type="gauge",
+                values=[self.met_buffer.dropped_batch_count],
+            ),
+            self.collectd.Values(
+                type_instance="dropped_metrics",
+                type="gauge",
+                values=[self.met_buffer.dropped_metric_count],
+            ),
+        ]
+
+        for value in values:
+            value.dispatch()
 
     def shutdown_callback(self):
         """
@@ -105,8 +148,10 @@ class MetricsWriter(object):
 
     def register(self):
         """
-        Register callbacks for init, write, and shutdown.
+        Register callbacks for collectd.
         """
         self.collectd.register_init(self.init_callback)
         self.collectd.register_write(self.write_callback)
         self.collectd.register_shutdown(self.shutdown_callback)
+        if self.met_config.conf[ConfigOptions.enable_internal_metrics]:
+            self.collectd.register_read(self.read_internal_metrics_callback)

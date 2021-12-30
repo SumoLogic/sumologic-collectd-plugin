@@ -1,4 +1,4 @@
-test: install pytest
+test: install-test pytest
 
 install: install-lint install-test
 

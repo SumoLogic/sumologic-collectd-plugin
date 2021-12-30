@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from . import logger, register
+from . import logger, register, values
 
 
 class CollecdMock:
@@ -11,6 +11,9 @@ class CollecdMock:
             ("test_ds_name2", "test_ds_type2", 0, None),
         ],
     }
+    Values = (
+        values.Values
+    )  # this is here so instantiating Values via collectd.Values(...) works
 
     def debug(self, msg):
         logger.debug(msg)
@@ -32,6 +35,9 @@ class CollecdMock:
 
     def register_write(self, func):
         register.register_write(func)
+
+    def register_read(self, func):
+        pass
 
     def register_shutdown(self, func):
         register.register_shutdown(func)
