@@ -5,3 +5,4 @@ retry
 # test dependencies
 urllib3
 pytest-cov
+mock; python_version < '3.3'

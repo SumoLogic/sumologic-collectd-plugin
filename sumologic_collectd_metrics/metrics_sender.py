@@ -43,6 +43,8 @@ class MetricsSender(Timer):
         """
 
         self.collectd = collectd
+        self.sent_batch_count = 0
+        self.sent_metric_count = 0
         Timer.__init__(
             self, conf[ConfigOptions.http_post_interval], self._request_scheduler
         )
@@ -86,6 +88,8 @@ class MetricsSender(Timer):
                 "Sent https request with batch_size=%d got response_code=%s"
                 % (len(body), response.status_code)
             )
+            self.sent_batch_count += 1
+            self.sent_metric_count += len(body)
         except requests.exceptions.HTTPError as e:
             self.fail_with_recoverable_exception("An HTTP error occurred", body, e)
         except requests.exceptions.ConnectionError as e:

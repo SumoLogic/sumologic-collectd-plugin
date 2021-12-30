@@ -54,6 +54,10 @@ class Helper:
         return ConfigNode(ConfigOptions.url, [Helper.url])
 
     @staticmethod
+    def enable_internal_metrics_node():
+        return ConfigNode(ConfigOptions.enable_internal_metrics, [True])
+
+    @staticmethod
     def parse_configs(met_config, configs):
         for (key, value) in configs.items():
             node = ConfigNode(getattr(ConfigOptions, key), [value])
