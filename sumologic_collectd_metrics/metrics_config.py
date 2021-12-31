@@ -44,6 +44,8 @@ class ConfigOptions(object):
     metric_dimension_separator = "MetricDimensionSeparator"
     # Enable internal metrics
     enable_internal_metrics = "EnableInternalMetrics"
+    # Parse statsd tags in SignalFx format
+    signalfx_statsd_tags = "SignalFxStatsDTags"
 
 
 class MetricsConfig:
@@ -81,6 +83,7 @@ class MetricsConfig:
             ConfigOptions.add_metric_dimension: True,
             ConfigOptions.metric_dimension_separator: ".",
             ConfigOptions.enable_internal_metrics: False,
+            ConfigOptions.signalfx_statsd_tags: False,
         }
 
     def parse_config(self, config):
@@ -145,6 +148,7 @@ class MetricsConfig:
                 elif child.key in (
                     ConfigOptions.add_metric_dimension,
                     ConfigOptions.enable_internal_metrics,
+                    ConfigOptions.signalfx_statsd_tags,
                 ):
                     _b = child.values[0]
                     validate_boolean_type(child.key, _b)

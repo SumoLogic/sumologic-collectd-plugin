@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint: disable=no-self-use
 
 import pytest
 from collectd import CollecdMock
@@ -7,6 +8,7 @@ from collectd.values import Values
 from sumologic_collectd_metrics.metrics_converter import (
     convert_to_metrics,
     gen_tag,
+    parse_statsd_signalfx_metric_name,
     tags_to_str,
 )
 
@@ -117,3 +119,82 @@ def test_convert_to_metrics_with_metric_dimension():
     metrics = convert_to_metrics(data, dataset, "_")
 
     assert metrics == data.metrics_str("_")
+
+
+class TestParseStatsDSignalFxMetricName:
+    @pytest.mark.parametrize(
+        "metric_name",
+        ("some_name", "name_with_[", "name_with_]", "name_with.[]empty_tag_section"),
+    )
+    def test_no_tags(self, metric_name):
+        assert parse_statsd_signalfx_metric_name(metric_name) == (metric_name, {})
+
+    @pytest.mark.parametrize(
+        "metric_name,log_message",
+        [
+            (
+                "two[key=value]sections[key=value]",
+                "Found more than one metadata segment in metric name "
+                "`two[key=value]sections[key=value]`. Ignoring all segments.",
+            ),
+            (
+                "no[key]value",
+                "Invalid key=value pair `key` in metric name `no[key]value`, ignoring it",
+            ),
+            (
+                "no[=value]key",
+                "Empty keys aren't supported, ignoring key=value pair `=value` in metric name "
+                "`no[=value]key`",
+            ),
+        ],
+    )
+    def test_invalid_format(self, metric_name, log_message, caplog):
+        assert parse_statsd_signalfx_metric_name(metric_name) == (metric_name, {})
+        assert len(caplog.messages) == 1
+        assert caplog.messages[0] == log_message
+
+    @pytest.mark.parametrize(
+        "metric_name,cleaned_name,metadata,log_message",
+        [
+            (
+                "metric.[key=value]test",
+                "metric.test",
+                dict(key="value"),
+                None,
+            ),
+            (
+                "metric.[key1=value1,key2=value2]test",
+                "metric.test",
+                dict(key1="value1", key2="value2"),
+                None,
+            ),
+            (
+                "ignore[key1=value1, key2].malformed",
+                "ignore.malformed",
+                dict(key1="value1"),
+                "Invalid key=value pair `key2` in metric name `ignore[key1=value1, key2].malformed`"
+                ", ignoring it",
+            ),
+            (
+                "ignore[key=value1, key=value2].duplicates",
+                "ignore.duplicates",
+                dict(key="value1"),
+                "Key `key` is defined multiple times in metric name "
+                "`ignore[key=value1, key=value2].duplicates`, ignoring subsequent values",
+            ),
+            (
+                "spaces[ key = value ]",
+                "spaces",
+                dict(key="value"),
+                None,
+            ),
+        ],
+    )
+    def test_valid_tags(self, metric_name, cleaned_name, metadata, log_message, caplog):
+        assert parse_statsd_signalfx_metric_name(metric_name) == (
+            cleaned_name,
+            metadata,
+        )
+        if log_message is not None:
+            assert len(caplog.messages) == 1
+            assert caplog.messages[0] == log_message

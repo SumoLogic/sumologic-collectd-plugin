@@ -1,17 +1,22 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
+# We use logging here so we can easily make assertions using pytest's caplog fixture
+logger = logging.getLogger("collectd")
+
 
 def debug(msg):
-    print("collect.debug: %s" % msg)
+    logger.debug(msg)
 
 
 def info(msg):
-    print("collect.info: %s" % msg)
+    logger.info(msg)
 
 
 def warning(msg):
-    print("collect.warning: %s" % msg)
+    logger.warning(msg)
 
 
 def error(msg):
-    print("collect.error: %s" % msg)
+    logger.error(msg)
