@@ -58,6 +58,10 @@ class Helper:
         return ConfigNode(ConfigOptions.enable_internal_metrics, [True])
 
     @staticmethod
+    def signalfx_statsd_tags_node():
+        return ConfigNode(ConfigOptions.signalfx_statsd_tags, [True])
+
+    @staticmethod
     def parse_configs(met_config, configs):
         for (key, value) in configs.items():
             node = ConfigNode(getattr(ConfigOptions, key), [value])

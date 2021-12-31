@@ -76,9 +76,12 @@ class Values:
                     )
                 )
             else:
+                meta_str = " ".join(
+                    ["%s=%s" % (key, value) for key, value in self.meta.items()]
+                )
                 metrics.append(
                     "host=%s plugin=%s plugin_instance=%s type=%s type_instance=%s "
-                    "ds_name=%s ds_type=%s%s  test_meta_key=%s %f %d"
+                    "ds_name=%s ds_type=%s%s  %s %f %d"
                     % (
                         self.host,
                         self.plugin,
@@ -88,7 +91,7 @@ class Values:
                         ds_name,
                         ds_type,
                         metric,
-                        self.meta["test_meta_key"],
+                        meta_str,
                         self.values[i],
                         self.time,
                     )

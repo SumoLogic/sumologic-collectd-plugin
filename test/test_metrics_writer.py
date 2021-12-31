@@ -100,6 +100,19 @@ def test_write_callback_invalid_metric_name(initialized_metrics_writer):
     assert "Do not know how to handle type test" in str(e)
 
 
+@pytest.mark.parametrize(
+    "config", [CollectdConfig([Helper.url_node(), Helper.signalfx_statsd_tags_node()])]
+)
+def test_write_callback_signalfx_statsd_tags(initialized_metrics_writer):
+    metrics_writer = initialized_metrics_writer
+    data = Values(values=[1], type_instance="metric[key=value].test")
+    metrics_writer.write_callback(data)
+    assert metrics_writer.met_batcher.queue.qsize() == 1
+    metric_str = metrics_writer.met_batcher.queue.get()
+    assert " key=value " in metric_str
+    assert "type_instance=metric.test" in metric_str
+
+
 def test_shutdown_call_back(initialized_metrics_writer):
     metrics_writer = initialized_metrics_writer
 

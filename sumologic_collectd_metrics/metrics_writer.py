@@ -5,7 +5,7 @@ import time
 from .metrics_batcher import MetricsBatcher
 from .metrics_buffer import MetricsBuffer
 from .metrics_config import ConfigOptions, MetricsConfig
-from .metrics_converter import convert_to_metrics
+from .metrics_converter import convert_to_metrics, process_signalfx_statsd_tags
 from .metrics_sender import MetricsSender
 
 
@@ -67,6 +67,9 @@ class MetricsWriter(object):
             raise Exception(  # pylint: disable=W0707
                 "Do not know how to handle type %s" % raw_data.type
             )
+        if self.met_config.conf[ConfigOptions.signalfx_statsd_tags]:
+            process_signalfx_statsd_tags(raw_data)
+
         metrics = convert_to_metrics(
             raw_data,
             data_set,
