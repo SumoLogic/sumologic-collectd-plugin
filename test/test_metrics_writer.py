@@ -14,6 +14,7 @@ from collectd.collectd_config import CollectdConfig
 from collectd.values import Values
 
 from sumologic_collectd_metrics.metrics_config import ConfigOptions
+from sumologic_collectd_metrics.metrics_writer import PLUGIN_NAME
 
 
 @pytest.fixture
@@ -153,29 +154,37 @@ class TestReadCallback:
             mocked_cls.assert_has_calls(
                 [
                     mock.call(
-                        type_instance="batch_queue_size", type="gauge", values=[0]
+                        plugin=PLUGIN_NAME,
+                        type_instance="batch_queue_size",
+                        type="gauge",
+                        values=[0],
                     ).dispatch(),
                     mock.call(
+                        plugin=PLUGIN_NAME,
                         type_instance="received_metrics",
                         type="gauge",
                         values=[metrics_writer.received_metric_count],
                     ).dispatch(),
                     mock.call(
+                        plugin=PLUGIN_NAME,
                         type_instance="sent_metrics",
                         type="gauge",
                         values=[metrics_writer.met_sender.sent_metric_count],
                     ).dispatch(),
                     mock.call(
+                        plugin=PLUGIN_NAME,
                         type_instance="sent_batches",
                         type="gauge",
                         values=[metrics_writer.met_sender.sent_batch_count],
                     ).dispatch(),
                     mock.call(
+                        plugin=PLUGIN_NAME,
                         type_instance="dropped_metrics",
                         type="gauge",
                         values=[metrics_writer.met_buffer.dropped_metric_count],
                     ).dispatch(),
                     mock.call(
+                        plugin=PLUGIN_NAME,
                         type_instance="dropped_batches",
                         type="gauge",
                         values=[metrics_writer.met_buffer.dropped_batch_count],

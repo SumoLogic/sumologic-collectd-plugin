@@ -8,6 +8,8 @@ from .metrics_config import ConfigOptions, MetricsConfig
 from .metrics_converter import convert_to_metrics, process_signalfx_statsd_tags
 from .metrics_sender import MetricsSender
 
+PLUGIN_NAME = "sumologic_collectd_metrics"
+
 
 class MetricsWriter(object):
     def __init__(self, collectd):
@@ -88,31 +90,37 @@ class MetricsWriter(object):
         """
         values = [
             self.collectd.Values(
+                plugin=PLUGIN_NAME,
                 type_instance="batch_queue_size",
                 type="gauge",
                 values=[self.met_buffer.size()],
             ),
             self.collectd.Values(
+                plugin=PLUGIN_NAME,
                 type_instance="received_metrics",
                 type="gauge",
                 values=[self.received_metric_count],
             ),
             self.collectd.Values(
+                plugin=PLUGIN_NAME,
                 type_instance="sent_batches",
                 type="gauge",
                 values=[self.met_sender.sent_batch_count],
             ),
             self.collectd.Values(
+                plugin=PLUGIN_NAME,
                 type_instance="sent_metrics",
                 type="gauge",
                 values=[self.met_sender.sent_metric_count],
             ),
             self.collectd.Values(
+                plugin=PLUGIN_NAME,
                 type_instance="dropped_batches",
                 type="gauge",
                 values=[self.met_buffer.dropped_batch_count],
             ),
             self.collectd.Values(
+                plugin=PLUGIN_NAME,
                 type_instance="dropped_metrics",
                 type="gauge",
                 values=[self.met_buffer.dropped_metric_count],
