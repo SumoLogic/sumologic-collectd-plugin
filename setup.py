@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name="sumologic_collectd_metrics",
-    version="4.1.0",
+    version="4.1.1",
     description="A collectd output plugin to send Carbon 2.0-formatted metrics to Sumo Logic.",
     long_description=readme(),
     long_description_content_type="text/markdown",
