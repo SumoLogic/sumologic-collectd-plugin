@@ -98,7 +98,7 @@ def _gen_metric(dimension_tags, meta_tags, value, timestamp):
 
 
 # Generate dimension tags
-def _gen_dimension_tags(data, ds_name, ds_type):
+def _gen_dimension_tags(data, ds_name, ds_type, extra_dimensions=None):
 
     tags = [
         gen_tag(key, getattr(data, key))
@@ -113,6 +113,9 @@ def _gen_dimension_tags(data, ds_name, ds_type):
         gen_tag(IntrinsicKeys.ds_name, ds_name),
         gen_tag(IntrinsicKeys.ds_type, ds_type),
     ]
+
+    if extra_dimensions:
+        tags += [gen_tag(key, value) for key, value in extra_dimensions.items()]
 
     dimension_tags = _remove_empty_tags(tags)
 
@@ -134,7 +137,7 @@ def _gen_metric_dimension(data, sep):
     ]
 
 
-def convert_to_metrics(data, data_set, sep):
+def convert_to_metrics(data, data_set, sep, extra_dimensions=None):
     """
     Convert data into metrics
     """
@@ -149,7 +152,10 @@ def convert_to_metrics(data, data_set, sep):
         ds_name = data_type[0]
         ds_type = data_type[1]
 
-        dimension_tags = _gen_dimension_tags(data, ds_name, ds_type) + metric_dimension
+        dimension_tags = (
+            _gen_dimension_tags(data, ds_name, ds_type, extra_dimensions)
+            + metric_dimension
+        )
         metric = _gen_metric(dimension_tags, meta_tags, value, data.time)
 
         metrics.append(metric)

@@ -11,7 +11,7 @@ except ImportError:  # python 2
 import pytest
 from collectd import Helper
 from collectd.collectd_config import CollectdConfig
-from collectd.values import Values
+from collectd.values import Constants, Values
 
 from sumologic_collectd_metrics.metrics_config import ConfigOptions
 from sumologic_collectd_metrics.metrics_writer import PLUGIN_NAME
@@ -110,7 +110,11 @@ def test_write_callback_signalfx_statsd_tags(initialized_metrics_writer):
     metrics_writer.write_callback(data)
     assert metrics_writer.met_batcher.queue.qsize() == 1
     metric_str = metrics_writer.met_batcher.queue.get()
-    assert " key=value " in metric_str
+
+    # the below checks try to determine if the statsd tag shows up in the right place in the
+    # output Carbon2 metric
+    # in particular, the tag needs to be a dimension, not metadata
+    assert "ds_type=%s key=value" % Constants.ds_types[0] in metric_str
     assert "type_instance=metric.test" in metric_str
 
 

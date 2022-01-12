@@ -5,7 +5,7 @@ import time
 from .metrics_batcher import MetricsBatcher
 from .metrics_buffer import MetricsBuffer
 from .metrics_config import ConfigOptions, MetricsConfig
-from .metrics_converter import convert_to_metrics, process_signalfx_statsd_tags
+from .metrics_converter import convert_to_metrics, parse_statsd_signalfx_metric_name
 from .metrics_sender import MetricsSender
 
 PLUGIN_NAME = "sumologic_collectd_metrics"
@@ -70,12 +70,19 @@ class MetricsWriter(object):
                 "Do not know how to handle type %s" % raw_data.type
             )
         if self.met_config.conf[ConfigOptions.signalfx_statsd_tags]:
-            process_signalfx_statsd_tags(raw_data)
+            # try to extract StatsD tags and treat them as extra dimensions for the metric
+            cleaned_type_instance, extra_dimensions = parse_statsd_signalfx_metric_name(
+                raw_data.type_instance
+            )
+            raw_data.type_instance = cleaned_type_instance
+        else:
+            extra_dimensions = None
 
         metrics = convert_to_metrics(
             raw_data,
             data_set,
             self.met_config.conf[ConfigOptions.metric_dimension_separator],
+            extra_dimensions=extra_dimensions,
         )
 
         self.collectd.debug("Converted data %s to metrics %s" % (raw_data, metrics))
