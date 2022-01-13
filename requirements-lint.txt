@@ -1,5 +1,5 @@
 # This is a separate file because black doesn't run on Python 2, eveb though it
 # supports formatting Python 2 syntax.
-pylint~=2.12.2
+flake8==4.0.1
 black==21.12b0
 isort~=5.10.1
