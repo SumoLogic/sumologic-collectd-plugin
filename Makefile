@@ -12,7 +12,7 @@ pytest:
 	python -m pytest -v test/ --cov=sumologic_collectd_metrics/
 
 lint:
-	python -m pylint **/*.py
+	flake8 .
 	black --check .
 	isort --check .
 

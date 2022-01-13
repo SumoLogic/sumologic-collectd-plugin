@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=logging-not-lazy
 
 import math
 import re
@@ -191,7 +190,7 @@ def parse_statsd_signalfx_metric_name(metric_name):
     :return: A pair consisting of the modified metric name without the metadata, and a dict of
     extracted metadata.
     :rtype: (str, dict)
-    """  # pylint: disable=line-too-long
+    """  # noqa: E501
     matcher = re.compile(r"\[([^\]]+)\]")
     matches = matcher.findall(metric_name)
     if len(matches) > 1:

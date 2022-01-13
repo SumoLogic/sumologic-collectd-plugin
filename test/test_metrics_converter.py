@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=no-self-use
 
 import pytest
 from collectd import CollecdMock

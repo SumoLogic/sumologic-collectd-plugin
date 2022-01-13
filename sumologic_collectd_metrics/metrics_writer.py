@@ -66,9 +66,7 @@ class MetricsWriter(object):
         try:
             data_set = self.collectd.get_dataset(raw_data.type)
         except TypeError:
-            raise Exception(  # pylint: disable=W0707
-                "Do not know how to handle type %s" % raw_data.type
-            )
+            raise Exception("Do not know how to handle type %s" % raw_data.type)
         if self.met_config.conf[ConfigOptions.signalfx_statsd_tags]:
             # try to extract StatsD tags and treat them as extra dimensions for the metric
             cleaned_type_instance, extra_dimensions = parse_statsd_signalfx_metric_name(
