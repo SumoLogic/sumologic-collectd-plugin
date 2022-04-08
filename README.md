@@ -289,14 +289,14 @@ If the `EnableInternalMetrics` configuration option is set to true, the plugin e
 
 The following metrics are available:
 
-| Name             | Type  | Description                                                                                                  |
-|------------------|-------|--------------------------------------------------------------------------------------------------------------|
-| received_metrics | Gauge | The number of metrics values received from collectd.                                                         |
-| sent_metrics     | Gauge | The number of metrics values successfully sent to Sumo.                                                      |
-| sent_batches     | Gauge | The number of metrics batches successfully sent to Sumo.                                                     |
-| dropped_metrics  | Gauge | The number of metrics values dropped during processing due to various faults, typically buffers being full.  |
-| dropped_batches  | Gauge | The number of metrics batches dropped during processing due to various faults, typically buffers being full. |
-| batch_queue_size | Gauge | The number of batches in the sending queue.                                                                  |
+| Name             | Type  | Description                                                                                                                          |
+|------------------|-------|--------------------------------------------------------------------------------------------------------------------------------------|
+| received_metrics | Gauge | The number of metrics values received from collectd. It will never decrease.                                                         |
+| sent_metrics     | Gauge | The number of metrics values successfully sent to Sumo. It will never decrease.                                                      |
+| sent_batches     | Gauge | The number of metrics batches successfully sent to Sumo. It will never decrease.                                                     |
+| dropped_metrics  | Gauge | The number of metrics values dropped during processing due to various faults, typically buffers being full. It will never decrease.  |
+| dropped_batches  | Gauge | The number of metrics batches dropped during processing due to various faults, typically buffers being full. It will never decrease. |
+| batch_queue_size | Gauge | The number of batches in the sending queue.                                                                                          |
 
 ## TLS 1.2 Requirement
 

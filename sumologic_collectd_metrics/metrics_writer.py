@@ -103,30 +103,35 @@ class MetricsWriter(object):
             self.collectd.Values(
                 plugin=PLUGIN_NAME,
                 type_instance="received_metrics",
+                # this is actually counter, but we are using gauge to keep value as it is
                 type="gauge",
                 values=[self.received_metric_count],
             ),
             self.collectd.Values(
                 plugin=PLUGIN_NAME,
                 type_instance="sent_batches",
+                # this is actually counter, but we are using gauge to keep value as it is
                 type="gauge",
                 values=[self.met_sender.sent_batch_count],
             ),
             self.collectd.Values(
                 plugin=PLUGIN_NAME,
                 type_instance="sent_metrics",
+                # this is actually counter, but we are using gauge to keep value as it is
                 type="gauge",
                 values=[self.met_sender.sent_metric_count],
             ),
             self.collectd.Values(
                 plugin=PLUGIN_NAME,
                 type_instance="dropped_batches",
+                # this is actually counter, but we are using gauge to keep value as it is
                 type="gauge",
                 values=[self.met_buffer.dropped_batch_count],
             ),
             self.collectd.Values(
                 plugin=PLUGIN_NAME,
                 type_instance="dropped_metrics",
+                # this is actually counter, but we are using gauge to keep value as it is
                 type="gauge",
                 values=[self.met_buffer.dropped_metric_count],
             ),
