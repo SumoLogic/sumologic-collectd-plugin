@@ -37,3 +37,11 @@ push-test:
 push:
 	python -m pip install --upgrade twine
 	python -m twine upload dist/*
+
+## Vagrant
+
+vagrant-up:
+	vagrant up
+
+vagrant-ssh:
+	vagrant ssh -c 'cd /sumologic/vagrant ; exec "$$SHELL"'

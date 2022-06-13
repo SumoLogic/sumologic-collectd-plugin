@@ -32,5 +32,5 @@ sudo apt-get install -y \
 LIBPYTHON_PATH="$(find / -path '/usr/lib/python*' -name 'libpython*.so' 2>/dev/null)"
 echo "LD_PRELOAD=${LIBPYTHON_PATH}" | sudo tee -a /etc/default/collectd
 
-sudo cp /sumologic/vagrant/sumo.conf /etc/collectd/collectd.conf.d/sumo.conf
+sudo ln -s /sumologic/vagrant/sumo.conf /etc/collectd/collectd.conf.d/sumo.conf
 sudo systemctl restart collectd
