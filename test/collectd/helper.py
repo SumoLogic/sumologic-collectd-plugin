@@ -63,7 +63,7 @@ class Helper:
 
     @staticmethod
     def parse_configs(met_config, configs):
-        for (key, value) in configs.items():
+        for key, value in configs.items():
             node = ConfigNode(getattr(ConfigOptions, key), [value])
             config = CollectdConfig([Helper.url_node(), node])
             met_config.parse_config(config)

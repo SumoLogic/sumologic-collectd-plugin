@@ -96,7 +96,7 @@ def test_parse_string_config():
 
     Helper.parse_configs(met_config, configs)
 
-    for (key, value) in configs.items():
+    for key, value in configs.items():
 
         assert met_config.conf[getattr(ConfigOptions, key)] == value
 
@@ -118,7 +118,7 @@ def test_parse_int_config():
 
     Helper.parse_configs(met_config, configs)
 
-    for (key, value) in configs.items():
+    for key, value in configs.items():
 
         assert met_config.conf[getattr(ConfigOptions, key)] == int(value)
 

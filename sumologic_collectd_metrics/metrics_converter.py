@@ -144,7 +144,7 @@ def convert_to_metrics(data, data_set, sep, extra_dimensions=None):
     metric_dimension = _gen_metric_dimension(data, sep)
     meta_tags = _gen_meta_tags(data)
 
-    for (value, data_type) in zip(data.values, data_set):
+    for value, data_type in zip(data.values, data_set):
         if math.isnan(value):
             continue
 
