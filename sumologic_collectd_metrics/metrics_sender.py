@@ -168,7 +168,7 @@ class MetricsSender(Timer):
             HeaderKeys.x_sumo_host,
             HeaderKeys.x_sumo_category,
         ]
-        for (config_key, header_key) in zip(sumo_config_keys, sumo_header_keys):
+        for config_key, header_key in zip(sumo_config_keys, sumo_header_keys):
             if config_key in config_keys:
                 headers[header_key] = self.conf[config_key]
 

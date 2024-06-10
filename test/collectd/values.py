@@ -57,7 +57,7 @@ class Values:
                 sep.join(v for v in (self.type, self.type_instance) if v)
             )
 
-        for (ds_name, ds_type) in zip(self.ds_names, self.ds_types):
+        for ds_name, ds_type in zip(self.ds_names, self.ds_types):
             if not self.meta:
                 metrics.append(
                     "host=%s plugin=%s plugin_instance=%s type=%s type_instance=%s "

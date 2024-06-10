@@ -120,7 +120,7 @@ def test_post_normal_addition_dimensions_metadata():
         "dimension_tags": ("dim_key1", "dim_val1", "dim_key2", "dim_val2"),
         "meta_tags": ("meta_key1", "meta_val1", "meta_key2", "meta_val2"),
     }
-    for (key, value) in configs.items():
+    for key, value in configs.items():
         node = ConfigNode(getattr(ConfigOptions, key), value)
         config = CollectdConfig([Helper.url_node(), node])
         met_config.parse_config(config)
