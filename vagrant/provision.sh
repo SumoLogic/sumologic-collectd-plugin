@@ -26,9 +26,9 @@ add-apt-repository \
 apt-get install -y docker-ce docker-ce-cli containerd.io
 usermod -aG docker vagrant
 
-# start receiver-mock
-sudo docker create -p 3000:3000 --name receiver-mock --restart=always sumologic/kubernetes-tools:2.9.0 receiver-mock --print-metrics
-sudo docker start receiver-mock
+# start sumologic-mock
+sudo docker create -p 3000:3000 --name sumologic-mock --restart=always sumologic/sumologic-mock:2.22.0-76-g3e8cc1f sumologic-mock --print-metrics
+sudo docker start sumologic-mock
 
 # Install collectd
 sudo apt-get install -y \
