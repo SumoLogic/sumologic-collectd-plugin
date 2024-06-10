@@ -16,6 +16,14 @@ Vagrant.configure('2') do |config|
     vb.name = 'sumologic-collectd-plugin'
   end
 
+  config.vm.provider "qemu" do |qe, override|
+    override.vm.box = "perk/ubuntu-2204-arm64"
+    qe.gui = false
+    qe.smp = 8
+    qe.memory = 16384
+    qe.name = 'sumologic-collectd-plugin'
+  end
+
   config.vm.provision 'shell', path: 'vagrant/provision.sh'
 
   config.vm.synced_folder ".", "/sumologic"
