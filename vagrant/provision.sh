@@ -1,3 +1,9 @@
+#!/bin/bash
+
+set -euo pipefail
+
+ARCH="$(dpkg --print-architecture)"
+
 sudo apt-get update
 
 # Install Python
@@ -14,15 +20,15 @@ popd
 # Install docker
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   "deb [arch=${ARCH}] https://download.docker.com/linux/ubuntu \
    $(lsb_release -cs) \
    stable"
 apt-get install -y docker-ce docker-ce-cli containerd.io
 usermod -aG docker vagrant
 
-# start receiver-mock
-sudo docker create -p 3000:3000 --name receiver-mock --restart=always sumologic/kubernetes-tools receiver-mock --print-metrics
-sudo docker start receiver-mock
+# start sumologic-mock
+sudo docker create -p 3000:3000 --name sumologic-mock --restart=always sumologic/sumologic-mock:2.23.0 sumologic-mock --print-metrics
+sudo docker start sumologic-mock
 
 # Install collectd
 sudo apt-get install -y \
